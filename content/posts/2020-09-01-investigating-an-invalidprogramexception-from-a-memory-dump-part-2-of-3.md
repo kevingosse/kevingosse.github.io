@@ -7,12 +7,14 @@ subtitle: Part 2 of the investigation, where we extract the dynamic IL from the 
 date: 2020-09-01
 description: ""
 tags:
-- csharp
 - dotnet
 - debugging
-- programming
+- windbg
 - lldb
+- cpp
+- assembly
 author: Kevin Gosse
+thumbnailImage: /images/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4-1.webp
 ---
 
 In this series of article, we're retracing how I debugged an `InvalidProgramException`, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
@@ -459,7 +461,7 @@ It turned out that the value was next to a pointer (`0x00007fce8c983790`, backwa
 
 How to confirm it? Every IL method has a header, so I decompiled the original `PostgresDatabaseInfo.LoadBackendTypes` method with [dnSpy](https://github.com/0xd4d/dnSpy) to look for a remarkable value. The `LocalVarSig` token had a value of `0x11000275`:
 
-![][image_ref_MSprWVZVOS1CeVNBMmhGZFBfMVY1QU5BLnBuZw==]
+{{<image classes="fancybox center" src="/images/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4-1.webp" >}}
 
 I then dumped a few bytes at the address I found and looked for the value:
 

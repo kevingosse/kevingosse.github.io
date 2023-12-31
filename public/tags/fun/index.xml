@@ -13,7 +13,7 @@
       <link>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
-      <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most. So the only choices you have is either to restart now or to spend the Friday with this window eating your precious screen real estate.</description>
+      <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;Your computer is about to restart. This action will have consequences.&#xD;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most.</description>
     </item>
     <item>
       <title>Have some fun with .net core startup hooks</title>

@@ -10,7 +10,7 @@
   "headline": "Posts",
   
   "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "2023-08-12T00:00:00Z",
+  "dateModified": "2023-09-30T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Kevin Gosse",
@@ -246,6 +246,69 @@
             
   
     
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/" aria-label="Open the post: Investigating an InvalidProgramException from a memory dump (part 2 of 3)">
+      
+          Investigating an InvalidProgramException from a memory dump (part 2 of 3)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-09-01T00:00:00Z">
+        
+  
+  
+  
+  
+    September 01 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
+Part 1: Preliminary exploration
+Part 2: Finding the generated IL
+Part 3: Identifying the error and fixing the bug
+Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.
+      
+      <p>
+        
+          <a href="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/" class="postShorten-excerpt_link link" aria-label="Open the post: Investigating an InvalidProgramException from a memory dump (part 2 of 3)">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/" aria-label="Open the post: Investigating an InvalidProgramException from a memory dump (part 2 of 3)">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4-1.webp"/>
+      </div>
+    </a>
+  
+</article>
+
+          
+            
+  
+    
       
         
       
@@ -255,7 +318,7 @@
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -304,16 +367,12 @@ As it turns out, we had customer reports of applications throwing InvalidProgram
             
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -355,22 +414,24 @@ As it turns out, we had customer reports of applications throwing InvalidProgram
     </div>
   </div>
   
+    <a href="https://minidump.net/c-tricked-by-webrequest-209014d99653/" aria-label="Open the post: Tricked by WebRequest">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/c-tricked-by-webrequest-209014d99653-1.webp"/>
+      </div>
+    </a>
+  
 </article>
 
           
             
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -413,6 +474,12 @@ What are startup hooks? Let&rsquo;s start by a quick catch-up, for those who don
     </div>
   </div>
   
+    <a href="https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/" aria-label="Open the post: Monitor GC stats with a startup hook">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/monitor-gc-stats-with-a-startup-hook-55aa03dedea3-1.webp"/>
+      </div>
+    </a>
+  
 </article>
 
           
@@ -428,7 +495,7 @@ What are startup hooks? Let&rsquo;s start by a quick catch-up, for those who don
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -487,7 +554,7 @@ Note: the whole article is about .net core on Linux. While the first part (imple
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -535,16 +602,12 @@ Note: the whole article is about .net core on Linux. While the first part (imple
             
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -592,22 +655,24 @@ To illustrate that, consider a web server that would execute this code:
     </div>
   </div>
   
+    <a href="https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/" aria-label="Open the post: .NET ThreadPool starvation, and how queuing makes it worse">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527-1.webp"/>
+      </div>
+    </a>
+  
 </article>
 
           
             
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -651,6 +716,12 @@ I tend to use the bike while watching series to make it less boring.
     </div>
   </div>
   
+    <a href="https://minidump.net/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/" aria-label="Open the post: Turning your training bike into a Speed remake">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114-5.webp"/>
+      </div>
+    </a>
+  
 </article>
 
           
@@ -666,7 +737,7 @@ I tend to use the bike while watching series to make it less boring.
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -716,16 +787,12 @@ A quick reminder In WinForms/WPF/UWP, you can only update controls from the UI t
             
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -757,7 +824,7 @@ A quick reminder In WinForms/WPF/UWP, you can only update controls from the UI t
     <div class="postShorten-excerpt">
       
         It&rsquo;s Friday! And when it&rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:
-It&rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &ldquo;Hide&rdquo; button wasn&rsquo;t grayed out. To make things better, the close button doesn&rsquo;t work either, and the window is top-most. So the only choices you have is either to restart now or to spend the Friday with this window eating your precious screen real estate.
+Your computer is about to restart. This action will have consequences.It&rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &ldquo;Hide&rdquo; button wasn&rsquo;t grayed out. To make things better, the close button doesn&rsquo;t work either, and the window is top-most.
       
       <p>
         
@@ -768,62 +835,11 @@ It&rsquo;s really nice to warn me that my computer is going to restart in a few 
     </div>
   </div>
   
-</article>
-
-          
-            
-  
-    
-      
-        
-      
-    
-  
-
-
-  
-
-<article class="postShorten postShorten--thumbnailimg-right">
-  <div class="postShorten-wrap">
-    
-    <div class="postShorten-header">
-      <h1 class="postShorten-title">
-      
-        <a class="link-unstyled" href="https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" aria-label="Open the post: Dumping stack objects with ClrMD">
-      
-          Dumping stack objects with ClrMD
-        </a>
-      </h1>
-      
-  <div class="postShorten-meta post-meta">
-    
-      <time datetime="2019-12-18T00:00:00Z">
-        
-  
-  
-  
-  
-    December 18 2019
-  
-
-      </time>
-    
-    
-  </div>
-
-    </div>
-    <div class="postShorten-excerpt">
-      
-        The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.
-      
-      <p>
-        
-          <a href="https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" class="postShorten-excerpt_link link" aria-label="Open the post: Dumping stack objects with ClrMD">Continue reading</a>
-        
-        
-      </p>
-    </div>
-  </div>
+    <a href="https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/" aria-label="Open the post: Another way to use your debugging tools">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/another-way-to-use-your-debugging-tools-7e7f498d7a2b-1.webp"/>
+      </div>
+    </a>
   
 </article>
 

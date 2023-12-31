@@ -7,11 +7,10 @@ subtitle: Browse memory structures from a memory dump in C#, just like you would
 date: 2021-07-16
 description: ""
 tags:
-- csharp
 - dotnet
 - debugging
-- programming
-- software-development
+- clrmd
+- dynamd
 author: Kevin Gosse
 ---
 

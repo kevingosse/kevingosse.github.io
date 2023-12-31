@@ -6,12 +6,12 @@ subtitle: Last part of the investigation, figuring out what is wrong with the IL
 date: 2020-09-10
 description: ""
 tags:
-- csharp
-- debugging
-- programming
 - dotnet
+- debugging
 - lldb
+- windbg
 author: Kevin Gosse
+thumbnailImage: /images/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1-2.webp
 ---
 
 # Investigating an InvalidProgramException from a memory dump (part 3 of 3)
@@ -122,7 +122,7 @@ IL_05fd: ret
 
 I methodically compared it with the original IL, paying special attention to the parts that we rewrote, but found nothing wrong.
 
-![Always have a diff tool ready][image_ref_MSp5V2FPUHFCZUlCNWhCTk9tU0RiMGd3LnBuZw==]
+{{<image classes="fancybox center" src="/images/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1-1.webp" title="Always have a diff tool ready">}}
 
 Note that the method tokens are not resolved in the `dumpil -i` output. That's because it doesn't have the context of the method, so it cannot guess what module to use to resolve them (so instead of, say, `call Hello::World()`, it would display `call TOKEN a000b60`). Suspecting that the token could be wrong in the rewritten method, I tried resolving them manually. The token is named a "MemberRef token" (recognizable because it starts with `a0`). According to the specification, this is an index to a table that maps it to a MethodDesc (which I can then dump using the `dumpmd` command, as I did in previous parts of the investigation).
 
@@ -176,7 +176,7 @@ There was nothing wrong with the SEH table either, so I turned my attention to `
 
 We see here that `maxstack` is set to 2. This is abnormally low, considering that the original method had a `maxstack` of 4!
 
-![][image_ref_MSo2blI1ZlhLRUtQanJQYTFfNDMxOHJBLnBuZw==]
+{{<image classes="fancybox center" src="/images/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1-2.webp" >}}
 
 This was enough to explain why the JIT would throw an `InvalidProgramException`. But I still had to figure out how we ended up with this value.
 

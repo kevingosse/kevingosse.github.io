@@ -8,14 +8,13 @@ date: 2023-01-11
 description: ""
 tags:
 - dotnet
-- programming
-- software-development
-- dotnet-core
 - csharp
+- nativeaot
+- profiler
 author: Kevin Gosse
 ---
 
-[In the first part](/writing-a-net-profiler-in-c-part-1-d3978aae9b12), we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn't be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .NET.
+[In the first part](/writing-a-net-profiler-in-c-part-1-d3978aae9b12), we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn't be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .NET.
 
 At this point, our code looks like:
 

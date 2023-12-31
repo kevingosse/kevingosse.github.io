@@ -6,8 +6,22 @@
     <description>Recent content in garbage-collection on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 21 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 Sep 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/tags/garbage-collection/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Memory alignment of doubles in C#</title>
+      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
+      <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
+    </item>
+    <item>
+      <title>SuppressGCTransition</title>
+      <link>https://minidump.net/suppressgctransition-b9a8a774edbd/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/suppressgctransition-b9a8a774edbd/</guid>
+      <description>While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.&#xA;SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:&#xA;public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&amp;#34;NativeLib.</description>
+    </item>
     <item>
       <title>Monitor GC stats with a startup hook</title>
       <link>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</link>

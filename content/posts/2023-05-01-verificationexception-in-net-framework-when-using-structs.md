@@ -6,10 +6,11 @@ subtitle: A surprising error occuring when using C# 7.3 with partial trust.
 date: 2023-05-01
 description: ""
 tags:
-- programming
-- csharp
 - dotnet
+- x64dbg
+- cpp
 author: Kevin Gosse
+thumbnailImage: /images/verificationexception-in-net-framework-when-using-structs-6269eb3df448-2.webp
 ---
 
 Consider the following code:
@@ -59,7 +60,7 @@ static void Main(string[] args)
 
 The answer is… It crashes with a `VerificationException` and a scary message ("Operation could destabilize the runtime").
 
-![][image_ref_MSpUSmIySkEyTXBHV0xJVnp6bE1GajRBLnBuZw==]
+{{<image classes="fancybox center" src="/images/verificationexception-in-net-framework-when-using-structs-6269eb3df448-1.webp" >}}
 
 The application stops crashing as soon as I remove the `readonly` keyword from the `Struct` field. Even weirder, it also stops crashing if you target an older version of C#, for instance by setting `<LangVersion>7</LangVersion>` in the csproj file.
 
@@ -153,7 +154,7 @@ if (mutator)
 }
 ```
 
-![x64dbg is great to annotate the assembly][image_ref_MCpuSUhDTzlaY1o5U2R1SUdZ]
+{{<image classes="fancybox center" src="/images/verificationexception-in-net-framework-when-using-structs-6269eb3df448-2.webp" title="x64dbg is great to annotate the assembly" >}}
 
 This code is invoked when the JIT compiler verifies a method and finds a `ldsflda` instruction. Specifically, our `VerificationException` is caused by this line:
 

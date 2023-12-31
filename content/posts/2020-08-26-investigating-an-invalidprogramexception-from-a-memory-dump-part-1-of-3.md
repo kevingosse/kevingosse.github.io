@@ -7,11 +7,9 @@ subtitle: The first part of the investigation is an introduction to using a memo
 date: 2020-08-26
 description: ""
 tags:
-- csharp
 - dotnet
 - debugging
-- software-development
-- programming
+- windbg
 author: Kevin Gosse
 ---
 

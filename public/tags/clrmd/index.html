@@ -233,6 +233,127 @@
               
   
     
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/" aria-label="Open the post: Writing native WinDbg extensions in C#">
+      
+          Writing native WinDbg extensions in C#
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2022-02-08T00:00:00Z">
+        
+  
+  
+  
+  
+    February 08 2022
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:
+Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg
+Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#
+      
+      <p>
+        
+          <a href="https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/" class="postShorten-excerpt_link link" aria-label="Open the post: Writing native WinDbg extensions in C#">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/" aria-label="Open the post: Writing native WinDbg extensions in C#">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/writing-native-windbg-extensions-in-c-5390726f3cec-1.webp"/>
+      </div>
+    </a>
+  
+</article>
+
+            
+              
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://minidump.net/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/" aria-label="Open the post: Reading AsyncLocal values from a memory dump">
+      
+          Reading AsyncLocal values from a memory dump
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2021-09-16T00:00:00Z">
+        
+  
+  
+  
+  
+    September 16 2021
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump. Note that the code provided is written for .NET 5, but should be able to work for .NET Framework with minor modifications (the name of some internal fields have changed across versions).
+Preparing the memory dump First thing first, we need to prepare the memory dump that will serve as example for the whole article.
+      
+      <p>
+        
+          <a href="https://minidump.net/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/" class="postShorten-excerpt_link link" aria-label="Open the post: Reading AsyncLocal values from a memory dump">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://minidump.net/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/" aria-label="Open the post: Reading AsyncLocal values from a memory dump">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/reading-asynclocal-values-from-a-memory-dump-8be356a46b29-1.webp"/>
+      </div>
+    </a>
+  
+</article>
+
+            
+              
+  
+    
       
         
       
@@ -242,7 +363,61 @@
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/" aria-label="Open the post: Analyze your memory dumps in C# with DynaMD">
+      
+          Analyze your memory dumps in C# with DynaMD
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2021-07-16T00:00:00Z">
+        
+  
+  
+  
+  
+    July 16 2021
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.
+Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &ldquo;natural&rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.
+      
+      <p>
+        
+          <a href="https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/" class="postShorten-excerpt_link link" aria-label="Open the post: Analyze your memory dumps in C# with DynaMD">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -283,6 +458,71 @@
       </p>
     </div>
   </div>
+  
+    <a href="https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" aria-label="Open the post: Dumping stack objects with ClrMD">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/dumping-stack-objects-with-clrmd-c002dab4651b-1.webp"/>
+      </div>
+    </a>
+  
+</article>
+
+            
+              
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">
+      
+          Writing ClrMD extensions for WinDbg and LLDB
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2019-03-14T00:00:00Z">
+        
+  
+  
+  
+  
+    March 14 2019
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.
+      
+      <p>
+        
+          <a href="https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" class="postShorten-excerpt_link link" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/2019-03-14-writing-clrmd-extensions-for-windbg-and-lldb-916427956f66-1.webp"/>
+      </div>
+    </a>
   
 </article>
 

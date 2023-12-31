@@ -67,15 +67,11 @@
   
   
     
-      <meta property="article:tag" content="programming">
-    
-      <meta property="article:tag" content="csharp">
-    
       <meta property="article:tag" content="windbg">
     
       <meta property="article:tag" content="dotnet">
     
-      <meta property="article:tag" content="software-development">
+      <meta property="article:tag" content="performance">
     
   
 
@@ -385,8 +381,11 @@
 }
 </code></pre><p>As much as possible, it sticks to the <code>StringBuilder</code> API to avoid having to modify the parsing code. The Trim method is called whenever the parser has finished reading a node, with the index of the last character processed. With that solution, we avoid the string copy to the <code>StringBuilder</code>, and accessing individual characters stays an <code>O(1)</code> operation most of the time.</p>
 <p>And the performance improvement is very apparent when tested live (old version on the left, new version on the right)</p>
-<p><strong>vimeo</strong>:</p>
 <p><a href="https://player.vimeo.com/video/309288801?app_id=122963"><!-- raw HTML omitted --><!-- raw HTML omitted --></a></p>
+
+
+<iframe src="https://player.vimeo.com/video/309288801?h=8d5a93b83a" width="640" height="334" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>}}
+
 <p>The fix has since then been released in the official version. I&rsquo;d like to thank Microsoft for their openness in accepting outside contributions (though it would be even better if the whole project was open-source 🙂).</p>
 
               
@@ -402,15 +401,11 @@
                   <div class="post-footer-tags">
                     <span class="text-color-light text-small">TAGGED IN</span><br/>
                     
-  <a class="tag tag--primary tag--small" href="/tags/programming/">programming</a>
-
-  <a class="tag tag--primary tag--small" href="/tags/csharp/">csharp</a>
-
   <a class="tag tag--primary tag--small" href="/tags/windbg/">windbg</a>
 
   <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
 
-  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
+  <a class="tag tag--primary tag--small" href="/tags/performance/">performance</a>
 
                   </div>
                 
@@ -431,7 +426,7 @@
         </li>
         <li class="post-action">
           
-            <a class="post-action-btn btn btn--default tooltip--top" href="/memory-alignment-of-doubles-in-c-1d13e3ce741/" data-tooltip="Memory alignment of doubles in C#" aria-label="PREVIOUS: Memory alignment of doubles in C#">
+            <a class="post-action-btn btn btn--disabled">
           
               <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
               <i class="fa fa-angle-right"></i>
@@ -572,7 +567,7 @@
         </li>
         <li class="post-action">
           
-            <a class="post-action-btn btn btn--default tooltip--top" href="/memory-alignment-of-doubles-in-c-1d13e3ce741/" data-tooltip="Memory alignment of doubles in C#" aria-label="PREVIOUS: Memory alignment of doubles in C#">
+            <a class="post-action-btn btn btn--disabled">
           
               <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
               <i class="fa fa-angle-right"></i>

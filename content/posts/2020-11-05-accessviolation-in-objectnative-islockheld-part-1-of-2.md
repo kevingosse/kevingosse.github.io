@@ -8,11 +8,12 @@ date: 2020-11-05
 description: ""
 tags:
 - dotnet
-- csharp
 - debugging
-- software-development
-- programming
+- cpp
+- windbg
+- assembly
 author: Kevin Gosse
+thumbnailImage: /images/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a-3.webp
 ---
 
 *This is a two parts article. [Part two is available here](/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c).*
@@ -27,7 +28,7 @@ Description: The process was terminated due to an internal error in the .NET Run
 
 A look at the reliability monitor showed that the app was crashing once or twice per day:
 
-![Not something you like to see before a release][image_ref_MSpTSE02TTVQWUZTY2FsQ0kxTk5OSEV3LnBuZw==]
+{{<image classes="fancybox center" src="/images/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a-1.webp" title="Not something you like to see before a release" >}}
 
 Unfortunately I couldn't tell much from the error message. You can't normally cause this kind of crash from managed code (unless of course you use `unsafe`), so I scanned the changes we made to our native libraries and found nothing suspicious. As there wasn't anything more I could do, I configured the server [to capture a memory dump at next crash](https://docs.microsoft.com/en-us/windows/win32/wer/collecting-user-mode-dumps?WT.mc_id=DT-MVP-5003493), and waited.
 
@@ -119,13 +120,13 @@ Where to look next? I wanted to check the instance of string that was given to `
 
 The error occurred when executing the instruction `mov ebx,dword ptr [rcx+2Ch]`, meaning: "read the memory at the address `rcx+0x2C`, and store it in `ebx`". I used the WinDbg Registers window to check the value of the registers at the time of the error:
 
-![][image_ref_MSo4aW9oNmRnMUpJQ3dUOTdhRGp1UXBnLnBuZw==]
+{{<image classes="fancybox center" src="/images/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a-2.webp" >}}
 
 The value of `rcx` was `0xffffffffffffffff` (that is, -1). This explained where the `0x2B` came from: `rcx + 2C = -1 + 2C = 2B` . `2C` was probably the offset of a field in an object, so it looked like the address of that object was wrong.
 
 I then decided to check where the value in `rcx` came from. The disassembly window of WinDbg shows the assembly code near the exception:
 
-![][image_ref_MSowcnVTN3pVbWJUb1V5UzJ6d0RpTDJBLnBuZw==]
+{{<image classes="fancybox center" src="/images/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a-3.webp" >}}
 
 `rcx` was written for the last time by the instruction `mov rcx, qword ptr [rdx+8]`, with `rdx` having a value of `0x0000029704f50208`. It looked like an address, so I tried to figure out what kind. The value of the stack pointer register, `rsp` , was `0x000000d967bfdca0`, so definitely not a stack address. The managed heap maybe? The command `!eeheap -gc` gives the range of all the GC segments, and allowed me to confirm that `0x0000029704f50208` was not on the managed heap either.
 

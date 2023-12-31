@@ -7,12 +7,11 @@ subtitle: There has been a lot of discussion around ThreadPool starvation. But w
 date: 2020-04-27
 description: ""
 tags:
-- software-development
 - dotnet
-- threads
-- csharp
-- scalability
+- performance
+- async
 author: Kevin Gosse
+thumbnailImage: /images/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527-1.webp
 ---
 
 There has been plenty of talk about ThreadPool starvation in .NET:
@@ -51,7 +50,7 @@ Combined with the fact that the ThreadPool grows very slowly (one thread per sec
 
 Yet, it does not fit what we observed on our own servers. We usually restart our instances as soon as starvation happens, but in one case we didn't. The ThreadPool grew until its hardcoded limit (32767 threads), and the system never recovered:
 
-![][image_ref_MCo5TGNkX0FMWEkzcGhrdVA4LmpwZw==]
+{{<image classes="fancybox center" src="/images/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527-1.webp" >}}
 
 If you do the math, 32767 threads should be more than enough to handle the 1000–2000 QPS that our servers process, even if every request required 10 threads!
 
@@ -117,13 +116,13 @@ Producer enqueues 5 calls to Process every second. In Process, we yield to avoid
 
 But if you run the program, you'll see that it managed to display "Ended" a few times in the console, then nothing happens anymore:
 
-![][image_ref_MCpmQ1lYV3J2cU9yVXdMenAzLnBuZw==]
+{{<image classes="fancybox center" src="/images/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527-2.webp" >}}
 
 *Note that this code assumes that `Environment.ProcessorCount` is lower or equal to 8 on your machine. If it's bigger, then the ThreadPool will start with more thread available, and you need to lower the delay of the `Thread.Sleep` in `Producer()` to set the same conditions.*
 
 Looking at the task manager, we can see that CPU usage is 0 and the number of threads is growing at about one per second:
 
-![][image_ref_MCpCVDRHVUNGY0hvZThzVWRLLnBuZw==]
+{{<image classes="fancybox center" src="/images/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527-3.webp" >}}
 
 Here I've let it run for a while and got to a whopping 989 threads, yet still nothing is happening! Even though 10 threads should be enough to handle the workload. So what's going on?
 

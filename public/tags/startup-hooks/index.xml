@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>startup-hooks on minidump.net</title>
+    <link>https://minidump.net/tags/startup-hooks/</link>
+    <description>Recent content in startup-hooks on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://minidump.net/tags/startup-hooks/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Monitor GC stats with a startup hook</title>
+      <link>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</link>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</guid>
+      <description>.NET core startup hooks is a feature I really like, and I had a lot of fun with it in the past. Still, I had yet to find a legitimate use for them, and the opportunity finally came a few days ago.&#xA;What are startup hooks? Let&amp;rsquo;s start by a quick catch-up, for those who don&amp;rsquo;t know what startup hooks are. The feature was introduced with .net core 2.2, and allows to execute any arbitrary code in a .</description>
+    </item>
+    <item>
+      <title>Have some fun with .net core startup hooks</title>
+      <link>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</link>
+      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</guid>
+      <description>One feature of .net core 2.2 that didn&amp;rsquo;t catch my attention immediately is the startup hooks. Put simply, this is a way to register globally a method in an assembly that will be executed whenever a .net core application is started. This unlocks a whole range of scenarios, from injecting a profiler to tweaking a static context in a given environment.&#xA;How does it work? First, you need to create a new .</description>
+    </item>
+  </channel>
+</rss>

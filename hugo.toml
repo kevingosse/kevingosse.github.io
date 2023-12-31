@@ -7,7 +7,7 @@ defaultContentLanguage = "en-us"
 [params]
   sidebarBehavior = 2
   thumbnailImage = true
-  thumbnailImagePosition = "right"
+  thumbnailImagePosition = "bottom"
   autoThumbnailImage = true
   coverImage = "images/code.png"
   imageGallery = true

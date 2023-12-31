@@ -8,8 +8,6 @@ date: 2020-05-18
 description: ""
 tags:
 - dotnet
-- dotnet-core
-- software-development
 - garbage-collection
 - debugging
 author: Kevin Gosse

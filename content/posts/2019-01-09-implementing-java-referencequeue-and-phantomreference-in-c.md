@@ -9,13 +9,10 @@ description: The Java ReferenceQueue is a mechanism that allows the developer to
   when an object has been garbage collected. How hard can it be to reimplement it
   in .NET?
 tags:
-- programming
-- software-development
-- csharp
+- dotnet
 - java
 - garbage-collection
 author: Kevin Gosse
-username: kevingosse
 ---
 
 After reading [Konrad Kokosa's article on Java PhantomReference](http://tooslowexception.com/do-we-need-jvms-phantomreference-in-net/), I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a `ReferenceQueue` in C#. The Java `ReferenceQueue` is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory. How hard can it be to reimplement it in .NET?

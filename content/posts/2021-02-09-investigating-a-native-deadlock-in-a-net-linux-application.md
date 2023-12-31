@@ -8,9 +8,8 @@ description: ""
 tags:
 - dotnet
 - debugging
-- programming
 - lldb
-- software-development
+- windbg
 author: Kevin Gosse
 ---
 

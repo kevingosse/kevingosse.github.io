@@ -6,41 +6,34 @@
     <description>Recent content in Tags on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 Sep 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>cpp</title>
+      <link>https://minidump.net/tags/cpp/</link>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/cpp/</guid>
+      <description></description>
+    </item>
     <item>
       <title>dotnet</title>
       <link>https://minidump.net/tags/dotnet/</link>
-      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/dotnet/</guid>
       <description></description>
     </item>
     <item>
-      <title>dotnet-core</title>
-      <link>https://minidump.net/tags/dotnet-core/</link>
-      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/dotnet-core/</guid>
+      <title>garbage-collection</title>
+      <link>https://minidump.net/tags/garbage-collection/</link>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/garbage-collection/</guid>
       <description></description>
     </item>
     <item>
       <title>performance</title>
       <link>https://minidump.net/tags/performance/</link>
-      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/performance/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>programming</title>
-      <link>https://minidump.net/tags/programming/</link>
-      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/programming/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>software-development</title>
-      <link>https://minidump.net/tags/software-development/</link>
-      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/software-development/</guid>
       <description></description>
     </item>
     <item>
@@ -51,24 +44,52 @@
       <description></description>
     </item>
     <item>
-      <title>datadog</title>
-      <link>https://minidump.net/tags/datadog/</link>
+      <title>nativeaot</title>
+      <link>https://minidump.net/tags/nativeaot/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/nativeaot/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>profiler</title>
+      <link>https://minidump.net/tags/profiler/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/profiler/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>source-generator</title>
+      <link>https://minidump.net/tags/source-generator/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/source-generator/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>x64dbg</title>
+      <link>https://minidump.net/tags/x64dbg/</link>
+      <pubDate>Mon, 01 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/x64dbg/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>superluminal</title>
+      <link>https://minidump.net/tags/superluminal/</link>
       <pubDate>Sun, 12 Feb 2023 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/datadog/</guid>
+      <guid>https://minidump.net/tags/superluminal/</guid>
       <description></description>
     </item>
     <item>
-      <title>asynchronous</title>
-      <link>https://minidump.net/tags/asynchronous/</link>
+      <title>async</title>
+      <link>https://minidump.net/tags/async/</link>
       <pubDate>Mon, 05 Sep 2022 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/asynchronous/</guid>
+      <guid>https://minidump.net/tags/async/</guid>
       <description></description>
     </item>
     <item>
-      <title>low-level-programming</title>
-      <link>https://minidump.net/tags/low-level-programming/</link>
-      <pubDate>Tue, 26 Jul 2022 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/low-level-programming/</guid>
+      <title>clrmd</title>
+      <link>https://minidump.net/tags/clrmd/</link>
+      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/clrmd/</guid>
       <description></description>
     </item>
     <item>
@@ -79,13 +100,6 @@
       <description></description>
     </item>
     <item>
-      <title>nativeaot</title>
-      <link>https://minidump.net/tags/nativeaot/</link>
-      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/nativeaot/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>windbg</title>
       <link>https://minidump.net/tags/windbg/</link>
       <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
@@ -93,10 +107,10 @@
       <description></description>
     </item>
     <item>
-      <title>optimization</title>
-      <link>https://minidump.net/tags/optimization/</link>
-      <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/optimization/</guid>
+      <title>dynamd</title>
+      <link>https://minidump.net/tags/dynamd/</link>
+      <pubDate>Fri, 16 Jul 2021 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/dynamd/</guid>
       <description></description>
     </item>
     <item>
@@ -107,45 +121,31 @@
       <description></description>
     </item>
     <item>
+      <title>arm64</title>
+      <link>https://minidump.net/tags/arm64/</link>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/arm64/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>assembly</title>
+      <link>https://minidump.net/tags/assembly/</link>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/assembly/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>lldb</title>
       <link>https://minidump.net/tags/lldb/</link>
-      <pubDate>Tue, 09 Feb 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/lldb/</guid>
       <description></description>
     </item>
     <item>
-      <title>bugs</title>
-      <link>https://minidump.net/tags/bugs/</link>
-      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/bugs/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>garbage-collection</title>
-      <link>https://minidump.net/tags/garbage-collection/</link>
+      <title>startup-hooks</title>
+      <link>https://minidump.net/tags/startup-hooks/</link>
       <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/garbage-collection/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>best-practices</title>
-      <link>https://minidump.net/tags/best-practices/</link>
-      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/best-practices/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>scalability</title>
-      <link>https://minidump.net/tags/scalability/</link>
-      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/scalability/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>threads</title>
-      <link>https://minidump.net/tags/threads/</link>
-      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/threads/</guid>
+      <guid>https://minidump.net/tags/startup-hooks/</guid>
       <description></description>
     </item>
     <item>
@@ -156,24 +156,10 @@
       <description></description>
     </item>
     <item>
-      <title>life</title>
-      <link>https://minidump.net/tags/life/</link>
-      <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/life/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>raspberry-pi</title>
       <link>https://minidump.net/tags/raspberry-pi/</link>
       <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/raspberry-pi/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>async</title>
-      <link>https://minidump.net/tags/async/</link>
-      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/async/</guid>
       <description></description>
     </item>
     <item>
@@ -191,38 +177,10 @@
       <description></description>
     </item>
     <item>
-      <title>friday</title>
-      <link>https://minidump.net/tags/friday/</link>
-      <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/friday/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>fun</title>
       <link>https://minidump.net/tags/fun/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/fun/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>hacking</title>
-      <link>https://minidump.net/tags/hacking/</link>
-      <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/hacking/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>clrmd</title>
-      <link>https://minidump.net/tags/clrmd/</link>
-      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/clrmd/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>javascript</title>
-      <link>https://minidump.net/tags/javascript/</link>
-      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/javascript/</guid>
       <description></description>
     </item>
     <item>
@@ -233,24 +191,10 @@
       <description></description>
     </item>
     <item>
-      <title>net-core</title>
-      <link>https://minidump.net/tags/net-core/</link>
-      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/net-core/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>java</title>
       <link>https://minidump.net/tags/java/</link>
       <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/java/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>memory-management</title>
-      <link>https://minidump.net/tags/memory-management/</link>
-      <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/memory-management/</guid>
       <description></description>
     </item>
   </channel>

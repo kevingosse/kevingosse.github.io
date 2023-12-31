@@ -10,9 +10,11 @@ tags:
 - dotnet
 - csharp
 - debugging
-- programming
-- software-development
+- windbg
+- cpp
+- assembly
 author: Kevin Gosse
+thumbnailImage: /images/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c-1.webp
 ---
 
 This is the second part of an investigation where I tried to understand why an application was randomly crashing with an `AccessViolationException`.
@@ -354,7 +356,7 @@ This is a runtime bug, that has probably been around for a very long time. I've 
 
 The reason for 1/ was simply that we weren't running vanilla Orchard. The locking scheme used by Orchard relies on the assumption that ASP.NET MVC will execute the `OnActionExecuting` and `OnResultExecuted` events in the same thread. This is actually true when using synchronous controllers. But to better test our code, we added some asynchronous workload to Orchard, and therefore switched to asynchronous controllers to follow best practices. This broke the assumption.
 
-![We were just following best practices :(][image_ref_MSpFOHo0Mlc3WW5ibGFKdG5ZZFdYd1lnLnBuZw==]
+{{<image classes="fancybox center" src="/images/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c-1.webp" title="We were just following best practices :(" >}}
 
 For 2/, I must commend the intuition of OzCode's [Omer Raviv](https://twitter.com/omerraviv), who sensed immediately after reading part 1 that something was fishy:
 

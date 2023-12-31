@@ -6,8 +6,15 @@
     <description>Recent content in performance on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 Sep 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/tags/performance/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Memory alignment of doubles in C#</title>
+      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
+      <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
+    </item>
     <item>
       <title>SuppressGCTransition</title>
       <link>https://minidump.net/suppressgctransition-b9a8a774edbd/</link>
@@ -35,6 +42,20 @@
       <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/performance-best-practices-in-c-b85a47bdd93a/</guid>
       <description>As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&amp;rsquo;re risky or because they perform poorly. The list may seem a bit random because it&amp;rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.</description>
+    </item>
+    <item>
+      <title>.NET ThreadPool starvation, and how queuing makes it worse</title>
+      <link>https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</link>
+      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</guid>
+      <description>There has been plenty of talk about ThreadPool starvation in .NET:&#xA;https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/&#xA;https://blogs.msdn.microsoft.com/vsoservice/?p=17665&#xA;Or even on the Criteo&amp;rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/&#xA;What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.&#xA;To illustrate that, consider a web server that would execute this code:&#xA;/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.</description>
+    </item>
+    <item>
+      <title>Optimizing the WinDbg DML parser</title>
+      <link>https://minidump.net/optimizing-the-windbg-dml-parser-9f64419f9/</link>
+      <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/optimizing-the-windbg-dml-parser-9f64419f9/</guid>
+      <description>One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.</description>
     </item>
   </channel>
 </rss>

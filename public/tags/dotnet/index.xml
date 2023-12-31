@@ -6,8 +6,15 @@
     <description>Recent content in dotnet on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 Sep 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/tags/dotnet/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Memory alignment of doubles in C#</title>
+      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
+      <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
+    </item>
     <item>
       <title>SuppressGCTransition</title>
       <link>https://minidump.net/suppressgctransition-b9a8a774edbd/</link>
@@ -48,7 +55,7 @@
       <link>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</link>
       <pubDate>Wed, 11 Jan 2023 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</guid>
-      <description>In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&amp;rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .</description>
+      <description>In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&amp;rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .</description>
     </item>
     <item>
       <title>Using GC.KeepAlive in async methods</title>
@@ -205,18 +212,53 @@
       <description>It may seem weird that in 2020 I would write an article on this subject. But I found a new approach to this problem that I had some fun experimenting with.&#xA;So what is the problem, to begin with?&#xA;A quick reminder In WinForms/WPF/UWP, you can only update controls from the UI thread. If you have code running in a background thread that needs to update some controls, you need to somehow switch to the UI thread.</description>
     </item>
     <item>
+      <title>Another way to use your debugging tools</title>
+      <link>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
+      <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
+      <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;Your computer is about to restart. This action will have consequences.&#xD;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most.</description>
+    </item>
+    <item>
+      <title>Dumping stack objects with ClrMD</title>
+      <link>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</guid>
+      <description>The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&amp;rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&amp;rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.</description>
+    </item>
+    <item>
+      <title>Debugging and fixing the Twitch desktop client</title>
+      <link>https://minidump.net/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</link>
+      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</guid>
+      <description>I&amp;rsquo;ve seen through the years that debugging is often misunderstood. Many people that are unfamiliar with debugging tend to think it&amp;rsquo;s all about mastering difficult and austere tools. I often had coworkers ask me &amp;ldquo;what sequence of commands should I type in WinDbg to debug this kind of issue?&amp;rdquo;, as if debugging was about applying a simple flowchart with a complex tool. This is in fact quite the opposite. Debugging is all about the mindset and the methodology, and the tooling is the simple part.</description>
+    </item>
+    <item>
+      <title>Writing ClrMD extensions for WinDbg and LLDB</title>
+      <link>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
+      <pubDate>Thu, 14 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
+      <description>You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.</description>
+    </item>
+    <item>
+      <title>Have some fun with .net core startup hooks</title>
+      <link>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</link>
+      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</guid>
+      <description>One feature of .net core 2.2 that didn&amp;rsquo;t catch my attention immediately is the startup hooks. Put simply, this is a way to register globally a method in an assembly that will be executed whenever a .net core application is started. This unlocks a whole range of scenarios, from injecting a profiler to tweaking a static context in a given environment.&#xA;How does it work? First, you need to create a new .</description>
+    </item>
+    <item>
+      <title>Implementing Java ReferenceQueue and PhantomReference in C#</title>
+      <link>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</link>
+      <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</guid>
+      <description>After reading Konrad Kokosa&amp;rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.</description>
+    </item>
+    <item>
       <title>Optimizing the WinDbg DML parser</title>
       <link>https://minidump.net/optimizing-the-windbg-dml-parser-9f64419f9/</link>
       <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/optimizing-the-windbg-dml-parser-9f64419f9/</guid>
       <description>One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.</description>
-    </item>
-    <item>
-      <title>Memory alignment of doubles in C#</title>
-      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
-      <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
-      <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
     </item>
   </channel>
 </rss>

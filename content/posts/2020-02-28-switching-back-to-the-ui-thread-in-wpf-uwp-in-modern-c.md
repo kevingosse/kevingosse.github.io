@@ -10,7 +10,6 @@ tags:
 - dotnet
 - wpf
 - uwp
-- software-development
 - async
 author: Kevin Gosse
 ---

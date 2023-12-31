@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>dynamd on minidump.net</title>
+    <link>https://minidump.net/tags/dynamd/</link>
+    <description>Recent content in dynamd on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 16 Jul 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://minidump.net/tags/dynamd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Analyze your memory dumps in C# with DynaMD</title>
+      <link>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</link>
+      <pubDate>Fri, 16 Jul 2021 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</guid>
+      <description>Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.&#xA;Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &amp;ldquo;natural&amp;rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>source-generator on minidump.net</title>
+    <link>https://minidump.net/tags/source-generator/</link>
+    <description>Recent content in source-generator on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 10 Jun 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://minidump.net/tags/source-generator/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Writing a .NET profiler in C# — Part 4</title>
+      <link>https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</guid>
+      <description>In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.</description>
+    </item>
+    <item>
+      <title>Writing a .NET profiler in C#   — Part 3</title>
+      <link>https://minidump.net/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</link>
+      <pubDate>Fri, 03 Mar 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</guid>
+      <description>In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. Now that we know how to interact with the profiling API, we&amp;rsquo;re going to write a source generator to automatically generate the boilerplate code needed to implement the 70+ methods declared in the ICorProfilerCallback interface.</description>
+    </item>
+  </channel>
+</rss>

@@ -32,7 +32,7 @@
     }
     
   },
-  "description": "In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn\u0026rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .",
+  "description": "In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn\u0026rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .",
   "keywords": []
 }
 
@@ -43,18 +43,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
+<meta name="description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
 
 
-<meta property="og:description" content="In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
+<meta property="og:description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Writing a .NET profiler in C#  —  Part 2">
 <meta name="twitter:title" content="Writing a .NET profiler in C#  —  Part 2">
 <meta property="og:url" content="https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/">
 <meta property="twitter:url" content="https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
-<meta name="twitter:description" content="In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
+<meta property="og:description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
+<meta name="twitter:description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
 <meta property="og:locale" content="en-us">
 
   
@@ -69,13 +69,11 @@
     
       <meta property="article:tag" content="dotnet">
     
-      <meta property="article:tag" content="programming">
-    
-      <meta property="article:tag" content="software-development">
-    
-      <meta property="article:tag" content="dotnet-core">
-    
       <meta property="article:tag" content="csharp">
+    
+      <meta property="article:tag" content="nativeaot">
+    
+      <meta property="article:tag" content="profiler">
     
   
 
@@ -289,7 +287,7 @@
           
           <div class="post-content markdown">
             <div class="main-content-wrap">
-              <p><a href="/writing-a-net-profiler-in-c-part-1-d3978aae9b12">In the first part</a>, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .NET.</p>
+              <p><a href="/writing-a-net-profiler-in-c-part-1-d3978aae9b12">In the first part</a>, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .NET.</p>
 <p>At this point, our code looks like:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DllMain</span>
 </span></span><span style="display:flex;"><span>{
@@ -633,13 +631,11 @@
                     
   <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
 
-  <a class="tag tag--primary tag--small" href="/tags/programming/">programming</a>
-
-  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
-
-  <a class="tag tag--primary tag--small" href="/tags/dotnet-core/">dotnet-core</a>
-
   <a class="tag tag--primary tag--small" href="/tags/csharp/">csharp</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/nativeaot/">nativeaot</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/profiler/">profiler</a>
 
                   </div>
                 

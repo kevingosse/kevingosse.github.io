@@ -7,12 +7,9 @@ subtitle: The C# specification indicates that function pointers can only be used
 date: 2022-07-26
 description: ""
 tags:
-- csharp
 - dotnet
-- programming
-- low-level-programming
-- dotnet-core
 author: Kevin Gosse
+thumbnailImage: /images/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040-1.webp
 ---
 
 A few days ago, [a github issue in the dotnet/runtime](https://github.com/dotnet/runtime/issues/72781) repository piqued my interest. To summarize, the author was wondering why their code wasn't working as expected. Here is a simplified version:
@@ -65,7 +62,7 @@ class Program
 
 First, what are we looking at? The class `Getter` retrieves the getter of a property by reflection, then gets a function pointer to it, presumably to be able to invoke it without any performance penalty. When running the code, it displays `Value: 0` even though the value should be equal to 42. Even more surprising, when running with a debugger, we can see that after invoking the function pointer, we can't read the value of `target` anymore and `v` is filled with garbage:
 
-![][image_ref_MSo1d0FQZlVUblVyWmoyT2hwVWRGM3NnLnBuZw==]
+{{<image classes="fancybox center" src="/images/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040-1.webp" >}}
 
 So what's going on?
 

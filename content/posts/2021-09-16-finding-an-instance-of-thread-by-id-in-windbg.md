@@ -7,8 +7,6 @@ date: 2021-09-16
 description: ""
 tags:
 - dotnet
-- dotnet-core
-- programming
 - debugging
 - windbg
 author: Kevin Gosse
@@ -176,5 +174,3 @@ Fields:
 ```
 
 Of course this won't work if you're using a version of .NET older than 3.0. In that case, well, I hope you like [scripting in WinDbg](https://stackoverflow.com/a/4616882/869621) 😉
-
-

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>superluminal on minidump.net</title>
+    <link>https://minidump.net/tags/superluminal/</link>
+    <description>Recent content in superluminal on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 12 Feb 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://minidump.net/tags/superluminal/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reading .NET performance counters without the PerfCounter API</title>
+      <link>https://minidump.net/reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874/</link>
+      <pubDate>Sun, 12 Feb 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874/</guid>
+      <description>Note: The code was originally written as part of my job at Datadog and published on the dd-trace-dotnet repository under Apache 2.0 license.&#xA;The excerpts of code in this article are therefore licensed under the same terms. Before using them, quoting them, or redistributing them, make sure to check the terms of the license and the notice.&#xA;The Datadog .NET tracer has a feature named &amp;ldquo;runtime metrics&amp;rdquo;. It collects technical metrics about the way your application behaves and publishes them to a dedicated dashboard, that you can use to diagnose your performance issues:</description>
+    </item>
+  </channel>
+</rss>

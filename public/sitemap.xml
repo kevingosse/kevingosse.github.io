@@ -2,34 +2,43 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://minidump.net/tags/dotnet/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
+    <loc>https://minidump.net/tags/cpp/</loc>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/dotnet-core/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
+    <loc>https://minidump.net/tags/dotnet/</loc>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/tags/garbage-collection/</loc>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</loc>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/performance/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/posts/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/programming/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/software-development/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
+    <loc>https://minidump.net/tags/</loc>
+    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/suppressgctransition-b9a8a774edbd/</loc>
     <lastmod>2023-08-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/</loc>
-    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://minidump.net/tags/csharp/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/tags/nativeaot/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/tags/profiler/</loc>
+    <lastmod>2023-06-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/tags/source-generator/</loc>
     <lastmod>2023-06-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</loc>
@@ -38,26 +47,26 @@
     <loc>https://minidump.net/verificationexception-in-net-framework-when-using-structs-6269eb3df448/</loc>
     <lastmod>2023-05-01T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://minidump.net/tags/x64dbg/</loc>
+    <lastmod>2023-05-01T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://minidump.net/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</loc>
     <lastmod>2023-03-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/datadog/</loc>
+    <loc>https://minidump.net/reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874/</loc>
     <lastmod>2023-02-12T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874/</loc>
+    <loc>https://minidump.net/tags/superluminal/</loc>
     <lastmod>2023-02-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</loc>
     <lastmod>2023-01-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/asynchronous/</loc>
+    <loc>https://minidump.net/tags/async/</loc>
     <lastmod>2022-09-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</loc>
     <lastmod>2022-09-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/low-level-programming/</loc>
-    <lastmod>2022-07-26T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</loc>
     <lastmod>2022-07-26T00:00:00+00:00</lastmod>
@@ -65,10 +74,10 @@
     <loc>https://minidump.net/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</loc>
     <lastmod>2022-07-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/debugging/</loc>
+    <loc>https://minidump.net/tags/clrmd/</loc>
     <lastmod>2022-02-08T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/nativeaot/</loc>
+    <loc>https://minidump.net/tags/debugging/</loc>
     <lastmod>2022-02-08T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/windbg/</loc>
@@ -86,8 +95,8 @@
     <loc>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</loc>
     <lastmod>2021-07-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/optimization/</loc>
-    <lastmod>2021-06-02T00:00:00+00:00</lastmod>
+    <loc>https://minidump.net/tags/dynamd/</loc>
+    <lastmod>2021-07-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/perfview/</loc>
     <lastmod>2021-06-02T00:00:00+00:00</lastmod>
@@ -98,10 +107,16 @@
     <loc>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</loc>
     <lastmod>2021-03-16T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</loc>
-    <lastmod>2021-02-09T00:00:00+00:00</lastmod>
+    <loc>https://minidump.net/tags/arm64/</loc>
+    <lastmod>2021-03-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/tags/assembly/</loc>
+    <lastmod>2021-03-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/lldb/</loc>
+    <lastmod>2021-03-16T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</loc>
     <lastmod>2021-02-09T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</loc>
@@ -119,23 +134,17 @@
     <loc>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/bugs/</loc>
-    <lastmod>2020-08-14T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://minidump.net/c-tricked-by-webrequest-209014d99653/</loc>
     <lastmod>2020-08-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/garbage-collection/</loc>
-    <lastmod>2020-06-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</loc>
     <lastmod>2020-06-21T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://minidump.net/tags/startup-hooks/</loc>
+    <lastmod>2020-06-21T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://minidump.net/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</loc>
     <lastmod>2020-05-18T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/best-practices/</loc>
-    <lastmod>2020-05-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/performance-best-practices-in-c-b85a47bdd93a/</loc>
     <lastmod>2020-05-12T00:00:00+00:00</lastmod>
@@ -143,16 +152,7 @@
     <loc>https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</loc>
     <lastmod>2020-04-27T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/scalability/</loc>
-    <lastmod>2020-04-27T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/threads/</loc>
-    <lastmod>2020-04-27T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://minidump.net/tags/iot/</loc>
-    <lastmod>2020-04-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/life/</loc>
     <lastmod>2020-04-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/raspberry-pi/</loc>
@@ -160,9 +160,6 @@
   </url><url>
     <loc>https://minidump.net/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</loc>
     <lastmod>2020-04-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/async/</loc>
-    <lastmod>2020-02-28T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/switching-back-to-the-ui-thread-in-wpf-uwp-in-modern-c-5dc1cc8efa5e/</loc>
     <lastmod>2020-02-28T00:00:00+00:00</lastmod>
@@ -176,25 +173,13 @@
     <loc>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</loc>
     <lastmod>2020-02-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/friday/</loc>
-    <lastmod>2020-02-21T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://minidump.net/tags/fun/</loc>
     <lastmod>2020-02-21T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/hacking/</loc>
-    <lastmod>2020-02-21T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/clrmd/</loc>
-    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</loc>
     <lastmod>2019-12-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</loc>
-    <lastmod>2019-05-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/javascript/</loc>
     <lastmod>2019-05-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/twitch/</loc>
@@ -206,9 +191,6 @@
     <loc>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</loc>
     <lastmod>2019-02-01T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/tags/net-core/</loc>
-    <lastmod>2019-02-01T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</loc>
     <lastmod>2019-01-09T00:00:00+00:00</lastmod>
   </url><url>
@@ -217,12 +199,6 @@
   </url><url>
     <loc>https://minidump.net/optimizing-the-windbg-dml-parser-9f64419f9/</loc>
     <lastmod>2019-01-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</loc>
-    <lastmod>2009-01-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/memory-management/</loc>
-    <lastmod>2009-01-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/archives/</loc>
   </url><url>

@@ -6,11 +6,9 @@ subtitle: How to use .net core startup hooks to make apps behave in crazy ways
 date: 2019-02-01
 description: How to use .net core startup hooks to make apps behave in crazy ways
 tags:
-- programming
-- software-development
-- csharp
-- net-core
+- dotnet
 - fun
+- startup-hooks
 author: Kevin Gosse
 ---
 

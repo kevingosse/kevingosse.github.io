@@ -7,11 +7,8 @@ subtitle: Non-exhaustive list of code patterns to avoid in C#, either because th
 date: 2020-05-12
 description: ""
 tags:
-- csharp
-- performance
-- best-practices
-- software-development
 - dotnet
+- performance
 author: Kevin Gosse
 ---
 

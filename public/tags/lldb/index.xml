@@ -6,8 +6,15 @@
     <description>Recent content in lldb on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 09 Feb 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 16 Mar 2021 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/tags/lldb/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>An unconventional way of investigating a NullReferenceException</title>
+      <link>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
+      <description>The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.&#xA;As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.&#xA;Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:</description>
+    </item>
     <item>
       <title>Debugging a native deadlock in a .NET Linux application</title>
       <link>https://minidump.net/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</link>
@@ -28,6 +35,13 @@
       <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</guid>
       <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;Let&amp;rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.</description>
+    </item>
+    <item>
+      <title>Writing ClrMD extensions for WinDbg and LLDB</title>
+      <link>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
+      <pubDate>Thu, 14 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
+      <description>You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.</description>
     </item>
   </channel>
 </rss>

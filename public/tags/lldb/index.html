@@ -233,6 +233,67 @@
               
   
     
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/" aria-label="Open the post: An unconventional way of investigating a NullReferenceException">
+      
+          An unconventional way of investigating a NullReferenceException
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2021-03-16T00:00:00Z">
+        
+  
+  
+  
+  
+    March 16 2021
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
+As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
+Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:
+      
+      <p>
+        
+          <a href="https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/" class="postShorten-excerpt_link link" aria-label="Open the post: An unconventional way of investigating a NullReferenceException">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/" aria-label="Open the post: An unconventional way of investigating a NullReferenceException">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a-1.webp"/>
+      </div>
+    </a>
+  
+</article>
+
+            
+              
+  
+    
       
         
       
@@ -242,7 +303,7 @@
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -291,16 +352,12 @@ Preliminary inspection The failure was occurring in a Linux test. After a while,
               
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -346,22 +403,24 @@ In the previous part, we&rsquo;ve located the bad generated IL, stored in an int
     </div>
   </div>
   
+    <a href="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/" aria-label="Open the post: Investigating an InvalidProgramException from a memory dump (part 3 of 3)">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1-2.webp"/>
+      </div>
+    </a>
+  
 </article>
 
             
               
   
     
-      
-        
-      
-    
   
 
 
   
 
-<article class="postShorten postShorten--thumbnailimg-right">
+<article class="postShorten postShorten--thumbnailimg-bottom">
   <div class="postShorten-wrap">
     
     <div class="postShorten-header">
@@ -406,6 +465,71 @@ Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL 
       </p>
     </div>
   </div>
+  
+    <a href="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/" aria-label="Open the post: Investigating an InvalidProgramException from a memory dump (part 2 of 3)">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4-1.webp"/>
+      </div>
+    </a>
+  
+</article>
+
+            
+              
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">
+      
+          Writing ClrMD extensions for WinDbg and LLDB
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2019-03-14T00:00:00Z">
+        
+  
+  
+  
+  
+    March 14 2019
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.
+      
+      <p>
+        
+          <a href="https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" class="postShorten-excerpt_link link" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/2019-03-14-writing-clrmd-extensions-for-windbg-and-lldb-916427956f66-1.webp"/>
+      </div>
+    </a>
   
 </article>
 

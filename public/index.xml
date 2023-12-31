@@ -6,8 +6,15 @@
     <description>Recent content on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 30 Sep 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Memory alignment of doubles in C#</title>
+      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
+      <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
+    </item>
     <item>
       <title>SuppressGCTransition</title>
       <link>https://minidump.net/suppressgctransition-b9a8a774edbd/</link>
@@ -48,7 +55,7 @@
       <link>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</link>
       <pubDate>Wed, 11 Jan 2023 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</guid>
-      <description>In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&amp;rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .</description>
+      <description>In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&amp;rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .</description>
     </item>
     <item>
       <title>Using GC.KeepAlive in async methods</title>
@@ -209,7 +216,7 @@
       <link>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
-      <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most. So the only choices you have is either to restart now or to spend the Friday with this window eating your precious screen real estate.</description>
+      <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;Your computer is about to restart. This action will have consequences.&#xD;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most.</description>
     </item>
     <item>
       <title>Dumping stack objects with ClrMD</title>
@@ -252,13 +259,6 @@
       <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/optimizing-the-windbg-dml-parser-9f64419f9/</guid>
       <description>One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.</description>
-    </item>
-    <item>
-      <title>Memory alignment of doubles in C#</title>
-      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
-      <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
-      <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
     </item>
   </channel>
 </rss>

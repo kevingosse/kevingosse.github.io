@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>x64dbg on minidump.net</title>
+    <link>https://minidump.net/tags/x64dbg/</link>
+    <description>Recent content in x64dbg on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://minidump.net/tags/x64dbg/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VerificationException in .NET Framework when using structs</title>
+      <link>https://minidump.net/verificationexception-in-net-framework-when-using-structs-6269eb3df448/</link>
+      <pubDate>Mon, 01 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/verificationexception-in-net-framework-when-using-structs-6269eb3df448/</guid>
+      <description>Consider the following code:&#xA;private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.&#xA;Yet, what happens if we try to run this program in .NET Framework under partial trust?&#xA;static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.</description>
+    </item>
+  </channel>
+</rss>
