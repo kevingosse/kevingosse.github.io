@@ -13,8 +13,6 @@ author: Kevin Gosse
 thumbnailImage: /images/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0-1.webp
 ---
 
-# [C#] Using GC.KeepAlive in async methods
-
 Can you figure out what's wrong with this code?
 
 ```csharp

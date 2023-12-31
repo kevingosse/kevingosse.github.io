@@ -16,8 +16,6 @@ author: Kevin Gosse
 thumbnailImage: /images/writing-native-windbg-extensions-in-c-5390726f3cec-1.webp
 ---
 
-# Writing native WinDbg extensions in C#
-
 It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD [as described by Christophe Nasarre in this article](https://labs.criteo.com/2017/06/clrmd-part-5-how-to-use-clrmd-to-extend-sos-in-windbg/). However, it has a few serious drawbacks:
 
 * Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg

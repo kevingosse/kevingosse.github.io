@@ -15,8 +15,6 @@ author: Kevin Gosse
 thumbnailImage: /images/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1-2.webp
 ---
 
-# Investigating an InvalidProgramException from a memory dump (part 3 of 3)
-
 In this series of articles, we're retracing how I debugged an `InvalidProgramException`, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
 
 * [Part 1: Preliminary exploration](/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3)
