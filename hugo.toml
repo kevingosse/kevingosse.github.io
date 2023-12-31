@@ -15,20 +15,10 @@ defaultContentLanguage = "en-us"
   syntaxHighlighter = 'highlight.js'
   dateFormat = "January 02 2006"
 
-[params.comment.gitalk]
+[params.comment.utterances]
   enable = true
-  clientId = 'Iv1.8114b4896395b29e'
-  clientSecret = '51d5de761d1fbcbfad430e94ebdecdf6765a20b5'
-  owner = 'kevingosse'
-  admin = 'kevingosse'
-  repo = 'kevingosse.github.io'
-  # See all options: https://github.com/gitalk/gitalk#options
-  [params.comment.gitalk.options]
-    language = "en"
-    perPage = 10
-    distractionFreeMode = false
-    enableHotKey = true
-    pagerDirection = "first"
+  repo = 'kevingosse/kevingosse.github.io'
+
 [taxonomies]
   category = "categories"
   tag = "tags"

@@ -47,5 +47,18 @@
         }).render('gitalk')
       })()
     </script>
+  {{ else if .Site.Params.comment.utterances.enable }}
+<div id="utterances">
+      <noscript>Please enable JavaScript to view the comments powered by Utterances.</noscript>
+    </div>
+<script src="https://utteranc.es/client.js"
+        repo="{{ .Site.Params.comment.utterances.repo }}"
+        issue-term="title"
+        label="comments"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+  {{ end }}
   {{ end }}
 {{ end }}
