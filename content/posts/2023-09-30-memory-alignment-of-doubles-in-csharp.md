@@ -4,8 +4,9 @@ canonical_url: https://medium.com/@kevingosse/memory-alignment-of-doubles-in-c-1
 title: Memory alignment of doubles in C#
 subtitle: A deep dive into the weird tricks used by the .NET allocator to align arrays
   of doubles.
+summary: A deep dive into the weird tricks used by the .NET allocator to align arrays
+  of doubles.
 date: 2023-09-30
-description: ""
 tags:
 - dotnet
 - cpp

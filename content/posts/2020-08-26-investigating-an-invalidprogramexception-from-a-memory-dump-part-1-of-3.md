@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/investigating-an-invalidprogramexc
 title: Investigating an InvalidProgramException from a memory dump (part 1 of 3)
 subtitle: The first part of the investigation is an introduction to using a memory
   dump from a .NET application to find the information you seek.
+summary: In this series of article, we're retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.
 date: 2020-08-26
 description: ""
 tags:

@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/an-unconventional-way-of-investiga
 title: An unconventional way of investigating a NullReferenceException
 subtitle: Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs,
   and using that knowledge to diagnose a NullReferenceException
+summary: Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.
 date: 2021-03-16
 description: ""
 tags:

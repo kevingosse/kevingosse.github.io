@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn\u0026rsquo;t working as expected. Here is a simplified version:\npublic unsafe class Getter { private delegate*\u0026lt;Obj, SomeStruct\u0026gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*\u0026lt;Obj, SomeStruct\u0026gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(\u0026#34;Property\u0026#34;); Console.",
+  "description": "The C# specification indicates that function pointers can only be used on static methods. This article explains why.",
   "keywords": []
 }
 
@@ -45,22 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&rsquo;t working as expected. Here is a simplified version:
-public unsafe class Getter { private delegate*&lt;Obj, SomeStruct&gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&lt;Obj, SomeStruct&gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&#34;Property&#34;); Console.">
+<meta name="description" content="The C# specification indicates that function pointers can only be used on static methods. This article explains why.">
 
 
-<meta property="og:description" content="A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&rsquo;t working as expected. Here is a simplified version:
-public unsafe class Getter { private delegate*&lt;Obj, SomeStruct&gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&lt;Obj, SomeStruct&gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&#34;Property&#34;); Console.">
+<meta property="og:description" content="The C# specification indicates that function pointers can only be used on static methods. This article explains why.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Why function pointers can&#39;t be used on instance methods in C#">
 <meta name="twitter:title" content="Why function pointers can&#39;t be used on instance methods in C#">
 <meta property="og:url" content="https://minidump.net/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/">
 <meta property="twitter:url" content="https://minidump.net/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&rsquo;t working as expected. Here is a simplified version:
-public unsafe class Getter { private delegate*&lt;Obj, SomeStruct&gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&lt;Obj, SomeStruct&gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&#34;Property&#34;); Console.">
-<meta name="twitter:description" content="A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&rsquo;t working as expected. Here is a simplified version:
-public unsafe class Getter { private delegate*&lt;Obj, SomeStruct&gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&lt;Obj, SomeStruct&gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&#34;Property&#34;); Console.">
+<meta property="og:description" content="The C# specification indicates that function pointers can only be used on static methods. This article explains why.">
+<meta name="twitter:description" content="The C# specification indicates that function pointers can only be used on static methods. This article explains why.">
 <meta property="og:locale" content="en-us">
 
   

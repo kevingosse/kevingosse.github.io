@@ -244,6 +244,65 @@
     <div class="postShorten-header">
       <h1 class="postShorten-title">
       
+        <a class="link-unstyled" href="https://minidump.net/suppressgctransition-b9a8a774edbd/" aria-label="Open the post: SuppressGCTransition">
+      
+          SuppressGCTransition
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2023-08-12T00:00:00Z">
+        
+  
+  
+  
+  
+    August 12 2023
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.
+      
+      <p>
+        
+          <a href="https://minidump.net/suppressgctransition-b9a8a774edbd/" class="postShorten-excerpt_link link" aria-label="Open the post: SuppressGCTransition">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+    <a href="https://minidump.net/suppressgctransition-b9a8a774edbd/" aria-label="Open the post: SuppressGCTransition">
+      <div class="postShorten-thumbnailimg">
+        <img alt="" src="https://minidump.net/images/suppressgctransition-b9a8a774edbd-3.webp"/>
+      </div>
+    </a>
+  
+</article>
+
+            
+              
+  
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-bottom">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
         <a class="link-unstyled" href="https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/" aria-label="Open the post: An unconventional way of investigating a NullReferenceException">
       
           An unconventional way of investigating a NullReferenceException
@@ -269,9 +328,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
-As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
-Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:
+        Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.
       
       <p>
         
@@ -330,11 +387,7 @@ Eventually, I realized this was leading nowhere, and took the time to setup an A
     </div>
     <div class="postShorten-excerpt">
       
-        This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.
-If you haven&rsquo;t read it, you can find part 1 of the investigation here.
-As a reminder, here is what we uncovered so far:
-The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day
-The crash dump indicated an access violation in method clr!
+        This is the second part of an investigation where I tried to understand why an application was randomly crashing with an <code>AccessViolationException</code>. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the <code>IsLockHeld</code> method to the original C++ code to understand exactly where it crashed.
       
       <p>
         
@@ -393,9 +446,7 @@ The crash dump indicated an access violation in method clr!
     </div>
     <div class="postShorten-excerpt">
       
-        This is a two parts article. Part two is available here.
-Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:
-Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .
+        Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.
       
       <p>
         
@@ -454,11 +505,7 @@ Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was
     </div>
     <div class="postShorten-excerpt">
       
-        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.
       
       <p>
         

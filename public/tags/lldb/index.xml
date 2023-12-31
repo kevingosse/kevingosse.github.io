@@ -13,35 +13,35 @@
       <link>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
       <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
-      <description>The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.&#xA;As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.&#xA;Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:</description>
+      <description>Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.</description>
     </item>
     <item>
       <title>Debugging a native deadlock in a .NET Linux application</title>
       <link>https://minidump.net/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</link>
       <pubDate>Tue, 09 Feb 2021 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</guid>
-      <description>This story begins when one of our integrations tests started got stuck on one PR that seemingly impacted unrelated code. This is a nice excuse to cover some concepts I haven&amp;rsquo;t touched in my previous articles, such as downloading the .NET symbols on Linux.&#xA;Preliminary inspection The failure was occurring in a Linux test. After a while, I managed to reproduce the issue locally in a docker container. Usually the first step would be to attach a debugger, but I didn&amp;rsquo;t want to spend the time to find the commands to inject the debugger in the container.</description>
+      <description>This story begins when one of our integrations tests started got stuck on one PR that seemingly impacted unrelated code. This is a nice excuse to cover some concepts I haven&amp;rsquo;t touched in my previous articles, such as downloading the .NET symbols on Linux.</description>
     </item>
     <item>
       <title>Investigating an InvalidProgramException from a memory dump (part 3 of 3)</title>
       <link>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</link>
       <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</guid>
-      <description>Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;In the previous part, we&amp;rsquo;ve located the bad generated IL, stored in an internal CLR structure.</description>
+      <description>In this series of article, we&amp;rsquo;re retracing how I debugged an &lt;code&gt;InvalidProgramException&lt;/code&gt;, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.</description>
     </item>
     <item>
       <title>Investigating an InvalidProgramException from a memory dump (part 2 of 3)</title>
       <link>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</link>
       <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</guid>
-      <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;Let&amp;rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.</description>
+      <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.</description>
     </item>
     <item>
       <title>Writing ClrMD extensions for WinDbg and LLDB</title>
       <link>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
       <pubDate>Thu, 14 Mar 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
-      <description>You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.</description>
+      <description>Guide on how to write debugger extensions that are compatible with both WinDbg and LLDB.</description>
     </item>
   </channel>
 </rss>

@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "There has been plenty of talk about ThreadPool starvation in .NET:\nhttps://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/\nhttps://blogs.msdn.microsoft.com/vsoservice/?p=17665\nOr even on the Criteo\u0026rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/\nWhat is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.\nTo illustrate that, consider a web server that would execute this code:\n/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.",
+  "description": "Explaining the ThreadPool starvation issue, and how it can be made worse by the way work-items are queued.",
   "keywords": []
 }
 
@@ -45,42 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="There has been plenty of talk about ThreadPool starvation in .NET:
-https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
-https://blogs.msdn.microsoft.com/vsoservice/?p=17665
-Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
-What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
-To illustrate that, consider a web server that would execute this code:
-/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
+<meta name="description" content="Explaining the ThreadPool starvation issue, and how it can be made worse by the way work-items are queued.">
 
 
-<meta property="og:description" content="There has been plenty of talk about ThreadPool starvation in .NET:
-https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
-https://blogs.msdn.microsoft.com/vsoservice/?p=17665
-Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
-What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
-To illustrate that, consider a web server that would execute this code:
-/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
+<meta property="og:description" content="Explaining the ThreadPool starvation issue, and how it can be made worse by the way work-items are queued.">
 <meta property="og:type" content="article">
 <meta property="og:title" content=".NET ThreadPool starvation, and how queuing makes it worse">
 <meta name="twitter:title" content=".NET ThreadPool starvation, and how queuing makes it worse">
 <meta property="og:url" content="https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/">
 <meta property="twitter:url" content="https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="There has been plenty of talk about ThreadPool starvation in .NET:
-https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
-https://blogs.msdn.microsoft.com/vsoservice/?p=17665
-Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
-What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
-To illustrate that, consider a web server that would execute this code:
-/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
-<meta name="twitter:description" content="There has been plenty of talk about ThreadPool starvation in .NET:
-https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
-https://blogs.msdn.microsoft.com/vsoservice/?p=17665
-Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
-What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
-To illustrate that, consider a web server that would execute this code:
-/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
+<meta property="og:description" content="Explaining the ThreadPool starvation issue, and how it can be made worse by the way work-items are queued.">
+<meta name="twitter:description" content="Explaining the ThreadPool starvation issue, and how it can be made worse by the way work-items are queued.">
 <meta property="og:locale" content="en-us">
 
   

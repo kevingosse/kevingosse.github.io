@@ -269,10 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        Consider the following code:
-private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.
-Yet, what happens if we try to run this program in .NET Framework under partial trust?
-static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.
+        A surprising error occuring when using C# 7.3 with partial trust.
       
       <p>
         

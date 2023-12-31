@@ -2,11 +2,9 @@
 url: writing-clrmd-extensions-for-windbg-and-lldb-916427956f66
 canonical_url: https://medium.com/criteo-engineering/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66
 title: Writing ClrMD extensions for WinDbg and LLDB
-subtitle: Guide on how to easily write debugger extensions that are compatible with
-  both WinDbg and LLDB
+subtitle: Guide on how to easily write debugger extensions that are compatible with both WinDbg and LLDB
+summary: Guide on how to write debugger extensions that are compatible with both WinDbg and LLDB.
 date: 2019-03-14
-description: Guide on how to easily write debugger extensions that are compatible
-  with both WinDbg and LLDB
 tags:
 - dotnet
 - debugging

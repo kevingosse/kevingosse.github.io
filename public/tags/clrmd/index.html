@@ -269,9 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:
-Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg
-Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#
+        Using NativeAOT and ClrMD to write a native WinDbg extension in .NET.
       
       <p>
         
@@ -330,8 +328,7 @@ Because of the tricks used to manage dependencies, you can run into conflicts if
     </div>
     <div class="postShorten-excerpt">
       
-        This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump. Note that the code provided is written for .NET 5, but should be able to work for .NET Framework with minor modifications (the name of some internal fields have changed across versions).
-Preparing the memory dump First thing first, we need to prepare the memory dump that will serve as example for the whole article.
+        This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump.
       
       <p>
         
@@ -394,8 +391,7 @@ Preparing the memory dump First thing first, we need to prepare the memory dump 
     </div>
     <div class="postShorten-excerpt">
       
-        Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.
-Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &ldquo;natural&rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.
+        Browse memory structures from a memory dump in C#, just like you would with ClrMD, but in a more fluent way.
       
       <p>
         
@@ -448,7 +444,7 @@ Not everything is perfect however, and sometimes I feel like the ClrMD syntax do
     </div>
     <div class="postShorten-excerpt">
       
-        The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.
+        How to implement the WinDbg DumpStackObjects command in ClrMD.
       
       <p>
         
@@ -507,7 +503,7 @@ Not everything is perfect however, and sometimes I feel like the ClrMD syntax do
     </div>
     <div class="postShorten-excerpt">
       
-        You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.
+        Guide on how to write debugger extensions that are compatible with both WinDbg and LLDB.
       
       <p>
         

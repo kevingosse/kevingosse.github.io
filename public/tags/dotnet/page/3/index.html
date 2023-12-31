@@ -269,11 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.
       
       <p>
         
@@ -336,8 +332,7 @@ Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL 
     </div>
     <div class="postShorten-excerpt">
       
-        Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
-As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.
       
       <p>
         
@@ -390,7 +385,7 @@ As it turns out, we had customer reports of applications throwing InvalidProgram
     </div>
     <div class="postShorten-excerpt">
       
-        The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it&rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.
+        Even with years of experience, WebRequest managed to surprise me.
       
       <p>
         
@@ -449,8 +444,7 @@ As it turns out, we had customer reports of applications throwing InvalidProgram
     </div>
     <div class="postShorten-excerpt">
       
-        .NET core startup hooks is a feature I really like, and I had a lot of fun with it in the past. Still, I had yet to find a legitimate use for them, and the opportunity finally came a few days ago.
-What are startup hooks? Let&rsquo;s start by a quick catch-up, for those who don&rsquo;t know what startup hooks are. The feature was introduced with .net core 2.2, and allows to execute any arbitrary code in a .
+        Using startup hooks to automatically fetch GC metrics from any .net core application.
       
       <p>
         
@@ -513,9 +507,7 @@ What are startup hooks? Let&rsquo;s start by a quick catch-up, for those who don
     </div>
     <div class="postShorten-excerpt">
       
-        … and find an unexpected bug in the process
-We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
-Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.
+        How to inspect arbitrary values in the memory of a .net process on Linux&hellip; And find an unexpected bug in the process.
       
       <p>
         
@@ -572,7 +564,7 @@ Note: the whole article is about .net core on Linux. While the first part (imple
     </div>
     <div class="postShorten-excerpt">
       
-        As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&rsquo;re risky or because they perform poorly. The list may seem a bit random because it&rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.
+        Non-exhaustive list of code patterns to avoid in C#, either because they are risky or perform poorly.
       
       <p>
         
@@ -625,13 +617,7 @@ Note: the whole article is about .net core on Linux. While the first part (imple
     </div>
     <div class="postShorten-excerpt">
       
-        There has been plenty of talk about ThreadPool starvation in .NET:
-https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
-https://blogs.msdn.microsoft.com/vsoservice/?p=17665
-Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
-What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
-To illustrate that, consider a web server that would execute this code:
-/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.
+        Explaining the ThreadPool starvation issue, and how it can be made worse by the way work-items are queued.
       
       <p>
         
@@ -690,9 +676,7 @@ To illustrate that, consider a web server that would execute this code:
     </div>
     <div class="postShorten-excerpt">
       
-        (for context, this article was written during the containment period in 2020)
-In those days of isolation, finding ways to get a regular physical activity is important, both for health and moral. It turns out that I own a training bike, so it was a good opportunity to take it back from wherever it had been stored for years (yeah, like you kept using it).
-I tend to use the bike while watching series to make it less boring.
+        Inspiration for quarantine days: how to connect a Raspberry Pi to a training bike to stream the speed to a computer and pause a video when below 20 km/h
       
       <p>
         
@@ -755,9 +739,7 @@ I tend to use the bike while watching series to make it less boring.
     </div>
     <div class="postShorten-excerpt">
       
-        It may seem weird that in 2020 I would write an article on this subject. But I found a new approach to this problem that I had some fun experimenting with.
-So what is the problem, to begin with?
-A quick reminder In WinForms/WPF/UWP, you can only update controls from the UI thread. If you have code running in a background thread that needs to update some controls, you need to somehow switch to the UI thread.
+        Leveraging the async machinery to transparently switch to the UI thread when needed.
       
       <p>
         
@@ -810,8 +792,7 @@ A quick reminder In WinForms/WPF/UWP, you can only update controls from the UI t
     </div>
     <div class="postShorten-excerpt">
       
-        It&rsquo;s Friday! And when it&rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:
-Your computer is about to restart. This action will have consequences.It&rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &ldquo;Hide&rdquo; button wasn&rsquo;t grayed out. To make things better, the close button doesn&rsquo;t work either, and the window is top-most.
+        Using debugging tools to get rid of a nagging popup.
       
       <p>
         

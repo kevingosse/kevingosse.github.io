@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it\u0026rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.",
+  "description": "Even with years of experience, WebRequest managed to surprise me.",
   "keywords": []
 }
 
@@ -45,18 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it&rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.">
+<meta name="description" content="Even with years of experience, WebRequest managed to surprise me.">
 
 
-<meta property="og:description" content="The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it&rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.">
+<meta property="og:description" content="Even with years of experience, WebRequest managed to surprise me.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tricked by WebRequest">
 <meta name="twitter:title" content="Tricked by WebRequest">
 <meta property="og:url" content="https://minidump.net/c-tricked-by-webrequest-209014d99653/">
 <meta property="twitter:url" content="https://minidump.net/c-tricked-by-webrequest-209014d99653/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it&rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.">
-<meta name="twitter:description" content="The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it&rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.">
+<meta property="og:description" content="Even with years of experience, WebRequest managed to surprise me.">
+<meta name="twitter:description" content="Even with years of experience, WebRequest managed to surprise me.">
 <meta property="og:locale" content="en-us">
 
   

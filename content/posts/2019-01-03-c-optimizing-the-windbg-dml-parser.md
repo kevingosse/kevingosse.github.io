@@ -5,8 +5,7 @@ title: 'Optimizing the WinDbg DML parser'
 subtitle: The impact of using the wrong class for the job. Profiling and fixing a
   performance issue in WinDbg.
 date: 2019-01-03
-description: The impact of using the wrong class for the job. Profiling and fixing
-  a performance issue in WinDbg.
+summary: The impact of using the wrong class for the job. Profiling and fixing a performance issue in WinDbg.
 tags:
 - windbg
 - dotnet

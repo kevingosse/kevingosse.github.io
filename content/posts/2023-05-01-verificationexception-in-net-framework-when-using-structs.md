@@ -3,6 +3,7 @@ url: verificationexception-in-net-framework-when-using-structs-6269eb3df448
 canonical_url: https://medium.com/@kevingosse/verificationexception-in-net-framework-when-using-structs-6269eb3df448
 title: VerificationException in .NET Framework when using structs
 subtitle: A surprising error occuring when using C# 7.3 with partial trust.
+summary: A surprising error occuring when using C# 7.3 with partial trust.
 date: 2023-05-01
 description: ""
 tags:

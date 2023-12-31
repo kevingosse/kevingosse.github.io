@@ -32,7 +32,7 @@
     }
     
   },
-  "description": "Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.\nAs it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.",
+  "description": "In this series of article, we\u0026rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.",
   "keywords": []
 }
 
@@ -43,22 +43,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
-As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
+<meta name="description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.">
 
 
-<meta property="og:description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
-As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
+<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Investigating an InvalidProgramException from a memory dump (part 1 of 3)">
 <meta name="twitter:title" content="Investigating an InvalidProgramException from a memory dump (part 1 of 3)">
 <meta property="og:url" content="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/">
 <meta property="twitter:url" content="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
-As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
-<meta name="twitter:description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
-As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
+<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.">
+<meta name="twitter:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.">
 <meta property="og:locale" content="en-us">
 
   

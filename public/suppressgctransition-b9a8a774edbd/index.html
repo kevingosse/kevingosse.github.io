@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.\nSuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:\npublic class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(\u0026#34;NativeLib.",
+  "description": "Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.",
   "keywords": []
 }
 
@@ -45,26 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.
-SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:
-public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&#34;NativeLib.">
+<meta name="description" content="Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.">
 
 
-<meta property="og:description" content="While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.
-SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:
-public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&#34;NativeLib.">
+<meta property="og:description" content="Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SuppressGCTransition">
 <meta name="twitter:title" content="SuppressGCTransition">
 <meta property="og:url" content="https://minidump.net/suppressgctransition-b9a8a774edbd/">
 <meta property="twitter:url" content="https://minidump.net/suppressgctransition-b9a8a774edbd/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.
-SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:
-public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&#34;NativeLib.">
-<meta name="twitter:description" content="While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.
-SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:
-public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&#34;NativeLib.">
+<meta property="og:description" content="Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.">
+<meta name="twitter:description" content="Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.">
 <meta property="og:locale" content="en-us">
 
   
@@ -82,6 +74,8 @@ public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public
       <meta property="article:tag" content="performance">
     
       <meta property="article:tag" content="garbage-collection">
+    
+      <meta property="article:tag" content="assembly">
     
   
 
@@ -697,6 +691,8 @@ ret
   <a class="tag tag--primary tag--small" href="/tags/performance/">performance</a>
 
   <a class="tag tag--primary tag--small" href="/tags/garbage-collection/">garbage-collection</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/assembly/">assembly</a>
 
                   </div>
                 

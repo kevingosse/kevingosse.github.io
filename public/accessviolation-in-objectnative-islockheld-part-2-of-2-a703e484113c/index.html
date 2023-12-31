@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.\nIf you haven\u0026rsquo;t read it, you can find part 1 of the investigation here.\nAs a reminder, here is what we uncovered so far:\nThe server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day\nThe crash dump indicated an access violation in method clr!",
+  "description": "This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the IsLockHeld method to the original C++ code to understand exactly where it crashed.",
   "keywords": []
 }
 
@@ -45,34 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.
-If you haven&rsquo;t read it, you can find part 1 of the investigation here.
-As a reminder, here is what we uncovered so far:
-The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day
-The crash dump indicated an access violation in method clr!">
+<meta name="description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the IsLockHeld method to the original C&#43;&#43; code to understand exactly where it crashed.">
 
 
-<meta property="og:description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.
-If you haven&rsquo;t read it, you can find part 1 of the investigation here.
-As a reminder, here is what we uncovered so far:
-The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day
-The crash dump indicated an access violation in method clr!">
+<meta property="og:description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the IsLockHeld method to the original C&#43;&#43; code to understand exactly where it crashed.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AccessViolation in ObjectNative::IsLockHeld (part 2 of 2)">
 <meta name="twitter:title" content="AccessViolation in ObjectNative::IsLockHeld (part 2 of 2)">
 <meta property="og:url" content="https://minidump.net/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/">
 <meta property="twitter:url" content="https://minidump.net/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.
-If you haven&rsquo;t read it, you can find part 1 of the investigation here.
-As a reminder, here is what we uncovered so far:
-The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day
-The crash dump indicated an access violation in method clr!">
-<meta name="twitter:description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.
-If you haven&rsquo;t read it, you can find part 1 of the investigation here.
-As a reminder, here is what we uncovered so far:
-The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day
-The crash dump indicated an access violation in method clr!">
+<meta property="og:description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the IsLockHeld method to the original C&#43;&#43; code to understand exactly where it crashed.">
+<meta name="twitter:description" content="This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the IsLockHeld method to the original C&#43;&#43; code to understand exactly where it crashed.">
 <meta property="og:locale" content="en-us">
 
   

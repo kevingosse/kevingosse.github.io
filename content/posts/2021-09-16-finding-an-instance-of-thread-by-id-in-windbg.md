@@ -3,6 +3,7 @@ url: finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac
 canonical_url: https://medium.com/@kevingosse/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac
 title: Finding an instance of thread by id in WinDbg
 subtitle: Finding an instance of thread by id in WinDbg, with a .NET Core memory dump
+summary: How to find an instance of System.Threading.Thread by id in WinDbg, with a .NET Core memory dump.
 date: 2021-09-16
 description: ""
 tags:

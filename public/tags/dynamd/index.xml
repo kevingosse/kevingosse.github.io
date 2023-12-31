@@ -13,7 +13,7 @@
       <link>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</link>
       <pubDate>Fri, 16 Jul 2021 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</guid>
-      <description>Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.&#xA;Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &amp;ldquo;natural&amp;rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.</description>
+      <description>Browse memory structures from a memory dump in C#, just like you would with ClrMD, but in a more fluent way.</description>
     </item>
   </channel>
 </rss>

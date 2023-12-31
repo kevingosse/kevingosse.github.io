@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "In this series of article, we\u0026rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.\nPart 1: Preliminary exploration\nPart 2: Finding the generated IL\nPart 3: Identifying the error and fixing the bug\nLet\u0026rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.",
+  "description": "In this series of article, we\u0026rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.",
   "keywords": []
 }
 
@@ -45,34 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.">
+<meta name="description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.">
 
 
-<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.">
+<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Investigating an InvalidProgramException from a memory dump (part 2 of 3)">
 <meta name="twitter:title" content="Investigating an InvalidProgramException from a memory dump (part 2 of 3)">
 <meta property="og:url" content="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/">
 <meta property="twitter:url" content="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.">
-<meta name="twitter:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.">
+<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.">
+<meta name="twitter:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.">
 <meta property="og:locale" content="en-us">
 
   
@@ -312,7 +296,7 @@ Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL 
           
           <div class="post-content markdown">
             <div class="main-content-wrap">
-              <p>In this series of article, we&rsquo;re retracing how I debugged an <code>InvalidProgramException</code>, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.</p>
+              <p>In this series of articles, we&rsquo;re retracing how I debugged an <code>InvalidProgramException</code>, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.</p>
 <ul>
 <li>
 <p><a href="/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3">Part 1: Preliminary exploration</a></p>

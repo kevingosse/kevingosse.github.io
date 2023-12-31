@@ -32,7 +32,7 @@
     }
     
   },
-  "description": "In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn\u0026rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .",
+  "description": "Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.",
   "keywords": []
 }
 
@@ -43,18 +43,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
+<meta name="description" content="Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.">
 
 
-<meta property="og:description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
+<meta property="og:description" content="Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Writing a .NET profiler in C#  —  Part 2">
 <meta name="twitter:title" content="Writing a .NET profiler in C#  —  Part 2">
 <meta property="og:url" content="https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/">
 <meta property="twitter:url" content="https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
-<meta name="twitter:description" content="In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .">
+<meta property="og:description" content="Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.">
+<meta name="twitter:description" content="Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.">
 <meta property="og:locale" content="en-us">
 
   

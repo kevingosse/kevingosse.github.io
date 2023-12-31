@@ -13,28 +13,28 @@
       <link>https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</link>
       <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</guid>
-      <description>In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.</description>
+      <description>Part 4 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we learn how to call methods from &lt;code&gt;ICorProfilerInfo&lt;/code&gt;.</description>
     </item>
     <item>
       <title>Writing a .NET profiler in C#   — Part 3</title>
       <link>https://minidump.net/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</link>
       <pubDate>Fri, 03 Mar 2023 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</guid>
-      <description>In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. Now that we know how to interact with the profiling API, we&amp;rsquo;re going to write a source generator to automatically generate the boilerplate code needed to implement the 70+ methods declared in the ICorProfilerCallback interface.</description>
+      <description>Part 3 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we write a source generator to automatically generate the boilerplate code needed to implement the &lt;code&gt;ICorProfilerCallback&lt;/code&gt; interface.</description>
     </item>
     <item>
       <title>Writing a .NET profiler in C#  —  Part 2</title>
       <link>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</link>
       <pubDate>Wed, 11 Jan 2023 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</guid>
-      <description>In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&amp;rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .</description>
+      <description>Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.</description>
     </item>
     <item>
       <title>Writing a .NET profiler in C# - Part 1</title>
       <link>https://minidump.net/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</link>
       <pubDate>Mon, 11 Jul 2022 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</guid>
-      <description>.NET has a very powerful profiling API, that allows to closely monitor the runtime, dynamically rewrite methods during execution, walk the callstack of threads at arbitrary points in time, and much more. However, the entry cost to learn how to use that API is quite high. The first reason is that many features require a good knowledge of how the .NET metadata system works. The other reason is that all the documentation and examples are written in C++.</description>
+      <description>Part 1 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we will see how to mimic a COM interface in C#.</description>
     </item>
   </channel>
 </rss>

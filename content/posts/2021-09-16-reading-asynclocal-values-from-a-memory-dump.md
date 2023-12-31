@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/reading-asynclocal-values-from-a-m
 title: Reading AsyncLocal values from a memory dump
 subtitle: This article explains how AsyncLocal values are stored in .NET and how to
   retrieve them from a memory dump.
+summary: This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump.
 date: 2021-09-16
 description: ""
 tags:

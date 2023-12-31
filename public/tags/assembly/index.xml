@@ -6,35 +6,42 @@
     <description>Recent content in assembly on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 16 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/tags/assembly/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SuppressGCTransition</title>
+      <link>https://minidump.net/suppressgctransition-b9a8a774edbd/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/suppressgctransition-b9a8a774edbd/</guid>
+      <description>Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.</description>
+    </item>
     <item>
       <title>An unconventional way of investigating a NullReferenceException</title>
       <link>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
       <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
-      <description>The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.&#xA;As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.&#xA;Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:</description>
+      <description>Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.</description>
     </item>
     <item>
       <title>AccessViolation in ObjectNative::IsLockHeld (part 2 of 2)</title>
       <link>https://minidump.net/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</link>
       <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</guid>
-      <description>This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.&#xA;If you haven&amp;rsquo;t read it, you can find part 1 of the investigation here.&#xA;As a reminder, here is what we uncovered so far:&#xA;The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day&#xA;The crash dump indicated an access violation in method clr!</description>
+      <description>This is the second part of an investigation where I tried to understand why an application was randomly crashing with an &lt;code&gt;AccessViolationException&lt;/code&gt;. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the &lt;code&gt;IsLockHeld&lt;/code&gt; method to the original C++ code to understand exactly where it crashed.</description>
     </item>
     <item>
       <title>AccessViolation in ObjectNative::IsLockHeld (part 1 of 2)</title>
       <link>https://minidump.net/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</link>
       <pubDate>Thu, 05 Nov 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</guid>
-      <description>This is a two parts article. Part two is available here.&#xA;Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:&#xA;Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .</description>
+      <description>Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.</description>
     </item>
     <item>
       <title>Investigating an InvalidProgramException from a memory dump (part 2 of 3)</title>
       <link>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</link>
       <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</guid>
-      <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;Let&amp;rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.</description>
+      <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.</description>
     </item>
   </channel>
 </rss>

@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "This is a two parts article. Part two is available here.\nSymptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:\nApplication: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .",
+  "description": "Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.",
   "keywords": []
 }
 
@@ -45,26 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="This is a two parts article. Part two is available here.
-Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:
-Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .">
+<meta name="description" content="Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.">
 
 
-<meta property="og:description" content="This is a two parts article. Part two is available here.
-Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:
-Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .">
+<meta property="og:description" content="Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AccessViolation in ObjectNative::IsLockHeld (part 1 of 2)">
 <meta name="twitter:title" content="AccessViolation in ObjectNative::IsLockHeld (part 1 of 2)">
 <meta property="og:url" content="https://minidump.net/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/">
 <meta property="twitter:url" content="https://minidump.net/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="This is a two parts article. Part two is available here.
-Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:
-Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .">
-<meta name="twitter:description" content="This is a two parts article. Part two is available here.
-Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:
-Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .">
+<meta property="og:description" content="Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.">
+<meta name="twitter:description" content="Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.">
 <meta property="og:locale" content="en-us">
 
   

@@ -13,14 +13,14 @@
       <link>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
-      <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;Your computer is about to restart. This action will have consequences.&#xD;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most.</description>
+      <description>Using debugging tools to get rid of a nagging popup.</description>
     </item>
     <item>
       <title>Have some fun with .net core startup hooks</title>
       <link>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</link>
       <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</guid>
-      <description>One feature of .net core 2.2 that didn&amp;rsquo;t catch my attention immediately is the startup hooks. Put simply, this is a way to register globally a method in an assembly that will be executed whenever a .net core application is started. This unlocks a whole range of scenarios, from injecting a profiler to tweaking a static context in a given environment.&#xA;How does it work? First, you need to create a new .</description>
+      <description>How to abuse .net core startup hooks to make apps behave in crazy ways.</description>
     </item>
   </channel>
 </rss>

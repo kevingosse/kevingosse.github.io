@@ -4,6 +4,8 @@ canonical_url: https://medium.com/criteo-engineering/net-threadpool-starvation-a
 title: .NET ThreadPool starvation, and how queuing makes it worse
 subtitle: There has been a lot of discussion around ThreadPool starvation. But why?
   And what it is about? Read on!
+summary: Explaining the ThreadPool starvation issue, and how it can be made worse by
+  the way work-items are queued.
 date: 2020-04-27
 description: ""
 tags:

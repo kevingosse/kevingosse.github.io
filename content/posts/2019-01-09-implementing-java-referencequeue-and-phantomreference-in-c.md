@@ -2,12 +2,9 @@
 url: implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4
 canonical_url: https://medium.com/criteo-engineering/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4
 title: Implementing Java ReferenceQueue and PhantomReference in C#
-subtitle: The Java ReferenceQueue is a mechanism that lets you know when an object
-  has been GC'd. How hard can it be to reimplement it in .NET?
+subtitle: The Java ReferenceQueue is a mechanism that lets you know when an object has been GC'd. How hard can it be to reimplement it in .NET?
+summary: The Java ReferenceQueue is a mechanism that lets you know when an object has been GC'd. How hard can it be to reimplement it in .NET?
 date: 2019-01-09
-description: The Java ReferenceQueue is a mechanism that allows the developer to know
-  when an object has been garbage collected. How hard can it be to reimplement it
-  in .NET?
 tags:
 - dotnet
 - java

@@ -2,8 +2,8 @@
 url: monitor-gc-stats-with-a-startup-hook-55aa03dedea3
 canonical_url: https://medium.com/@kevingosse/monitor-gc-stats-with-a-startup-hook-55aa03dedea3
 title: Monitor GC stats with a startup hook
-subtitle: Using startup hooks to automatically fetch GC metrics from any .net core
-  application
+subtitle: Using startup hooks to automatically fetch GC metrics from any .net core application
+summary: Using startup hooks to automatically fetch GC metrics from any .net core application.
 date: 2020-06-21
 description: ""
 tags:

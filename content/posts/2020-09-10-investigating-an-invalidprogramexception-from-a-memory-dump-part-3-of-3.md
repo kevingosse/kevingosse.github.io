@@ -3,6 +3,7 @@ url: investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d
 canonical_url: https://medium.com/@kevingosse/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1
 title: Investigating an InvalidProgramException from a memory dump (part 3 of 3)
 subtitle: Last part of the investigation, figuring out what is wrong with the IL code.
+summary: In this series of article, we're retracing how I debugged an `InvalidProgramException`, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.
 date: 2020-09-10
 description: ""
 tags:
@@ -16,7 +17,7 @@ thumbnailImage: /images/investigating-an-invalidprogramexception-from-a-memory-d
 
 # Investigating an InvalidProgramException from a memory dump (part 3 of 3)
 
-In this series of article, we're retracing how I debugged an `InvalidProgramException`, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
+In this series of articles, we're retracing how I debugged an `InvalidProgramException`, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
 
 * [Part 1: Preliminary exploration](/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3)
 

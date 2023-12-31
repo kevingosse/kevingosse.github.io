@@ -2,8 +2,8 @@
 url: investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4
 canonical_url: https://medium.com/@kevingosse/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4
 title: Investigating an InvalidProgramException from a memory dump (part 2 of 3)
-subtitle: Part 2 of the investigation, where we extract the dynamic IL from the memory
-  dump
+subtitle: Part 2 of the investigation, where we extract the dynamic IL from the memory dump
+summary: In this series of article, we're retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.
 date: 2020-09-01
 description: ""
 tags:
@@ -17,7 +17,7 @@ author: Kevin Gosse
 thumbnailImage: /images/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4-1.webp
 ---
 
-In this series of article, we're retracing how I debugged an `InvalidProgramException`, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
+In this series of articles, we're retracing how I debugged an `InvalidProgramException`, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
 
 * [Part 1: Preliminary exploration](/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3)
 

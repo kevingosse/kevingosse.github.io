@@ -3,8 +3,8 @@ url: dumping-stack-objects-with-clrmd-c002dab4651b
 canonical_url: https://medium.com/criteo-engineering/dumping-stack-objects-with-clrmd-c002dab4651b
 title: Dumping stack objects with ClrMD
 subtitle: How to implement the WinDbg DumpStackObjects command in ClrMD
+summary: How to implement the WinDbg DumpStackObjects command in ClrMD.
 date: 2019-12-18
-description: How to implement the WinDbg DumpStackObjects command in ClrMD
 tags:
 - dotnet
 - clrmd

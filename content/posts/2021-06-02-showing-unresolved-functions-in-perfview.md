@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/showing-unresolved-functions-in-pe
 title: Showing unresolved functions in PerfView
 subtitle: How to tell PerfView to stop grouping unresolved functions under the same
   "?!?" label
+summary: How to tell PerfView to stop grouping unresolved functions under the same "?!?" label.
 date: 2021-06-02
 description: ""
 tags:

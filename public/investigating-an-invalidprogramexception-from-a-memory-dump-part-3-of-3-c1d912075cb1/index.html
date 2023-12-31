@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we\u0026rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.\nPart 1: Preliminary exploration\nPart 2: Finding the generated IL\nPart 3: Identifying the error and fixing the bug\nIn the previous part, we\u0026rsquo;ve located the bad generated IL, stored in an internal CLR structure.",
+  "description": "In this series of article, we\u0026rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.",
   "keywords": []
 }
 
@@ -45,34 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-In the previous part, we&rsquo;ve located the bad generated IL, stored in an internal CLR structure.">
+<meta name="description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.">
 
 
-<meta property="og:description" content="Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-In the previous part, we&rsquo;ve located the bad generated IL, stored in an internal CLR structure.">
+<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Investigating an InvalidProgramException from a memory dump (part 3 of 3)">
 <meta name="twitter:title" content="Investigating an InvalidProgramException from a memory dump (part 3 of 3)">
 <meta property="og:url" content="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/">
 <meta property="twitter:url" content="https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-In the previous part, we&rsquo;ve located the bad generated IL, stored in an internal CLR structure.">
-<meta name="twitter:description" content="Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-In the previous part, we&rsquo;ve located the bad generated IL, stored in an internal CLR structure.">
+<meta property="og:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.">
+<meta name="twitter:description" content="In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.">
 <meta property="og:locale" content="en-us">
 
   
@@ -309,7 +293,7 @@ In the previous part, we&rsquo;ve located the bad generated IL, stored in an int
           <div class="post-content markdown">
             <div class="main-content-wrap">
               <h1 id="investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3">Investigating an InvalidProgramException from a memory dump (part 3 of 3)</h1>
-<p>In this series of article, we&rsquo;re retracing how I debugged an <code>InvalidProgramException</code>, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.</p>
+<p>In this series of articles, we&rsquo;re retracing how I debugged an <code>InvalidProgramException</code>, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.</p>
 <ul>
 <li>
 <p><a href="/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3">Part 1: Preliminary exploration</a></p>

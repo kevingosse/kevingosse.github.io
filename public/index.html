@@ -266,8 +266,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.
+        A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.
       
       <p>
         
@@ -326,9 +325,7 @@ It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every c
     </div>
     <div class="postShorten-excerpt">
       
-        While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.
-SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:
-public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&#34;NativeLib.
+        Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.
       
       <p>
         
@@ -387,7 +384,7 @@ public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public
     </div>
     <div class="postShorten-excerpt">
       
-        In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.
+        Part 4 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we learn how to call methods from <code>ICorProfilerInfo</code>.
       
       <p>
         
@@ -446,10 +443,7 @@ public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public
     </div>
     <div class="postShorten-excerpt">
       
-        Consider the following code:
-private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.
-Yet, what happens if we try to run this program in .NET Framework under partial trust?
-static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.
+        A surprising error occuring when using C# 7.3 with partial trust.
       
       <p>
         
@@ -508,7 +502,7 @@ static void Main(string[] args) { var permissionSet = new PermissionSet(Permissi
     </div>
     <div class="postShorten-excerpt">
       
-        In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. Now that we know how to interact with the profiling API, we&rsquo;re going to write a source generator to automatically generate the boilerplate code needed to implement the 70+ methods declared in the ICorProfilerCallback interface.
+        Part 3 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we write a source generator to automatically generate the boilerplate code needed to implement the <code>ICorProfilerCallback</code> interface.
       
       <p>
         
@@ -567,9 +561,7 @@ static void Main(string[] args) { var permissionSet = new PermissionSet(Permissi
     </div>
     <div class="postShorten-excerpt">
       
-        Note: The code was originally written as part of my job at Datadog and published on the dd-trace-dotnet repository under Apache 2.0 license.
-The excerpts of code in this article are therefore licensed under the same terms. Before using them, quoting them, or redistributing them, make sure to check the terms of the license and the notice.
-The Datadog .NET tracer has a feature named &ldquo;runtime metrics&rdquo;. It collects technical metrics about the way your application behaves and publishes them to a dedicated dashboard, that you can use to diagnose your performance issues:
+        A faster and safer way to read .NET performance counters from within.
       
       <p>
         
@@ -632,7 +624,7 @@ The Datadog .NET tracer has a feature named &ldquo;runtime metrics&rdquo;. It co
     </div>
     <div class="postShorten-excerpt">
       
-        In the first part, we saw how to mimic the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .
+        Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.
       
       <p>
         
@@ -685,9 +677,7 @@ The Datadog .NET tracer has a feature named &ldquo;runtime metrics&rdquo;. It co
     </div>
     <div class="postShorten-excerpt">
       
-        [C#] Using GC.KeepAlive in async methods Can you figure out what&rsquo;s wrong with this code?
-var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.
-This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&rsquo;t tell what the error was.
+        GC.KeepAlive may not work the way you intend when using it in async methods.
       
       <p>
         
@@ -746,8 +736,7 @@ This code was posted in an issue in the dotnet/runtime repository, and I followe
     </div>
     <div class="postShorten-excerpt">
       
-        A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&rsquo;t working as expected. Here is a simplified version:
-public unsafe class Getter { private delegate*&lt;Obj, SomeStruct&gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&lt;Obj, SomeStruct&gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&#34;Property&#34;); Console.
+        The C# specification indicates that function pointers can only be used on static methods. This article explains why.
       
       <p>
         
@@ -806,7 +795,7 @@ public unsafe class Getter { private delegate*&lt;Obj, SomeStruct&gt; _functionP
     </div>
     <div class="postShorten-excerpt">
       
-        .NET has a very powerful profiling API, that allows to closely monitor the runtime, dynamically rewrite methods during execution, walk the callstack of threads at arbitrary points in time, and much more. However, the entry cost to learn how to use that API is quite high. The first reason is that many features require a good knowledge of how the .NET metadata system works. The other reason is that all the documentation and examples are written in C++.
+        Part 1 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we will see how to mimic a COM interface in C#.
       
       <p>
         

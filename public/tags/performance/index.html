@@ -269,8 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.
+        A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.
       
       <p>
         
@@ -329,9 +328,7 @@ It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every c
     </div>
     <div class="postShorten-excerpt">
       
-        While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.
-SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:
-public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&#34;NativeLib.
+        Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.
       
       <p>
         
@@ -390,9 +387,7 @@ public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public
     </div>
     <div class="postShorten-excerpt">
       
-        Note: The code was originally written as part of my job at Datadog and published on the dd-trace-dotnet repository under Apache 2.0 license.
-The excerpts of code in this article are therefore licensed under the same terms. Before using them, quoting them, or redistributing them, make sure to check the terms of the license and the notice.
-The Datadog .NET tracer has a feature named &ldquo;runtime metrics&rdquo;. It collects technical metrics about the way your application behaves and publishes them to a dedicated dashboard, that you can use to diagnose your performance issues:
+        A faster and safer way to read .NET performance counters from within.
       
       <p>
         
@@ -451,9 +446,7 @@ The Datadog .NET tracer has a feature named &ldquo;runtime metrics&rdquo;. It co
     </div>
     <div class="postShorten-excerpt">
       
-        One thing that has bothered me quite a bit with PerfView is how it groups all unresolved frames under the same &ldquo;?!?&rdquo; name. I understand that it&rsquo;s a way to reduce noise, but when trying to reduce the CPU usage of an application it can be unsettling.
-Take the following example:
-Here, &ldquo;?!?&rdquo; is presented as top offender, accounting for more than 7% of the total CPU usage. But I&rsquo;m missing critical information to know whether I should consider it as a bottleneck or not.
+        How to tell PerfView to stop grouping unresolved functions under the same &ldquo;?!?&rdquo; label.
       
       <p>
         
@@ -516,7 +509,7 @@ Here, &ldquo;?!?&rdquo; is presented as top offender, accounting for more than 7
     </div>
     <div class="postShorten-excerpt">
       
-        As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&rsquo;re risky or because they perform poorly. The list may seem a bit random because it&rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.
+        Non-exhaustive list of code patterns to avoid in C#, either because they are risky or perform poorly.
       
       <p>
         
@@ -569,13 +562,7 @@ Here, &ldquo;?!?&rdquo; is presented as top offender, accounting for more than 7
     </div>
     <div class="postShorten-excerpt">
       
-        There has been plenty of talk about ThreadPool starvation in .NET:
-https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
-https://blogs.msdn.microsoft.com/vsoservice/?p=17665
-Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
-What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
-To illustrate that, consider a web server that would execute this code:
-/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.
+        Explaining the ThreadPool starvation issue, and how it can be made worse by the way work-items are queued.
       
       <p>
         
@@ -638,7 +625,7 @@ To illustrate that, consider a web server that would execute this code:
     </div>
     <div class="postShorten-excerpt">
       
-        One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.
+        The impact of using the wrong class for the job. Profiling and fixing a performance issue in WinDbg.
       
       <p>
         

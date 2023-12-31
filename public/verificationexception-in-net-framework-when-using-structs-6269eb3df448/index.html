@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "Consider the following code:\nprivate static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.\nYet, what happens if we try to run this program in .NET Framework under partial trust?\nstatic void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.",
+  "description": "A surprising error occuring when using C# 7.3 with partial trust.",
   "keywords": []
 }
 
@@ -45,30 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="Consider the following code:
-private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.
-Yet, what happens if we try to run this program in .NET Framework under partial trust?
-static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.">
+<meta name="description" content="A surprising error occuring when using C# 7.3 with partial trust.">
 
 
-<meta property="og:description" content="Consider the following code:
-private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.
-Yet, what happens if we try to run this program in .NET Framework under partial trust?
-static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.">
+<meta property="og:description" content="A surprising error occuring when using C# 7.3 with partial trust.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VerificationException in .NET Framework when using structs">
 <meta name="twitter:title" content="VerificationException in .NET Framework when using structs">
 <meta property="og:url" content="https://minidump.net/verificationexception-in-net-framework-when-using-structs-6269eb3df448/">
 <meta property="twitter:url" content="https://minidump.net/verificationexception-in-net-framework-when-using-structs-6269eb3df448/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="Consider the following code:
-private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.
-Yet, what happens if we try to run this program in .NET Framework under partial trust?
-static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.">
-<meta name="twitter:description" content="Consider the following code:
-private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.
-Yet, what happens if we try to run this program in .NET Framework under partial trust?
-static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.">
+<meta property="og:description" content="A surprising error occuring when using C# 7.3 with partial trust.">
+<meta name="twitter:description" content="A surprising error occuring when using C# 7.3 with partial trust.">
 <meta property="og:locale" content="en-us">
 
   

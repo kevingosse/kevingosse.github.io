@@ -3,12 +3,14 @@ url: suppressgctransition-b9a8a774edbd
 canonical_url: https://medium.com/@kevingosse/suppressgctransition-b9a8a774edbd
 title: SuppressGCTransition
 subtitle: Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.
+summary: Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.
 date: 2023-08-12
 description: ""
 tags:
 - dotnet
 - performance
 - garbage-collection
+- assembly
 author: Kevin Gosse
 thumbnailImage: /images/suppressgctransition-b9a8a774edbd-3.webp
 ---

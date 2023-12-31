@@ -2,11 +2,9 @@
 url: debugging-and-fixing-the-twitch-desktop-client-d1b38a349186
 canonical_url: https://medium.com/@kevingosse/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186
 title: Debugging and fixing the Twitch desktop client
-subtitle: Showing the mindset and methodology involved in the debugging of an application
-  you know almost nothing about.
+subtitle: Showing the mindset and methodology involved in the debugging of an application you know almost nothing about.
+summary: Showing the mindset and methodology involved in the debugging of an application you know almost nothing about.
 date: 2019-05-11
-description: Showing the mindset and methodology involved in the debugging of an application
-  you know almost nothing about.
 tags:
 - dotnet
 - debugging

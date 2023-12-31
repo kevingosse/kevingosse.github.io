@@ -269,7 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.
+        Guide on how to write debugger extensions that are compatible with both WinDbg and LLDB.
       
       <p>
         
@@ -332,7 +332,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.
+        The impact of using the wrong class for the job. Profiling and fixing a performance issue in WinDbg.
       
       <p>
         

@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are \u0026ldquo;lost\u0026rdquo; before each object:\nIt bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.",
+  "description": "A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.",
   "keywords": []
 }
 
@@ -45,22 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.">
+<meta name="description" content="A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.">
 
 
-<meta property="og:description" content="A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.">
+<meta property="og:description" content="A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Memory alignment of doubles in C#">
 <meta name="twitter:title" content="Memory alignment of doubles in C#">
 <meta property="og:url" content="https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/">
 <meta property="twitter:url" content="https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.">
-<meta name="twitter:description" content="A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.">
+<meta property="og:description" content="A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.">
+<meta name="twitter:description" content="A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.">
 <meta property="og:locale" content="en-us">
 
   

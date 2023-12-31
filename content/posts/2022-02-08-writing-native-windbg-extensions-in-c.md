@@ -3,6 +3,7 @@ url: writing-native-windbg-extensions-in-c-5390726f3cec
 canonical_url: https://medium.com/@kevingosse/writing-native-windbg-extensions-in-c-5390726f3cec
 title: Writing native WinDbg extensions in C#
 subtitle: Using NativeAOT and ClrMD to write a native WinDbg extension in .NET.
+summary: Using NativeAOT and ClrMD to write a native WinDbg extension in .NET.
 date: 2022-02-08
 description: ""
 tags:

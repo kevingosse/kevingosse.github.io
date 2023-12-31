@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/writing-a-net-profiler-in-c-part-3
 title: Writing a .NET profiler in C#   — Part 3
 subtitle: Using NativeAOT to write a .NET profiler in C#, learning many things about
   native interop in the process.
+summary: Part 3 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we write a source generator to automatically generate the boilerplate code needed to implement the `ICorProfilerCallback` interface.
 date: 2023-03-03
 description: ""
 tags:

@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/analyze-your-memory-dumps-in-c-wit
 title: Analyze your memory dumps in C# with DynaMD
 subtitle: Browse memory structures from a memory dump in C#, just like you would with
   ClrMD, but in a more fluent way.
+summary: Browse memory structures from a memory dump in C#, just like you would with ClrMD, but in a more fluent way.
 date: 2021-07-16
 description: ""
 tags:

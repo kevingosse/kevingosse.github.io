@@ -3,6 +3,7 @@ url: c-tricked-by-webrequest-209014d99653
 canonical_url: https://medium.com/@kevingosse/c-tricked-by-webrequest-209014d99653
 title: 'Tricked by WebRequest'
 subtitle: Even with years of experience, WebRequest managed to surprise me.
+summary: Even with years of experience, WebRequest managed to surprise me.
 date: 2020-08-14
 description: ""
 tags:

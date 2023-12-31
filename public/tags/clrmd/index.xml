@@ -13,35 +13,35 @@
       <link>https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/</link>
       <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/</guid>
-      <description>Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:&#xA;Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg&#xA;Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#</description>
+      <description>Using NativeAOT and ClrMD to write a native WinDbg extension in .NET.</description>
     </item>
     <item>
       <title>Reading AsyncLocal values from a memory dump</title>
       <link>https://minidump.net/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</link>
       <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</guid>
-      <description>This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump. Note that the code provided is written for .NET 5, but should be able to work for .NET Framework with minor modifications (the name of some internal fields have changed across versions).&#xA;Preparing the memory dump First thing first, we need to prepare the memory dump that will serve as example for the whole article.</description>
+      <description>This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump.</description>
     </item>
     <item>
       <title>Analyze your memory dumps in C# with DynaMD</title>
       <link>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</link>
       <pubDate>Fri, 16 Jul 2021 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</guid>
-      <description>Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.&#xA;Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &amp;ldquo;natural&amp;rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.</description>
+      <description>Browse memory structures from a memory dump in C#, just like you would with ClrMD, but in a more fluent way.</description>
     </item>
     <item>
       <title>Dumping stack objects with ClrMD</title>
       <link>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</link>
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</guid>
-      <description>The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&amp;rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&amp;rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.</description>
+      <description>How to implement the WinDbg DumpStackObjects command in ClrMD.</description>
     </item>
     <item>
       <title>Writing ClrMD extensions for WinDbg and LLDB</title>
       <link>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
       <pubDate>Thu, 14 Mar 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
-      <description>You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.</description>
+      <description>Guide on how to write debugger extensions that are compatible with both WinDbg and LLDB.</description>
     </item>
   </channel>
 </rss>

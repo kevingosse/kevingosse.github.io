@@ -269,8 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.
+        A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.
       
       <p>
         
@@ -329,10 +328,7 @@ It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every c
     </div>
     <div class="postShorten-excerpt">
       
-        Consider the following code:
-private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.
-Yet, what happens if we try to run this program in .NET Framework under partial trust?
-static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.
+        A surprising error occuring when using C# 7.3 with partial trust.
       
       <p>
         
@@ -391,9 +387,7 @@ static void Main(string[] args) { var permissionSet = new PermissionSet(Permissi
     </div>
     <div class="postShorten-excerpt">
       
-        The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
-As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
-Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:
+        Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.
       
       <p>
         
@@ -452,11 +446,7 @@ Eventually, I realized this was leading nowhere, and took the time to setup an A
     </div>
     <div class="postShorten-excerpt">
       
-        This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.
-If you haven&rsquo;t read it, you can find part 1 of the investigation here.
-As a reminder, here is what we uncovered so far:
-The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day
-The crash dump indicated an access violation in method clr!
+        This is the second part of an investigation where I tried to understand why an application was randomly crashing with an <code>AccessViolationException</code>. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the <code>IsLockHeld</code> method to the original C++ code to understand exactly where it crashed.
       
       <p>
         
@@ -515,9 +505,7 @@ The crash dump indicated an access violation in method clr!
     </div>
     <div class="postShorten-excerpt">
       
-        This is a two parts article. Part two is available here.
-Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:
-Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .
+        Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.
       
       <p>
         
@@ -576,11 +564,7 @@ Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was
     </div>
     <div class="postShorten-excerpt">
       
-        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.
       
       <p>
         

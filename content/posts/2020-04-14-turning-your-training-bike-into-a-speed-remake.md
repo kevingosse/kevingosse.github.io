@@ -2,8 +2,8 @@
 url: turning-your-training-bike-into-a-speed-remake-bceb4ea3d114
 canonical_url: https://medium.com/criteo-engineering/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114
 title: Turning your training bike into a Speed remake
-subtitle: 'Inspiration for quarantine days: How to connect a Raspberry Pi to a training
-  bike to stream the speed and pause a video when below 20 km/h'
+subtitle: 'Inspiration for quarantine days: How to connect a Raspberry Pi to a training bike to stream the speed and pause a video when below 20 km/h'
+summary: 'Inspiration for quarantine days: how to connect a Raspberry Pi to a training bike to stream the speed to a computer and pause a video when below 20 km/h'
 date: 2020-04-14
 description: ""
 tags:

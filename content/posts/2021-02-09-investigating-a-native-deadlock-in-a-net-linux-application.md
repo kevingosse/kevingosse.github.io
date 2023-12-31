@@ -3,6 +3,7 @@ url: investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd
 canonical_url: https://medium.com/@kevingosse/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd
 title: Debugging a native deadlock in a .NET Linux application
 subtitle: Debugging a native deadlock in a .NET Linux application
+summary: This story begins when one of our integrations tests started got stuck on one PR that seemingly impacted unrelated code. This is a nice excuse to cover some concepts I haven't touched in my previous articles, such as downloading the .NET symbols on Linux.
 date: 2021-02-09
 description: ""
 tags:

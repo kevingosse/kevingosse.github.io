@@ -273,8 +273,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
-As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.
       
       <p>
         
@@ -331,9 +330,7 @@ As it turns out, we had customer reports of applications throwing InvalidProgram
     </div>
     <div class="postShorten-excerpt">
       
-        … and find an unexpected bug in the process
-We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
-Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.
+        How to inspect arbitrary values in the memory of a .net process on Linux&hellip; And find an unexpected bug in the process.
       
       <p>
         
@@ -386,8 +383,7 @@ Note: the whole article is about .net core on Linux. While the first part (imple
     </div>
     <div class="postShorten-excerpt">
       
-        It&rsquo;s Friday! And when it&rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:
-Your computer is about to restart. This action will have consequences.It&rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &ldquo;Hide&rdquo; button wasn&rsquo;t grayed out. To make things better, the close button doesn&rsquo;t work either, and the window is top-most.
+        Using debugging tools to get rid of a nagging popup.
       
       <p>
         
@@ -446,7 +442,7 @@ Your computer is about to restart. This action will have consequences.It&rsquo;
     </div>
     <div class="postShorten-excerpt">
       
-        The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.
+        How to implement the WinDbg DumpStackObjects command in ClrMD.
       
       <p>
         
@@ -505,7 +501,7 @@ Your computer is about to restart. This action will have consequences.It&rsquo;
     </div>
     <div class="postShorten-excerpt">
       
-        I&rsquo;ve seen through the years that debugging is often misunderstood. Many people that are unfamiliar with debugging tend to think it&rsquo;s all about mastering difficult and austere tools. I often had coworkers ask me &ldquo;what sequence of commands should I type in WinDbg to debug this kind of issue?&rdquo;, as if debugging was about applying a simple flowchart with a complex tool. This is in fact quite the opposite. Debugging is all about the mindset and the methodology, and the tooling is the simple part.
+        Showing the mindset and methodology involved in the debugging of an application you know almost nothing about.
       
       <p>
         
@@ -564,7 +560,7 @@ Your computer is about to restart. This action will have consequences.It&rsquo;
     </div>
     <div class="postShorten-excerpt">
       
-        You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.
+        Guide on how to write debugger extensions that are compatible with both WinDbg and LLDB.
       
       <p>
         

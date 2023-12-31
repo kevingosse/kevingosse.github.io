@@ -2,8 +2,8 @@
 url: performance-best-practices-in-c-b85a47bdd93a
 canonical_url: https://medium.com/@kevingosse/performance-best-practices-in-c-b85a47bdd93a
 title: Performance best practices in C#
-subtitle: Non-exhaustive list of code patterns to avoid in C#, either because they
-  are risky or perform poorly.
+subtitle: Non-exhaustive list of code patterns to avoid in C#, either because they are risky or perform poorly.
+summary: Non-exhaustive list of code patterns to avoid in C#, either because they are risky or perform poorly.
 date: 2020-05-12
 description: ""
 tags:

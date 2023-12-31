@@ -266,7 +266,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.
+        How to implement the WinDbg DumpStackObjects command in ClrMD.
       
       <p>
         
@@ -325,7 +325,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        I&rsquo;ve seen through the years that debugging is often misunderstood. Many people that are unfamiliar with debugging tend to think it&rsquo;s all about mastering difficult and austere tools. I often had coworkers ask me &ldquo;what sequence of commands should I type in WinDbg to debug this kind of issue?&rdquo;, as if debugging was about applying a simple flowchart with a complex tool. This is in fact quite the opposite. Debugging is all about the mindset and the methodology, and the tooling is the simple part.
+        Showing the mindset and methodology involved in the debugging of an application you know almost nothing about.
       
       <p>
         
@@ -384,7 +384,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.
+        Guide on how to write debugger extensions that are compatible with both WinDbg and LLDB.
       
       <p>
         
@@ -447,8 +447,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        One feature of .net core 2.2 that didn&rsquo;t catch my attention immediately is the startup hooks. Put simply, this is a way to register globally a method in an assembly that will be executed whenever a .net core application is started. This unlocks a whole range of scenarios, from injecting a profiler to tweaking a static context in a given environment.
-How does it work? First, you need to create a new .
+        How to abuse .net core startup hooks to make apps behave in crazy ways.
       
       <p>
         
@@ -505,7 +504,7 @@ How does it work? First, you need to create a new .
     </div>
     <div class="postShorten-excerpt">
       
-        After reading Konrad Kokosa&rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.
+        The Java ReferenceQueue is a mechanism that lets you know when an object has been GC&rsquo;d. How hard can it be to reimplement it in .NET?
       
       <p>
         
@@ -562,7 +561,7 @@ How does it work? First, you need to create a new .
     </div>
     <div class="postShorten-excerpt">
       
-        One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.
+        The impact of using the wrong class for the job. Profiling and fixing a performance issue in WinDbg.
       
       <p>
         

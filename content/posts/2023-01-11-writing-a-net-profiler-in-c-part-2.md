@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/writing-a-net-profiler-in-c-part-2
 title: Writing a .NET profiler in C#  —  Part 2
 subtitle: Using NativeAOT to write a .NET profiler in C#, learning many things about
   native interop in the process.
+summary: Part 2 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we improve the code from the previous article by using instance methods instead of static methods.
 date: 2023-01-11
 description: ""
 tags:

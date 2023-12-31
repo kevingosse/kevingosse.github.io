@@ -3,6 +3,7 @@ url: c-using-gc-keepalive-in-async-methods-8d20fd79f0a0
 canonical_url: https://medium.com/@kevingosse/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0
 title: 'Using GC.KeepAlive in async methods'
 subtitle: GC.KeepAlive may not work the way you intend when using it in async methods.
+summary: GC.KeepAlive may not work the way you intend when using it in async methods.
 date: 2022-09-05
 description: ""
 tags:

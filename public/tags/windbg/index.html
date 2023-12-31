@@ -269,9 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:
-Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg
-Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#
+        Using NativeAOT and ClrMD to write a native WinDbg extension in .NET.
       
       <p>
         
@@ -334,8 +332,7 @@ Because of the tricks used to manage dependencies, you can run into conflicts if
     </div>
     <div class="postShorten-excerpt">
       
-        As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:
-0:000&gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.
+        How to find an instance of System.Threading.Thread by id in WinDbg, with a .NET Core memory dump.
       
       <p>
         
@@ -388,8 +385,7 @@ Because of the tricks used to manage dependencies, you can run into conflicts if
     </div>
     <div class="postShorten-excerpt">
       
-        This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump. Note that the code provided is written for .NET 5, but should be able to work for .NET Framework with minor modifications (the name of some internal fields have changed across versions).
-Preparing the memory dump First thing first, we need to prepare the memory dump that will serve as example for the whole article.
+        This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump.
       
       <p>
         
@@ -448,9 +444,7 @@ Preparing the memory dump First thing first, we need to prepare the memory dump 
     </div>
     <div class="postShorten-excerpt">
       
-        The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
-As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
-Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:
+        Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.
       
       <p>
         
@@ -514,7 +508,6 @@ Eventually, I realized this was leading nowhere, and took the time to setup an A
     <div class="postShorten-excerpt">
       
         This story begins when one of our integrations tests started got stuck on one PR that seemingly impacted unrelated code. This is a nice excuse to cover some concepts I haven&rsquo;t touched in my previous articles, such as downloading the .NET symbols on Linux.
-Preliminary inspection The failure was occurring in a Linux test. After a while, I managed to reproduce the issue locally in a docker container. Usually the first step would be to attach a debugger, but I didn&rsquo;t want to spend the time to find the commands to inject the debugger in the container.
       
       <p>
         
@@ -567,11 +560,7 @@ Preliminary inspection The failure was occurring in a Linux test. After a while,
     </div>
     <div class="postShorten-excerpt">
       
-        This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.
-If you haven&rsquo;t read it, you can find part 1 of the investigation here.
-As a reminder, here is what we uncovered so far:
-The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day
-The crash dump indicated an access violation in method clr!
+        This is the second part of an investigation where I tried to understand why an application was randomly crashing with an <code>AccessViolationException</code>. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the <code>IsLockHeld</code> method to the original C++ code to understand exactly where it crashed.
       
       <p>
         
@@ -630,9 +619,7 @@ The crash dump indicated an access violation in method clr!
     </div>
     <div class="postShorten-excerpt">
       
-        This is a two parts article. Part two is available here.
-Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:
-Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .
+        Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.
       
       <p>
         
@@ -691,11 +678,7 @@ Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was
     </div>
     <div class="postShorten-excerpt">
       
-        Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-In the previous part, we&rsquo;ve located the bad generated IL, stored in an internal CLR structure.
+        In this series of article, we&rsquo;re retracing how I debugged an <code>InvalidProgramException</code>, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. This is the last part of the investigation, about figuring out what is wrong with the IL code.
       
       <p>
         
@@ -754,11 +737,7 @@ In the previous part, we&rsquo;ve located the bad generated IL, stored in an int
     </div>
     <div class="postShorten-excerpt">
       
-        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.
-Part 1: Preliminary exploration
-Part 2: Finding the generated IL
-Part 3: Identifying the error and fixing the bug
-Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. In this part, we extract the dynamic IL from the memory dump.
       
       <p>
         
@@ -821,8 +800,7 @@ Let&rsquo;s start with a quick reminder. The profiler works by rewriting the IL 
     </div>
     <div class="postShorten-excerpt">
       
-        Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
-As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.
+        In this series of article, we&rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer. The first part of the investigation is an introduction to using a memory dump from a .NET application to find the information you seek.
       
       <p>
         

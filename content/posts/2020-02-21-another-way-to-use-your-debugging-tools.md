@@ -2,8 +2,8 @@
 url: another-way-to-use-your-debugging-tools-7e7f498d7a2b
 canonical_url: https://medium.com/@kevingosse/another-way-to-use-your-debugging-tools-7e7f498d7a2b
 title: Another way to use your debugging tools
-subtitle: It's Friday! And when it's Friday and your computer is managed by Criteo,
-  you have a chance to get this nice popup.
+subtitle: It's Friday! And when it's Friday and your computer is managed by Criteo, you have a chance to get this nice popup.
+summary: Using debugging tools to get rid of a nagging popup.
 date: 2020-02-21
 description: ""
 tags:

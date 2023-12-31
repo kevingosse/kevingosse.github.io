@@ -269,7 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.
+        Part 4 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we learn how to call methods from <code>ICorProfilerInfo</code>.
       
       <p>
         
@@ -328,7 +328,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. Now that we know how to interact with the profiling API, we&rsquo;re going to write a source generator to automatically generate the boilerplate code needed to implement the 70+ methods declared in the ICorProfilerCallback interface.
+        Part 3 of the series about using NativeAOT to write a .NET profiler in C#, learning many things about native interop in the process. In this part, we write a source generator to automatically generate the boilerplate code needed to implement the <code>ICorProfilerCallback</code> interface.
       
       <p>
         

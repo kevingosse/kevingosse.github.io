@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/accessviolation-in-objectnative-is
 title: AccessViolation in ObjectNative::IsLockHeld (part 1 of 2)
 subtitle: Investigating a crash in a .NET application, caused by an AccessViolationException
   when inspecting the state of a lock
+summary: Investigating a crash in a .NET application, caused by an AccessViolationException when inspecting the state of a lock.
 date: 2020-11-05
 description: ""
 tags:

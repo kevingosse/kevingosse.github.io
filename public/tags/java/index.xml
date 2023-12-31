@@ -13,7 +13,7 @@
       <link>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</link>
       <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</guid>
-      <description>After reading Konrad Kokosa&amp;rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.</description>
+      <description>The Java ReferenceQueue is a mechanism that lets you know when an object has been GC&amp;rsquo;d. How hard can it be to reimplement it in .NET?</description>
     </item>
   </channel>
 </rss>

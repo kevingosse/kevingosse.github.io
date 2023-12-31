@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.\nAs I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.\nEventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:",
+  "description": "Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.",
   "keywords": []
 }
 
@@ -45,26 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
-As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
-Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:">
+<meta name="description" content="Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.">
 
 
-<meta property="og:description" content="The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
-As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
-Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:">
+<meta property="og:description" content="Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="An unconventional way of investigating a NullReferenceException">
 <meta name="twitter:title" content="An unconventional way of investigating a NullReferenceException">
 <meta property="og:url" content="https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/">
 <meta property="twitter:url" content="https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
-As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
-Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:">
-<meta name="twitter:description" content="The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.
-As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.
-Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:">
+<meta property="og:description" content="Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.">
+<meta name="twitter:description" content="Digging into a bug in the .NET ARM64 runtime, learning about dispatch stubs, and using that knowledge to diagnose a NullReferenceException.">
 <meta property="og:locale" content="en-us">
 
   

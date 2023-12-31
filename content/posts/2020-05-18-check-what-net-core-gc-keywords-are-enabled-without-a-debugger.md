@@ -2,8 +2,8 @@
 url: check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e
 canonical_url: https://medium.com/@kevingosse/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e
 title: Check what .net core GC keywords are enabled without a debugger
-subtitle: How to inspect arbitrary values in the memory of a .net process on Linux..
-  And find an unexpected bug in the process
+subtitle: How to inspect arbitrary values in the memory of a .net process on Linux.. And find an unexpected bug in the process
+summary: How to inspect arbitrary values in the memory of a .net process on Linux... And find an unexpected bug in the process.
 date: 2020-05-18
 description: ""
 tags:

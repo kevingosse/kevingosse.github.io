@@ -26,6 +26,9 @@
     <loc>https://minidump.net/tags/</loc>
     <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://minidump.net/tags/assembly/</loc>
+    <lastmod>2023-08-12T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://minidump.net/suppressgctransition-b9a8a774edbd/</loc>
     <lastmod>2023-08-12T00:00:00+00:00</lastmod>
   </url><url>
@@ -108,9 +111,6 @@
     <lastmod>2021-03-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/arm64/</loc>
-    <lastmod>2021-03-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/assembly/</loc>
     <lastmod>2021-03-16T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/lldb/</loc>

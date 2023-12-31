@@ -2,8 +2,8 @@
 url: switching-back-to-the-ui-thread-in-wpf-uwp-in-modern-c-5dc1cc8efa5e
 canonical_url: https://medium.com/criteo-engineering/switching-back-to-the-ui-thread-in-wpf-uwp-in-modern-c-5dc1cc8efa5e
 title: Switching back to the UI thread in WPF/UWP, in modern C#
-subtitle: Leveraging the async machinery to transparently switch to the UI thread
-  when needed
+subtitle: Leveraging the async machinery to transparently switch to the UI thread when needed
+summary: Leveraging the async machinery to transparently switch to the UI thread when needed.
 date: 2020-02-28
 description: ""
 tags:

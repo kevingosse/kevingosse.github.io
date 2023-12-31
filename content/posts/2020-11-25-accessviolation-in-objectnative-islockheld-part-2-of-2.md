@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/accessviolation-in-objectnative-is
 title: AccessViolation in ObjectNative::IsLockHeld (part 2 of 2)
 subtitle: Investigating a crash in a .NET application, caused by an AccessViolationException
   when inspecting the state of a lock.
+summary: This is the second part of an investigation where I tried to understand why an application was randomly crashing with an `AccessViolationException`. This part starts when, as I ran out of easy things to try, I decided to map the assembly code of the `IsLockHeld` method to the original C++ code to understand exactly where it crashed.
 date: 2020-11-25
 description: ""
 tags:

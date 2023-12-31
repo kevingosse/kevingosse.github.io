@@ -3,8 +3,8 @@ url: c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1
 canonical_url: https://medium.com/criteo-engineering/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1
 title: 'Have some fun with .net core startup hooks'
 subtitle: How to use .net core startup hooks to make apps behave in crazy ways
+summary: How to abuse .net core startup hooks to make apps behave in crazy ways.
 date: 2019-02-01
-description: How to use .net core startup hooks to make apps behave in crazy ways
 tags:
 - dotnet
 - fun

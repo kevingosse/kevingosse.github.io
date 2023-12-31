@@ -269,8 +269,7 @@
     </div>
     <div class="postShorten-excerpt">
       
-        A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &ldquo;lost&rdquo; before each object:
-It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.
+        A deep dive into the weird tricks used by the .NET allocator to align arrays of doubles.
       
       <p>
         
@@ -329,9 +328,7 @@ It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every c
     </div>
     <div class="postShorten-excerpt">
       
-        While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.
-SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:
-public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&#34;NativeLib.
+        Deep-dive into the SuppressGCTransition attribute introduced in .NET 5.
       
       <p>
         
@@ -390,8 +387,7 @@ public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public
     </div>
     <div class="postShorten-excerpt">
       
-        .NET core startup hooks is a feature I really like, and I had a lot of fun with it in the past. Still, I had yet to find a legitimate use for them, and the opportunity finally came a few days ago.
-What are startup hooks? Let&rsquo;s start by a quick catch-up, for those who don&rsquo;t know what startup hooks are. The feature was introduced with .net core 2.2, and allows to execute any arbitrary code in a .
+        Using startup hooks to automatically fetch GC metrics from any .net core application.
       
       <p>
         
@@ -454,9 +450,7 @@ What are startup hooks? Let&rsquo;s start by a quick catch-up, for those who don
     </div>
     <div class="postShorten-excerpt">
       
-        … and find an unexpected bug in the process
-We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
-Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.
+        How to inspect arbitrary values in the memory of a .net process on Linux&hellip; And find an unexpected bug in the process.
       
       <p>
         
@@ -513,7 +507,7 @@ Note: the whole article is about .net core on Linux. While the first part (imple
     </div>
     <div class="postShorten-excerpt">
       
-        After reading Konrad Kokosa&rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.
+        The Java ReferenceQueue is a mechanism that lets you know when an object has been GC&rsquo;d. How hard can it be to reimplement it in .NET?
       
       <p>
         

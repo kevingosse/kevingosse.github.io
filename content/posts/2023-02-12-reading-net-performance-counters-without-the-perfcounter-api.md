@@ -3,6 +3,7 @@ url: reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874
 canonical_url: https://medium.com/@kevingosse/reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874
 title: Reading .NET performance counters without the PerfCounter API
 subtitle: A faster and safer way to read .NET performance counters from within.
+summary: A faster and safer way to read .NET performance counters from within.
 date: 2023-02-12
 description: ""
 tags:

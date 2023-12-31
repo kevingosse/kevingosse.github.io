@@ -4,6 +4,7 @@ canonical_url: https://medium.com/@kevingosse/c-why-function-pointers-cant-be-us
 title: Why function pointers can't be used on instance methods in C#
 subtitle: The C# specification indicates that function pointers can only be used on
   static methods. This article explains why.
+summary: The C# specification indicates that function pointers can only be used on static methods. This article explains why.
 date: 2022-07-26
 description: ""
 tags:

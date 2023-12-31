@@ -34,7 +34,7 @@
     }
     
   },
-  "description": "[C#] Using GC.KeepAlive in async methods Can you figure out what\u0026rsquo;s wrong with this code?\nvar taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =\u0026gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.\nThis code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn\u0026rsquo;t tell what the error was.",
+  "description": "GC.KeepAlive may not work the way you intend when using it in async methods.",
   "keywords": []
 }
 
@@ -45,26 +45,18 @@
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
 <meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="[C#] Using GC.KeepAlive in async methods Can you figure out what&rsquo;s wrong with this code?
-var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.
-This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&rsquo;t tell what the error was.">
+<meta name="description" content="GC.KeepAlive may not work the way you intend when using it in async methods.">
 
 
-<meta property="og:description" content="[C#] Using GC.KeepAlive in async methods Can you figure out what&rsquo;s wrong with this code?
-var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.
-This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&rsquo;t tell what the error was.">
+<meta property="og:description" content="GC.KeepAlive may not work the way you intend when using it in async methods.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Using GC.KeepAlive in async methods">
 <meta name="twitter:title" content="Using GC.KeepAlive in async methods">
 <meta property="og:url" content="https://minidump.net/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/">
 <meta property="twitter:url" content="https://minidump.net/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="[C#] Using GC.KeepAlive in async methods Can you figure out what&rsquo;s wrong with this code?
-var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.
-This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&rsquo;t tell what the error was.">
-<meta name="twitter:description" content="[C#] Using GC.KeepAlive in async methods Can you figure out what&rsquo;s wrong with this code?
-var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.
-This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&rsquo;t tell what the error was.">
+<meta property="og:description" content="GC.KeepAlive may not work the way you intend when using it in async methods.">
+<meta name="twitter:description" content="GC.KeepAlive may not work the way you intend when using it in async methods.">
 <meta property="og:locale" content="en-us">
 
   
