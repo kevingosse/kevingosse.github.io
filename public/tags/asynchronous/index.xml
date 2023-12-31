@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>asynchronous on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/asynchronous/</link>
+    <description>Recent content in asynchronous on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 05 Sep 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/asynchronous/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using GC.KeepAlive in async methods</title>
+      <link>https://kevingosse.github.io/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</link>
+      <pubDate>Mon, 05 Sep 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</guid>
+      <description>[C#] Using GC.KeepAlive in async methods Can you figure out what&amp;rsquo;s wrong with this code?&#xA;var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&amp;gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.&#xA;This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&amp;rsquo;t tell what the error was.</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Performance best practices in C#",
+  
+  "datePublished": "2020-05-12T00:00:00Z",
+  "dateModified": "2020-05-12T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/kevingosse.github.io\/performance-best-practices-in-c-b85a47bdd93a\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+  },
+  "description": "As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they\u0026rsquo;re risky or because they perform poorly. The list may seem a bit random because it\u0026rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&rsquo;re risky or because they perform poorly. The list may seem a bit random because it&rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.">
+
+
+<meta property="og:description" content="As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&rsquo;re risky or because they perform poorly. The list may seem a bit random because it&rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Performance best practices in C#">
+<meta name="twitter:title" content="Performance best practices in C#">
+<meta property="og:url" content="https://kevingosse.github.io/performance-best-practices-in-c-b85a47bdd93a/">
+<meta property="twitter:url" content="https://kevingosse.github.io/performance-best-practices-in-c-b85a47bdd93a/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&rsquo;re risky or because they perform poorly. The list may seem a bit random because it&rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.">
+<meta name="twitter:description" content="As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&rsquo;re risky or because they perform poorly. The list may seem a bit random because it&rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2020-05-12T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2020-05-12T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="csharp">
+    
+      <meta property="article:tag" content="performance">
+    
+      <meta property="article:tag" content="best-practices">
+    
+      <meta property="article:tag" content="software-development">
+    
+      <meta property="article:tag" content="dotnet">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>Performance best practices in C#</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/performance-best-practices-in-c-b85a47bdd93a/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Performance best practices in C#
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-05-12T00:00:00Z">
+        
+  
+  
+  
+  
+    May 12 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&rsquo;re risky or because they perform poorly. The list may seem a bit random because it&rsquo;s out of context, but <strong>all</strong> the items have been spotted in our code at some point and have caused production issues. Hopefully this will serve as a warning and prevent you from making the same mistakes.</p>
+<p>Also note that Criteo web services rely on high-performance code, hence the need to avoid inefficient code patterns. Some of those patterns wouldn&rsquo;t make a noticeable difference in most applications.</p>
+<p>Last but not least, some points have already been discussed in length in many articles (such as <code>ConfigureAwait</code>), so I do not elaborate on them. The goal is to have a list of points to keep in mind, rather than an in-depth technical description of each of them.</p>
+<h1 id="waiting-synchronously-on-asynchronous-code">Waiting synchronously on asynchronous code</h1>
+<p><strong>Don&rsquo;t ever wait synchronously for non-completed tasks.</strong> Including but not limited to: <code>Task.Wait</code>, <code>Task.Result</code>, <code>Task.GetAwaiter().GetResult()</code>, <code>Task.WaitAny</code>, <code>Task.WaitAll</code>.
+As a more general advice, any synchronous dependency between two threadpool threads is susceptible to cause threadpool starvation. The causes of the phenomenon are described <a href="https://medium.com/criteo-labs/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527">in this article</a>.</p>
+<h1 id="configureawait">ConfigureAwait</h1>
+<p><strong>If your code may be called from a synchronization context, use <code>ConfigureAwait(false)</code> on each of your await calls</strong>.</p>
+<p>Note however that <code>ConfigureAwait</code> <strong>only ever has a meaning when using the <code>await</code> keyword</strong>.</p>
+<p>For instance, this code doesn&rsquo;t make any sense:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#75715e">// Using ConfigureAwait doesn&#39;t magically make this call safe</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> result = ProcessAsync().ConfigureAwait(<span style="color:#66d9ef">false</span>).GetAwaiter().GetResult();
+</span></span></code></pre></div><h1 id="async-void">async void</h1>
+<p><strong>Never use <code>async void</code></strong>. An exception thrown in an <code>async void</code> method is propagated to the synchronization context and usually ends up crashing the whole application.</p>
+<p>If you can&rsquo;t return a task in your method (for instance because you&rsquo;re implementing an interface), move the async code to another method and call it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">IInterface</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> DoSomething();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Implementation</span> : IInterface
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> DoSomething()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// This method can&#39;t return a Task,</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// delegate the async code to another method</span>
+</span></span><span style="display:flex;"><span>        _ = DoSomethingAsync();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">async</span> Task DoSomethingAsync()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> Task.Delay(<span style="color:#ae81ff">100</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="avoid-async-when-possible">Avoid async when possible</h1>
+<p>Out of habit/muscle memory, you might write:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">async</span> Task CallAsync()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> client = <span style="color:#66d9ef">new</span> Client();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">await</span> client.GetAsync();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>While the code is semantically correct, using the <code>async</code> keyword is not needed here and can have a significant overhead in hot paths. Try removing it whenever possible:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Task CallAsync()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> client = <span style="color:#66d9ef">new</span> Client();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> client.GetAsync();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>However, keep in mind that you can&rsquo;t use that optimization when your code is wrapped in blocks (like <code>try/catch</code> or <code>using</code>) :</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">async</span> Task Correct()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">using</span> (<span style="color:#66d9ef">var</span> client = <span style="color:#66d9ef">new</span> Client())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">await</span> client.GetAsync();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Task Incorrect()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">using</span> (<span style="color:#66d9ef">var</span> client = <span style="color:#66d9ef">new</span> Client())
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> client.GetAsync();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>In the incorrect version, since the task isn&rsquo;t awaited inside of the using block, the client might be disposed before the <code>GetAsync</code> call completes.</p>
+<h1 id="culture-sensitive-comparisons">Culture-sensitive comparisons</h1>
+<p>Unless you have a reason to use culture-sensitive comparisons, <strong>always use ordinal comparisons</strong> instead. While it doesn&rsquo;t make much of a difference with en-US culture because of internal optimizations, the comparisons get one order of magnitude slower with other cultures (up to 2 orders of magnitude on Linux!). As string comparisons are a frequent operation in most applications, it quickly adds up.</p>
+<h1 id="concurrentbagt"><code>ConcurrentBag&lt;T&gt;</code></h1>
+<p><strong>Never use <code>ConcurrentBag&lt;T&gt;</code> without benchmarking</strong>. This collection has been designed for very specific use-cases (when most of the time an item is dequeued by the thread that enqueued it) and suffers from important performance issues if used otherwise. If in need of a concurrent collection, <strong>prefer <code>ConcurrentQueue&lt;T&gt;</code></strong>.</p>
+<h1 id="readerwriterlockt--readerwriterlockslimt"><code>ReaderWriterLock&lt;T&gt;</code> / <code>ReaderWriterLockSlim&lt;T&gt;</code></h1>
+<p><strong>Never use <code>ReaderWriterLock&lt;T&gt;</code>/<code>ReaderWriterLockSlim&lt;T&gt;</code> without benchmarking.</strong> While it may be tempting to use this kind of specialized synchronization primitive when dealing with readers and writers, its cost is much higher than a simple <code>Monitor</code> (usable with the <code>lock</code> keyword). Unless the number of readers executing the critical section at the same time is <em>very</em> high, the concurrency won&rsquo;t be enough to amortize the increased overhead, and the code will perform worse.</p>
+<h1 id="prefer-lambda-functions-over-methodgroup">Prefer Lambda functions over MethodGroup</h1>
+<p>Consider the following code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> IEnumerable&lt;<span style="color:#66d9ef">int</span>&gt; GetItems()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _list.Where(i =&gt; Filter(i));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> Filter(<span style="color:#66d9ef">int</span> element)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> i % <span style="color:#ae81ff">2</span> == <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Resharper suggests to rewrite the code without a lambda function, which may look cleaner:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> IEnumerable&lt;<span style="color:#66d9ef">int</span>&gt; GetItems()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _list.Where(Filter);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> Filter(<span style="color:#66d9ef">int</span> element)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> i % <span style="color:#ae81ff">2</span> == <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Unfortunately, doing so introduces a heap allocation at each call. Indeed, the call is compiled as:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> IEnumerable&lt;<span style="color:#66d9ef">int</span>&gt; GetItems()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _list.Where(<span style="color:#66d9ef">new</span> Predicate&lt;<span style="color:#66d9ef">int</span>&gt;(Filter));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> Filter(<span style="color:#66d9ef">int</span> element)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> i % <span style="color:#ae81ff">2</span> == <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This can have a significant impact if the code is called in a hot spot.</p>
+<p>Using lambda functions triggers a compiler optimization that caches the delegate into a static field, removing that allocation. This only works if <code>Filter</code> is static. If not, you may want to cache the delegate yourself:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">private</span> Predicate&lt;<span style="color:#66d9ef">int</span>&gt; _filter;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Constructor()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    _filter = <span style="color:#66d9ef">new</span> Predicate&lt;<span style="color:#66d9ef">int</span>&gt;(Filter);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> IEnumerable&lt;<span style="color:#66d9ef">int</span>&gt; GetItems()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _list.Where(_filter);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">bool</span> Filter(<span style="color:#66d9ef">int</span> element)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> i % <span style="color:#ae81ff">2</span> == <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="converting-enums-to-string">Converting enums to string</h1>
+<p>Calling <code>Enum.ToString</code> in .net is very costly, as reflection is used internally for the conversion and calling a virtual method on struct causes boxing. As much as possible, this should be avoided.</p>
+<p>Oftentimes, enums can actually be replaced by const strings:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#75715e">// In both cases, you can use Numbers.One, Numbers.Two, ...</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> Numbers
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    One,
+</span></span><span style="display:flex;"><span>    Two,
+</span></span><span style="display:flex;"><span>    Three
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Numbers</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">string</span> One = <span style="color:#e6db74">&#34;One&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">string</span> Two = <span style="color:#e6db74">&#34;Two&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">string</span> Three = <span style="color:#e6db74">&#34;Three&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If you really need an enum, then consider caching the converted value in a dictionary to amortize the cost.</p>
+<h1 id="enum-comparisons">Enum comparisons</h1>
+<p><strong>Note: this is not true anymore in .net core since version 2.1, the optimization is performed automatically by the JIT</strong></p>
+<p>When using enums as flags, it may be tempting to use the <code>Enum.HasFlag</code> method:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#a6e22e">[Flags]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> Options
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Option1 = <span style="color:#ae81ff">1</span>,
+</span></span><span style="display:flex;"><span>    Option2 = <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>    Option3 = <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> Options _option;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">bool</span> IsOption2Enabled()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> _option.HasFlag(Options.Option2);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This code causes two boxing allocations: one to convert <code>Options.Option2</code> to <code>Enum</code>, and another one for the <code>HasFlag</code> virtual call on a struct. This makes this code disproportionately expensive. Instead, you should sacrifice readability and use binary operators:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">bool</span> IsOption2Enabled()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (_option &amp; Options.Option2) == Options.Option2;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h1 id="implement-equality-members-for-structs">Implement equality members for structs</h1>
+<p>When using struct in comparisons (for instance, when used as a key for a dictionary), you need to override the <code>Equals</code>/<code>GetHashCode</code> methods. The default implementation uses reflection and is very slow. The implementation generated by Resharper is usually good enough.</p>
+<p>More information: <a href="https://devblogs.microsoft.com/premier-developer/performance-implications-of-default-struct-equality-in-c/?WT.mc_id=DT-MVP-5003493">https://devblogs.microsoft.com/premier-developer/performance-implications-of-default-struct-equality-in-c/</a></p>
+<h1 id="avoid-unnecessary-boxing-when-using-structs-with-interfaces">Avoid unnecessary boxing when using structs with interfaces</h1>
+<p>Consider the following code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">IntValue</span> : IValue
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> DoStuff()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span> = <span style="color:#66d9ef">new</span> IntValue();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    LogValue(<span style="color:#66d9ef">value</span>);
+</span></span><span style="display:flex;"><span>    SendValue(<span style="color:#66d9ef">value</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> SendValue(IValue <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> LogValue(IValue <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>It&rsquo;s tempting to make <code>IntValue</code> a struct to avoid heap allocations. But since <code>AddValue</code> and <code>SendValue</code> expect an interface, and interfaces have reference semantics, the value will be boxed at every call, nullifying the benefits of the &ldquo;optimization&rdquo;. In fact, it will allocate even more than if <code>IntValue</code> was a class, since the value will be boxed independently for each call.</p>
+<p>If you write an API and expect some values to be structs, try using generic methods:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">IntValue</span> : IValue
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> DoStuff()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span> = <span style="color:#66d9ef">new</span> IntValue();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    LogValue(<span style="color:#66d9ef">value</span>);
+</span></span><span style="display:flex;"><span>    SendValue(<span style="color:#66d9ef">value</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> SendValue&lt;T&gt;(T <span style="color:#66d9ef">value</span>) <span style="color:#66d9ef">where</span> T : IValue
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> LogValue&lt;T&gt;(T <span style="color:#66d9ef">value</span>) <span style="color:#66d9ef">where</span> T : IValue
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// ...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>While making those methods generic looks useless at first glance, it actually allows to avoid the boxing allocation when <code>IntValue</code> is a struct.</p>
+<h1 id="cancellationtoken-subscriptions-are-always-inlined"><code>CancellationToken</code> subscriptions are always inlined</h1>
+<p>Whenever you cancel a <code>CancellationTokenSource</code>, all subscriptions will be executed inside of the current thread. This can lead to unplanned pauses or even subtle deadlocks.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> cts = <span style="color:#66d9ef">new</span> CancellationTokenSource();
+</span></span><span style="display:flex;"><span>cts.Token.Register(() =&gt; Thread.Sleep(<span style="color:#ae81ff">5000</span>));
+</span></span><span style="display:flex;"><span>cts.Cancel(); <span style="color:#75715e">// This call will block during 5 seconds</span>
+</span></span></code></pre></div><p>You cannot opt-out from this behavior. Therefore, when cancelling a <code>CancellationTokenSource</code>, ask yourself whether you can safely let your current thread be hijacked. If the answer is no, then wrap the call to <code>Cancel</code> inside of a <code>Task.Run</code> to execute it on the threadpool.</p>
+<h1 id="taskcompletionsource-continuations-are-often-inlined"><code>TaskCompletionSource</code> continuations are often inlined</h1>
+<p>Just like <code>CancellationToken</code> subscriptions, <code>TaskCompletionSource</code> continuations are often inlined. This is a nice optimization, but it can be the cause of subtle errors. For instance, consider the following program:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> ManualResetEventSlim _mutex = <span style="color:#66d9ef">new</span> ManualResetEventSlim();
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">async</span> Task Deadlock()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> ProcessAsync();
+</span></span><span style="display:flex;"><span>        _mutex.Wait();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Task ProcessAsync()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> tcs = <span style="color:#66d9ef">new</span> TaskCompletionSource&lt;<span style="color:#66d9ef">bool</span>&gt;();
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        Task.Run(() =&gt;
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Thread.Sleep(<span style="color:#ae81ff">2000</span>); <span style="color:#75715e">// Simulate some work</span>
+</span></span><span style="display:flex;"><span>            tcs.SetResult(<span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>            _mutex.Set();
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> tcs.Task;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Deadlock().Wait();
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;Will never get there&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The call to <code>tcs.SetResult</code> causes the continuation of <code>await ProcessAsync()</code> to execute in the current thread. Therefore, the statement <code>_mutex.Wait()</code> is executed by the same thread that is supposed to call <code>_mutex.Set()</code>, resulting in a deadlock. This can be prevented by giving the <code>TaskCreationsOptions.RunContinuationsAsynchronously</code> parameter to the <code>TaskCompletionSource</code>.</p>
+<p><strong>Unless you have a good reason to omit it, always use the <code>TaskCreationsOptions.RunContinuationsAsynchronously</code> parameter when creating a <code>TaskCompletionSource</code>.</strong></p>
+<p>Beware: the code will also compile if you use <code>TaskContinuationOptions.RunContinuationsAsynchronously</code> instead of <code>TaskCreationOptions.RunContinuationsAsynchronously</code>, but the parameters will be ignored and the continuations will keep being inlined. This is a surprisingly common error, because <code>TaskContinuationOptions</code> comes before <code>TaskCreationOptions</code> in the auto-completion.</p>
+<h1 id="taskrun--taskfactorystartnew"><code>Task.Run</code> / <code>Task.Factory.StartNew</code></h1>
+<p>Unless you have a reason to use <code>Task.Factory.StartNew</code>, always favor <code>Task.Run</code> to start a background task. <code>Task.Run</code> uses safer defaults, and more importantly it automatically unwraps the return task, which can prevent subtle errors with async methods. Consider the following program:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">async</span> Task ProcessAsync()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> Task.Delay(<span style="color:#ae81ff">2000</span>);
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;Processing done&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">async</span> Task Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> Task.Factory.StartNew(ProcessAsync);
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;End of program&#34;</span>);
+</span></span><span style="display:flex;"><span>        Console.ReadLine();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Despite the appearances, &ldquo;End of program&rdquo; will be displayed before &ldquo;Processing done&rdquo;. This is because <code>Task.Factory.StartNew</code> is going to return a <code>Task&lt;Task&gt;</code>, and the code only waits on the outer task. Correct code would be either <code>await Task.Factory.StartNew(ProcessAsync).Unwrap()</code> or <code>await Task.Run(ProcessAsync)</code>.</p>
+<p>There are only three legitimate use-cases for <code>Task.Factory.StartNew</code>:</p>
+<ul>
+<li>
+<p>Starting a task on a different scheduler</p>
+</li>
+<li>
+<p>Executing the task on a dedicated thread (using <code>TaskCreationOptions.LongRunning</code>)</p>
+</li>
+<li>
+<p>Queuing the task on the threadpool global queue (using <code>TaskCreationOptions.PreferFairness</code>)</p>
+</li>
+</ul>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/csharp/">csharp</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/performance/">performance</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/best-practices/">best-practices</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/" data-tooltip="Check what .net core GC keywords are enabled without a debugger" aria-label="NEXT: Check what .net core GC keywords are enabled without a debugger">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/" data-tooltip=".NET ThreadPool starvation, and how queuing makes it worse" aria-label="PREVIOUS: .NET ThreadPool starvation, and how queuing makes it worse">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="gitalk">
+      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+          return;
+        }
+        new Gitalk({
+          clientID: 'Iv1.8114b4896395b29e',
+          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
+          repo: 'kevingosse\/kevingosse.github.io',
+          owner: 'kevingosse',
+          admin: ['kevingosse'],
+          id: 'fbac8aa9c02cf8d6f9c4789a3582a5ce',
+          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
+        }).render('gitalk')
+      })()
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/" data-tooltip="Check what .net core GC keywords are enabled without a debugger" aria-label="NEXT: Check what .net core GC keywords are enabled without a debugger">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/" data-tooltip=".NET ThreadPool starvation, and how queuing makes it worse" aria-label="PREVIOUS: .NET ThreadPool starvation, and how queuing makes it worse">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,11 +1,257 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on My New Hugo Site</title>
-    <link>https://example.org/tags/</link>
-    <description>Recent content in Tags on My New Hugo Site</description>
+    <title>Tags on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/</link>
+    <description>Recent content in Tags on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://example.org/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>dotnet</title>
+      <link>https://kevingosse.github.io/tags/dotnet/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/dotnet/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>dotnet-core</title>
+      <link>https://kevingosse.github.io/tags/dotnet-core/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/dotnet-core/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>performance</title>
+      <link>https://kevingosse.github.io/tags/performance/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/performance/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>programming</title>
+      <link>https://kevingosse.github.io/tags/programming/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/programming/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>software-development</title>
+      <link>https://kevingosse.github.io/tags/software-development/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/software-development/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>csharp</title>
+      <link>https://kevingosse.github.io/tags/csharp/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/csharp/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>datadog</title>
+      <link>https://kevingosse.github.io/tags/datadog/</link>
+      <pubDate>Sun, 12 Feb 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/datadog/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>asynchronous</title>
+      <link>https://kevingosse.github.io/tags/asynchronous/</link>
+      <pubDate>Mon, 05 Sep 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/asynchronous/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>low-level-programming</title>
+      <link>https://kevingosse.github.io/tags/low-level-programming/</link>
+      <pubDate>Tue, 26 Jul 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/low-level-programming/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>debugging</title>
+      <link>https://kevingosse.github.io/tags/debugging/</link>
+      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/debugging/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>nativeaot</title>
+      <link>https://kevingosse.github.io/tags/nativeaot/</link>
+      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/nativeaot/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>windbg</title>
+      <link>https://kevingosse.github.io/tags/windbg/</link>
+      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/windbg/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>optimization</title>
+      <link>https://kevingosse.github.io/tags/optimization/</link>
+      <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/optimization/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>perfview</title>
+      <link>https://kevingosse.github.io/tags/perfview/</link>
+      <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/perfview/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>lldb</title>
+      <link>https://kevingosse.github.io/tags/lldb/</link>
+      <pubDate>Tue, 09 Feb 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/lldb/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>bugs</title>
+      <link>https://kevingosse.github.io/tags/bugs/</link>
+      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/bugs/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>garbage-collection</title>
+      <link>https://kevingosse.github.io/tags/garbage-collection/</link>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/garbage-collection/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>best-practices</title>
+      <link>https://kevingosse.github.io/tags/best-practices/</link>
+      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/best-practices/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>scalability</title>
+      <link>https://kevingosse.github.io/tags/scalability/</link>
+      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/scalability/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>threads</title>
+      <link>https://kevingosse.github.io/tags/threads/</link>
+      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/threads/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>iot</title>
+      <link>https://kevingosse.github.io/tags/iot/</link>
+      <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/iot/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>life</title>
+      <link>https://kevingosse.github.io/tags/life/</link>
+      <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/life/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>raspberry-pi</title>
+      <link>https://kevingosse.github.io/tags/raspberry-pi/</link>
+      <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/raspberry-pi/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>async</title>
+      <link>https://kevingosse.github.io/tags/async/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/async/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>uwp</title>
+      <link>https://kevingosse.github.io/tags/uwp/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/uwp/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>wpf</title>
+      <link>https://kevingosse.github.io/tags/wpf/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/wpf/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>friday</title>
+      <link>https://kevingosse.github.io/tags/friday/</link>
+      <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/friday/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>fun</title>
+      <link>https://kevingosse.github.io/tags/fun/</link>
+      <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/fun/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>hacking</title>
+      <link>https://kevingosse.github.io/tags/hacking/</link>
+      <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/hacking/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>clrmd</title>
+      <link>https://kevingosse.github.io/tags/clrmd/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/clrmd/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>javascript</title>
+      <link>https://kevingosse.github.io/tags/javascript/</link>
+      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/javascript/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>twitch</title>
+      <link>https://kevingosse.github.io/tags/twitch/</link>
+      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/twitch/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>net-core</title>
+      <link>https://kevingosse.github.io/tags/net-core/</link>
+      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/net-core/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>java</title>
+      <link>https://kevingosse.github.io/tags/java/</link>
+      <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/java/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>memory-management</title>
+      <link>https://kevingosse.github.io/tags/memory-management/</link>
+      <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/tags/memory-management/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

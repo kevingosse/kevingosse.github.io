@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Investigating an InvalidProgramException from a memory dump (part 1 of 3)",
+  
+  "datePublished": "2020-08-26T00:00:00Z",
+  "dateModified": "2020-08-26T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/kevingosse.github.io\/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+  },
+  "description": "Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.\nAs it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
+As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
+
+
+<meta property="og:description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
+As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Investigating an InvalidProgramException from a memory dump (part 1 of 3)">
+<meta name="twitter:title" content="Investigating an InvalidProgramException from a memory dump (part 1 of 3)">
+<meta property="og:url" content="https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/">
+<meta property="twitter:url" content="https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
+As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
+<meta name="twitter:description" content="Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
+As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2020-08-26T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2020-08-26T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="csharp">
+    
+      <meta property="article:tag" content="dotnet">
+    
+      <meta property="article:tag" content="debugging">
+    
+      <meta property="article:tag" content="software-development">
+    
+      <meta property="article:tag" content="programming">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>Investigating an InvalidProgramException from a memory dump (part 1 of 3)</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Investigating an InvalidProgramException from a memory dump (part 1 of 3)
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-08-26T00:00:00Z">
+        
+  
+  
+  
+  
+    August 26 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written <a href="https://docs.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/profiling-overview?WT.mc_id=DT-MVP-5003493">using the profiler API</a>, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.</p>
+<p>As it turns out, we had customer reports of applications throwing <code>InvalidProgramException</code> when using our instrumentation. This exception is thrown when the JIT encounters invalid IL code, most likely emitted by our profiler. The symptoms were always the same: upon starting, the application had a random probability of ending up in a state where the exception would be thrown every time a method in particular was called. When that happened, restarting the application fixed the issue. The affected method would change from one time to the other. The issue was bad enough that the customers felt the need to report it, and rare enough that it couldn&rsquo;t be reproduced at will. Yikes.</p>
+<p>Since we couldn&rsquo;t reproduce the issue ourselves, I decided to ask for a memory dump, and received one a few weeks later (random issues are random). This was my first time debugging this kind of problem, and it proved to be quite dodgy, so I figured out it would make a nice subject for an article.</p>
+<p>The article ended up being <strong>a lot</strong> longer than I thought, so I divided it into 3 different parts.</p>
+<ul>
+<li>
+<p>Part 1: Preliminary exploration</p>
+</li>
+<li>
+<p><a href="/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4">Part 2: Finding the generated IL</a></p>
+</li>
+<li>
+<p><a href="/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1">Part 3: Identifying the error and fixing the bug</a></p>
+</li>
+</ul>
+<h1 id="preliminary-exploration">Preliminary exploration</h1>
+<p>The memory dump had been captured on a Linux instance. I opened it with <a href="https://docs.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-dump?WT.mc_id=DT-MVP-5003493">dotnet-dump</a>, running on WSL2. The first step was to find what method was throwing the exception. Usually, this kind of memory dump is captured when the first-chance exception is thrown, and that exception is visible in the last column when using the <code>clrthreads</code> command. But I couldn&rsquo;t find any:</p>
+<pre tabindex="0"><code>&gt; clrthreads
+
+ThreadCount:      19
+UnstartedThread:  0
+BackgroundThread: 10
+PendingThread:    0
+DeadThread:       7
+Hosted Runtime:   no
+                                                                                                            Lock
+ DBG   ID     OSID ThreadOBJ           State GC Mode     GC Alloc Context                  Domain           Count Apt Exception
+   0    1        1 0000000001B318D0  2020020 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn
+   5    2        a 0000000001AD1FE0    21220 Preemptive  00007FCE9864C630:00007FCE9864E2D0 0000000001AF60B0 0     Ukn (Finalizer)
+   7    3        c 00007FCE88000C50  1020220 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+   9    6       11 00007FCE8C17B250    21220 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn
+  10   10       15 0000000002F8FAF0    21220 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn
+  11   11       16 0000000002ECF840  2021020 Preemptive  00007FCE98650E48:00007FCE986522D0 0000000001AF60B0 0     Ukn
+XXXX   29        0 00007FCE44002BE0  1031820 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+XXXX   24        0 00007FCE5C006F60  1031820 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+XXXX   16        0 00007FCE800017C0  1031820 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+XXXX    4        0 00007FCE80002830  1031820 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+XXXX   23        0 00007FCE5C020CF0  1031820 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+XXXX   20        0 00007FCE7403F840  1031820 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+XXXX   15        0 00007FCE5803B2F0  1031820 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn (Threadpool Worker)
+  12   27      6d6 00007FCE74011A10  1021220 Preemptive  00007FCE98C7F330:00007FCE98C7FA28 0000000001AF60B0 0     Ukn (Threadpool Worker)
+  13   21      700 00007FCE740A0030  1021220 Preemptive  00007FCE98D10578:00007FCE98D11168 0000000001AF60B0 0     Ukn (Threadpool Worker)
+   8   28       10 00007FCE78000C50    20220 Preemptive  0000000000000000:0000000000000000 0000000001AF60B0 0     Ukn
+  14   26      71b 00007FCE3C007610  1021220 Preemptive  00007FCE98E81908:00007FCE98E831C8 0000000001AF60B0 0     Ukn (Threadpool Worker)
+  15   25      71d 00007FCE3C008750  1021220 Preemptive  00007FCE98E7BAC8:00007FCE98E7D1C8 0000000001AF60B0 0     Ukn (Threadpool Worker)
+  16   17      71f 00007FCE400292B0  1021220 Preemptive  00007FCE98CFB800:00007FCE98CFD168 0000000001AF60B0 0     Ukn (Threadpool Worker)
+</code></pre><p>I then decided to have a look at the notes sent along with the dump (yeah, I know, I should have started there), and understood why I couldn&rsquo;t see the exception: the customer confirmed that the issue was occurring and just captured the memory dump at a random point in time. Can&rsquo;t blame them: I don&rsquo;t even know how to capture a memory dump on first-chance exceptions on Linux, and <a href="https://github.com/microsoft/ProcDump-for-Linux">it doesn&rsquo;t seem to be supported by procdump</a>. If somebody from the .NET diagnostics team reads me…</p>
+<p>That&rsquo;s OK though. If no garbage collection happened since the exception was thrown, it should still be hanging somewhere around on the heap. To find out, I used the <code>dumpheap -stat</code> command:</p>
+<pre tabindex="0"><code>&gt; dumpheap -stat -type InvalidProgramException
+
+Statistics:
+              MT    Count    TotalSize Class Name
+00007fcf109e7428        3          384 System.InvalidProgramException
+Total 3 objects
+</code></pre><p>Three of them, great. I used the <code>dumpheap -mt</code> command to get their address, with the value from the &ldquo;MT&rdquo; column. Then I used the <code>printexception</code> (<code>pe</code>) command to get the stacktrace associated to the exception:</p>
+<pre tabindex="0"><code>&gt; dumpheap -mt 00007fcf109e7428
+
+         Address               MT     Size
+00007fce985a4358 00007fcf109e7428      128
+00007fce98a8b008 00007fcf109e7428      128
+00007fce98b560f0 00007fcf109e7428      128
+
+Statistics:
+              MT    Count    TotalSize Class Name
+00007fcf109e7428        3          384 System.InvalidProgramException
+Total 3 objects
+
+
+&gt; pe 00007fce985a4358
+
+Exception object: 00007fce985a4358
+Exception type:   System.InvalidProgramException
+Message:          Common Language Runtime detected an invalid program.
+InnerException:   &lt;none&gt;
+StackTrace (generated):
+    SP               IP               Function
+    00007FCE95127800 00007FCF1636CDC4 Customer.DataAccess.dll!Customer.DataAccess.Generic.AsyncDataAccessBase`2+&lt;&gt;c__DisplayClass1_0[[System.__Canon, System.Private.CoreLib],[System.__Canon, System.Private.CoreLib]].&lt;CreateConnectionAsync&gt;b__0(System.Threading.Tasks.Task)+0xd4
+    00007FCE95127830 00007FCF1636CC4E System.Private.CoreLib.dll!System.Threading.Tasks.ContinuationResultTaskFromTask`1[[System.__Canon, System.Private.CoreLib]].InnerInvoke()+0x6e
+    00007FCE95127870 00007FCF15BA54D1 System.Private.CoreLib.dll!System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(System.Threading.Thread, System.Threading.ExecutionContext, System.Threading.ContextCallback, System.Object)+0x41
+    00007FCE951278A0 00007FCF15CA33BC System.Private.CoreLib.dll!System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()+0x1c
+    00007FCE951278B0 00007FCF15BA51CE System.Private.CoreLib.dll!System.Threading.Tasks.Task.ExecuteWithThreadLocal(System.Threading.Tasks.Task ByRef, System.Threading.Thread)+0x17e
+    00007FCE95127680 00007FCF15CA33BC System.Private.CoreLib.dll!System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()+0x1c
+    00007FCE95127690 00007FCF15BA4B3B System.Private.CoreLib.dll!System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(System.Threading.Tasks.Task)+0x4b
+    00007FCE951276B0 00007FCF15CB4FF3 System.Private.CoreLib.dll!System.Runtime.CompilerServices.TaskAwaiter`1[[System.__Canon, System.Private.CoreLib]].GetResult()+0x13
+    00007FCE951276D0 00007FCF16313EA5 Customer.DataAccess.dll!Customer.DataAccess.Generic.AsyncDataAccessBase`2+&lt;CreateConnectionAsync&gt;d__1[[System.__Canon, System.Private.CoreLib],[System.__Canon, System.Private.CoreLib]].MoveNext()+0x245
+[... removed for brevity]
+    00007FCE95112A00 00007FCF15BBB442 Microsoft.AspNetCore.Server.Kestrel.Core.dll!Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol+&lt;ProcessRequests&gt;d__214`1[[System.__Canon, System.Private.CoreLib]].MoveNext()+0x472
+
+StackTraceString: &lt;none&gt;
+HResult: 8013153a
+</code></pre><blockquote>
+<p>Note: Since this is the output from an actual memory dump sent by a customer, I redacted the namespaces containing business code and replaced by &ldquo;Customer&rdquo;</p>
+</blockquote>
+<p>We see that the exception was thrown from <code>Customer.DataAccess.Generic.AsyncDataAccessBase`2+&lt;&gt;c__DisplayClass1_0.&lt;CreateConnectionAsync&gt;b__0</code>. The <code>&lt;&gt;c__</code> indicates a closure, so this was probably a lambda function declared in the <code>CreateConnectionAsync</code> method.</p>
+<p>Since I didn&rsquo;t have the source code, I used the<code>ip2md</code> command to convert the instruction pointer (second column of the stacktrace) to a MethodDescriptor, then fed it to the <code>dumpil</code> command to print the raw IL:</p>
+<pre tabindex="0"><code>&gt; ip2md 00007FCF1636CDC4
+
+MethodDesc:   00007fcf161d3c78
+Method Name:          Customer.DataAccess.Generic.AsyncDataAccessBase`2+&lt;&gt;c__DisplayClass1_0[[System.__Canon, System.Private.CoreLib],[System.__Canon, System.Private.CoreLib]].&lt;CreateConnectionAsync&gt;b__0(System.Threading.Tasks.Task)
+Class:                00007fcf161c74d0
+MethodTable:          00007fcf161d3ca0
+mdToken:              000000000600009E
+Module:               00007fcf1457e730
+IsJitted:             yes
+Current CodeAddr:     00007fcf1636ccf0
+Version History:
+  ILCodeVersion:      0000000000000000
+  ReJIT ID:           0
+  IL Addr:            0000000000000000
+     CodeAddr:           00007fcf1636ccf0  (OptimizedTier1)
+     NativeCodeVersion:  00007FCE5806D280
+     CodeAddr:           00007fcf16276f20  (QuickJitted)
+     NativeCodeVersion:  0000000000000000
+     
+     
+&gt; dumpil 00007fcf161d3c78
+
+ilAddr is 00007FCF0C04C3AC pImport is 000000000312B860
+ilAddr = 00007FCF0C04C3AC
+IL_0000: ldarg.1
+IL_0001: callvirt class [netstandard]System.AggregateException System.Threading.Tasks.Task::get_Exception()
+IL_0006: brtrue.s IL_0036
+IL_0008: ldarg.0
+[...]
+</code></pre><p>I&rsquo;m not going to show the full IL for obvious privacy reasons, but one thing struck me: the code was not calling any method that we instrument so there was no reason the IL would have been rewritten (and it turns out there was no traces of rewriting).</p>
+<p>Digging deeper, I got a hint at what was happening:</p>
+<pre tabindex="0"><code>IL_0036: ldarg.1
+IL_0037: callvirt class [netstandard]System.AggregateException System.Threading.Tasks.Task::get_Exception()
+IL_003c: callvirt class [netstandard]System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class [netstandard]System.Exception&gt; System.AggregateException::get_InnerExceptions()
+IL_0041: callvirt int32 ::get_Count()
+IL_0046: ldc.i4.1
+IL_0047: bne.un.s IL_005b
+IL_0049: ldarg.1
+IL_004a: callvirt class [netstandard]System.AggregateException System.Threading.Tasks.Task::get_Exception()
+IL_004f: callvirt class [netstandard]System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class [netstandard]System.Exception&gt; System.AggregateException::get_InnerExceptions()
+IL_0054: ldc.i4.0
+IL_0055: callvirt !0 ::get_Item(int32)
+IL_005a: throw
+IL_005b: ldarg.1
+IL_005c: callvirt class [netstandard]System.AggregateException System.Threading.Tasks.Task::get_Exception()
+IL_0061: throw
+</code></pre><p>Translated into C#, this is pretty much equivalent to:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (task.Exception.InnerExceptions.Count == <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">throw</span> task.Exception.InnerExceptions[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span> 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">throw</span> task.Exception;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Basically, the method was there to log a few things (that I didn&rsquo;t include in the snippet) then rethrow the exception. But since they didn&rsquo;t wrap the exception before rethrowing it (and didn&rsquo;t use <a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.exceptionservices.exceptiondispatchinfo?view=netcore-3.1&amp;WT.mc_id=DT-MVP-5003493"><code>ExceptionDispatchInfo</code></a>), it overwrote the original callstack!</p>
+<p>The caller code would have been something like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">await</span> SomethingAsync().ContinueWith(task =&gt; 
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Logging</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Rethrow</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> (task.Exception.InnerExceptions.Count == <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">throw</span> task.Exception.InnerExceptions[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">else</span> 
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">throw</span> task.Exception;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>The usage of <code>ContinueWith</code> is confirmed by the presence of <code>ContinuationResultTaskFromTask</code>1` in the callstack.</p>
+<p>That was really bad for me, because it meant that the original exception could have been thrown anywhere in whatever methods were called by <code>SomethingAsync</code>.</p>
+<p>By looking at the raw IL of the caller method, I figured out that <code>SomethingAsync</code> was <code>System.Data.Common.DbConnection::OpenAsync</code>. Since the application used PostgreSQL with the <a href="https://www.npgsql.org/">Npgsql library</a>, and since our tracer automatically instruments that library, it made sense that the rewritten method would be somewhere in there. Normally, I could have checked our logs to quickly find what Npgsql method was rewritten, but the customer didn&rsquo;t retrieve them before killing the instance, and waiting for the problem to happen again could have taken weeks (random issue is random). So I decided to bite the bullet and start the painstaking process of cross-checking the source code of Npgsql with the state of the objects in the memory dump to find the exact place where the execution stopped and the exception was originally thrown.</p>
+<p>For instance, at some point the method <code>PostgresDatabaseInfoFactory.Load</code> is called:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">async</span> Task&lt;NpgsqlDatabaseInfo?&gt; Load(NpgsqlConnection conn, NpgsqlTimeout timeout, <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">async</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> db = <span style="color:#66d9ef">new</span> PostgresDatabaseInfo(conn);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">await</span> db.LoadPostgresInfo(conn, timeout, <span style="color:#66d9ef">async</span>);
+</span></span><span style="display:flex;"><span>            Debug.Assert(db.LongVersion != <span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> db;
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><p>There were instances of <code>PostgresDatabaseInfo</code> on the heap, so I knew this method ran properly. From there, the <code>LoadBackendTypes</code> method is called, and the result is assigned to the <code>_types</code> field:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>        <span style="color:#66d9ef">internal</span> <span style="color:#66d9ef">async</span> Task LoadPostgresInfo(NpgsqlConnection conn, NpgsqlTimeout timeout, <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">async</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            HasIntegerDateTimes =
+</span></span><span style="display:flex;"><span>                conn.PostgresParameters.TryGetValue(<span style="color:#e6db74">&#34;integer_datetimes&#34;</span>, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> intDateTimes) &amp;&amp;
+</span></span><span style="display:flex;"><span>                intDateTimes == <span style="color:#e6db74">&#34;on&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            IsRedshift = conn.Settings.ServerCompatibilityMode == ServerCompatibilityMode.Redshift;
+</span></span><span style="display:flex;"><span>            _types = <span style="color:#66d9ef">await</span> LoadBackendTypes(conn, timeout, <span style="color:#66d9ef">async</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span></code></pre></div><p>But when inspecting the instances of <code>PostgresDatabaseInfo</code> (using the <code>dumpobj</code> or <code>do</code> command with the address returned by the <code>dumpheap -mt</code> command), we can see that the <code>_types</code> field has no value:</p>
+<pre tabindex="0"><code>&gt; dumpheap -stat -type PostgresDatabaseInfo
+
+Statistics:
+              MT    Count    TotalSize Class Name
+00007fcf162568f0        1           24 Npgsql.PostgresDatabaseInfoFactory
+00007fcf16256b10        2          256 Npgsql.PostgresDatabaseInfo
+Total 3 objects
+
+
+&gt; dumpheap -mt 00007fcf16256b10
+
+         Address               MT     Size
+00007fce98a8adb0 00007fcf16256b10      128
+00007fce98b55e98 00007fcf16256b10      128
+
+Statistics:
+              MT    Count    TotalSize Class Name
+00007fcf16256b10        2          256 Npgsql.PostgresDatabaseInfo
+Total 2 objects
+
+
+&gt; do 00007fce98a8adb0
+
+Name:        Npgsql.PostgresDatabaseInfo
+MethodTable: 00007fcf16256b10
+EEClass:     00007fcf16245848
+Size:        128(0x80) bytes
+File:        /Npgsql.dll
+Fields:
+              MT    Field   Offset                 Type VT     Attr            Value Name
+00007fcf0f640f90  40001e5        8        System.String  0 instance 00007fce984d56f0 &lt;Host&gt;k__BackingField
+00007fcf0f63a0e8  40001e6       68         System.Int32  1 instance             5432 &lt;Port&gt;k__BackingField
+00007fcf0f640f90  40001e7       10        System.String  0 instance 00007fce984d5750 &lt;Name&gt;k__BackingField
+00007fcf0f75e410  40001e8       18       System.Version  0 instance 00007fce98a8ae30 &lt;Version&gt;k__BackingField
+00007fcf0f6360c8  40001e9       6c       System.Boolean  1 instance                1 &lt;HasIntegerDateTimes&gt;k__BackingField
+00007fcf0f6360c8  40001ea       6d       System.Boolean  1 instance                1 &lt;SupportsTransactions&gt;k__BackingField
+00007fcf16546df8  40001eb       20 ...aseType, Npgsql]]  0 instance 00007fce98a8ae70 _baseTypesMutable
+00007fcf16547328  40001ec       28 ...rayType, Npgsql]]  0 instance 00007fce98a8ae90 _arrayTypesMutable
+00007fcf16547858  40001ed       30 ...ngeType, Npgsql]]  0 instance 00007fce98a8aeb0 _rangeTypesMutable
+00007fcf16547d88  40001ee       38 ...numType, Npgsql]]  0 instance 00007fce98a8aed0 _enumTypesMutable
+00007fcf165482b8  40001ef       40 ...iteType, Npgsql]]  0 instance 00007fce98a8aef0 _compositeTypesMutable
+00007fcf165487e8  40001f0       48 ...ainType, Npgsql]]  0 instance 00007fce98a8af10 _domainTypesMutable
+00007fcf16548d18  40001f1       50 ...resType, Npgsql]]  0 instance 00007fce98a8af30 &lt;ByOID&gt;k__BackingField
+00007fcf16549378  40001f2       58 ...resType, Npgsql]]  0 instance 00007fce98a8af78 &lt;ByFullName&gt;k__BackingField
+00007fcf16549378  40001f3       60 ...resType, Npgsql]]  0 instance 00007fce98a8afc0 &lt;ByName&gt;k__BackingField
+00007fcf162191f8  40001e3      1b0 ...aseInfo, Npgsql]]  0   static 00007fce984ecc48 Cache
+00007fcf16545ed0  40001e4      1b8 ...Factory, Npgsql]]  0   static 00007fce984ece00 Factories
+00007fcf16509488  400028e       70 ...resType, Npgsql]]  0 instance 0000000000000000 _types
+00007fcf0f6360c8  400028f       6e       System.Boolean  1 instance                0 &lt;IsRedshift&gt;k__BackingField
+00007fcf161d71c0  400028d      220 ...ging.NpgsqlLogger  0   static 0000000000000000 Log
+</code></pre><p>Therefore, the execution stopped somewhere in the <code>LoadBackendTypes</code> method. That method has calls to <code>NpgsqlCommand.ExecuteReader</code> and <code>NpgsqlCommand.ExecuteReaderAsync</code>, which are two method that our tracer instruments, and therefore is a candidate for rewriting.</p>
+<p>Great! At this point I just had to dump the generated IL, find the error, and call it a day. Right? Well it got more complicated than I anticipated, as we&rsquo;ll see in the next article.</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/csharp/">csharp</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/debugging/">debugging</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/programming/">programming</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/" data-tooltip="Investigating an InvalidProgramException from a memory dump (part 2 of 3)" aria-label="NEXT: Investigating an InvalidProgramException from a memory dump (part 2 of 3)">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/c-tricked-by-webrequest-209014d99653/" data-tooltip="Tricked by WebRequest" aria-label="PREVIOUS: Tricked by WebRequest">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="gitalk">
+      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+          return;
+        }
+        new Gitalk({
+          clientID: 'Iv1.8114b4896395b29e',
+          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
+          repo: 'kevingosse\/kevingosse.github.io',
+          owner: 'kevingosse',
+          admin: ['kevingosse'],
+          id: '43c0f265bdee258620c01826bf252fb7',
+          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
+        }).render('gitalk')
+      })()
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/" data-tooltip="Investigating an InvalidProgramException from a memory dump (part 2 of 3)" aria-label="NEXT: Investigating an InvalidProgramException from a memory dump (part 2 of 3)">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/c-tricked-by-webrequest-209014d99653/" data-tooltip="Tricked by WebRequest" aria-label="PREVIOUS: Tricked by WebRequest">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

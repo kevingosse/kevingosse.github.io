@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>lldb on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/lldb/</link>
+    <description>Recent content in lldb on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 09 Feb 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/lldb/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Debugging a native deadlock in a .NET Linux application</title>
+      <link>https://kevingosse.github.io/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</link>
+      <pubDate>Tue, 09 Feb 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</guid>
+      <description>This story begins when one of our integrations tests started got stuck on one PR that seemingly impacted unrelated code. This is a nice excuse to cover some concepts I haven&amp;rsquo;t touched in my previous articles, such as downloading the .NET symbols on Linux.&#xA;Preliminary inspection The failure was occurring in a Linux test. After a while, I managed to reproduce the issue locally in a docker container. Usually the first step would be to attach a debugger, but I didn&amp;rsquo;t want to spend the time to find the commands to inject the debugger in the container.</description>
+    </item>
+    <item>
+      <title>Investigating an InvalidProgramException from a memory dump (part 3 of 3)</title>
+      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</link>
+      <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</guid>
+      <description>Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;In the previous part, we&amp;rsquo;ve located the bad generated IL, stored in an internal CLR structure.</description>
+    </item>
+    <item>
+      <title>Investigating an InvalidProgramException from a memory dump (part 2 of 3)</title>
+      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</link>
+      <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</guid>
+      <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;Let&amp;rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.</description>
+    </item>
+  </channel>
+</rss>

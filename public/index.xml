@@ -1,11 +1,264 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>My New Hugo Site</title>
-    <link>https://example.org/</link>
-    <description>Recent content on My New Hugo Site</description>
+    <title>minidump.net</title>
+    <link>https://kevingosse.github.io/</link>
+    <description>Recent content on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SuppressGCTransition</title>
+      <link>https://kevingosse.github.io/suppressgctransition-b9a8a774edbd/</link>
+      <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/suppressgctransition-b9a8a774edbd/</guid>
+      <description>While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.&#xA;SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:&#xA;public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&amp;#34;NativeLib.</description>
+    </item>
+    <item>
+      <title>Writing a .NET profiler in C# — Part 4</title>
+      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</link>
+      <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</guid>
+      <description>Writing a .NET profiler in C# — Part 4 In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback.</description>
+    </item>
+    <item>
+      <title>VerificationException in .NET Framework when using structs</title>
+      <link>https://kevingosse.github.io/verificationexception-in-net-framework-when-using-structs-6269eb3df448/</link>
+      <pubDate>Mon, 01 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/verificationexception-in-net-framework-when-using-structs-6269eb3df448/</guid>
+      <description>Consider the following code:&#xA;private static readonly ReadonlyStruct Struct; public static void Read() { Console.WriteLine(Struct.Value); } public struct ReadonlyStruct { public ReadonlyStruct(int value) { Value = value; } public int Value; } This looks pretty straightforward, right? We store a struct in a readonly field, and read it.&#xA;Yet, what happens if we try to run this program in .NET Framework under partial trust?&#xA;static void Main(string[] args) { var permissionSet = new PermissionSet(PermissionState.</description>
+    </item>
+    <item>
+      <title>Writing a .NET profiler in C#   — Part 3</title>
+      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</link>
+      <pubDate>Fri, 03 Mar 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</guid>
+      <description>In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. Now that we know how to interact with the profiling API, we&amp;rsquo;re going to write a source generator to automatically generate the boilerplate code needed to implement the 70+ methods declared in the ICorProfilerCallback interface.</description>
+    </item>
+    <item>
+      <title>Reading .NET performance counters without the PerfCounter API</title>
+      <link>https://kevingosse.github.io/reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874/</link>
+      <pubDate>Sun, 12 Feb 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/reading-net-performance-counters-without-the-perfcounter-api-aca5eab08874/</guid>
+      <description>Note: The code was originally written as part of my job at Datadog and published on the dd-trace-dotnet repository under Apache 2.0 license.&#xA;The excerpts of code in this article are therefore licensed under the same terms. Before using them, quoting them, or redistributing them, make sure to check the terms of the license and the notice.&#xA;The Datadog .NET tracer has a feature named &amp;ldquo;runtime metrics&amp;rdquo;. It collects technical metrics about the way your application behaves and publishes them to a dedicated dashboard, that you can use to diagnose your performance issues:</description>
+    </item>
+    <item>
+      <title>Writing a .NET profiler in C#  —  Part 2</title>
+      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-2-8039da001e43/</link>
+      <pubDate>Wed, 11 Jan 2023 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-2-8039da001e43/</guid>
+      <description>In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&amp;rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .</description>
+    </item>
+    <item>
+      <title>Using GC.KeepAlive in async methods</title>
+      <link>https://kevingosse.github.io/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</link>
+      <pubDate>Mon, 05 Sep 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</guid>
+      <description>[C#] Using GC.KeepAlive in async methods Can you figure out what&amp;rsquo;s wrong with this code?&#xA;var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&amp;gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.&#xA;This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&amp;rsquo;t tell what the error was.</description>
+    </item>
+    <item>
+      <title>Why function pointers can&#39;t be used on instance methods in C#</title>
+      <link>https://kevingosse.github.io/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</link>
+      <pubDate>Tue, 26 Jul 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</guid>
+      <description>A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&amp;rsquo;t working as expected. Here is a simplified version:&#xA;public unsafe class Getter { private delegate*&amp;lt;Obj, SomeStruct&amp;gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&amp;lt;Obj, SomeStruct&amp;gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&amp;#34;Property&amp;#34;); Console.</description>
+    </item>
+    <item>
+      <title>Writing a .NET profiler in C# - Part 1</title>
+      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</link>
+      <pubDate>Mon, 11 Jul 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</guid>
+      <description>.NET has a very powerful profiling API, that allows to closely monitor the runtime, dynamically rewrite methods during execution, walk the callstack of threads at arbitrary points in time, and much more. However, the entry cost to learn how to use that API is quite high. The first reason is that many features require a good knowledge of how the .NET metadata system works. The other reason is that all the documentation and examples are written in C++.</description>
+    </item>
+    <item>
+      <title>Writing native WinDbg extensions in C#</title>
+      <link>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</link>
+      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</guid>
+      <description>Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:&#xA;Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg&#xA;Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#</description>
+    </item>
+    <item>
+      <title>Finding an instance of thread by id in WinDbg</title>
+      <link>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</link>
+      <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</guid>
+      <description>As you may already know, it&amp;rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:&#xA;0:000&amp;gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &amp;ldquo;ID&amp;rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.</description>
+    </item>
+    <item>
+      <title>Reading AsyncLocal values from a memory dump</title>
+      <link>https://kevingosse.github.io/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</link>
+      <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</guid>
+      <description>This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump. Note that the code provided is written for .NET 5, but should be able to work for .NET Framework with minor modifications (the name of some internal fields have changed across versions).&#xA;Preparing the memory dump First thing first, we need to prepare the memory dump that will serve as example for the whole article.</description>
+    </item>
+    <item>
+      <title>Analyze your memory dumps in C# with DynaMD</title>
+      <link>https://kevingosse.github.io/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</link>
+      <pubDate>Fri, 16 Jul 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</guid>
+      <description>Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.&#xA;Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &amp;ldquo;natural&amp;rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.</description>
+    </item>
+    <item>
+      <title>Showing unresolved functions in PerfView</title>
+      <link>https://kevingosse.github.io/showing-unresolved-functions-in-perfview-ab6cd899cb94/</link>
+      <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/showing-unresolved-functions-in-perfview-ab6cd899cb94/</guid>
+      <description>One thing that has bothered me quite a bit with PerfView is how it groups all unresolved frames under the same &amp;ldquo;?!?&amp;rdquo; name. I understand that it&amp;rsquo;s a way to reduce noise, but when trying to reduce the CPU usage of an application it can be unsettling.&#xA;Take the following example:&#xA;Here, &amp;ldquo;?!?&amp;rdquo; is presented as top offender, accounting for more than 7% of the total CPU usage. But I&amp;rsquo;m missing critical information to know whether I should consider it as a bottleneck or not.</description>
+    </item>
+    <item>
+      <title>An unconventional way of investigating a NullReferenceException</title>
+      <link>https://kevingosse.github.io/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
+      <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
+      <description>The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.&#xA;As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.&#xA;Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:</description>
+    </item>
+    <item>
+      <title>Debugging a native deadlock in a .NET Linux application</title>
+      <link>https://kevingosse.github.io/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</link>
+      <pubDate>Tue, 09 Feb 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</guid>
+      <description>This story begins when one of our integrations tests started got stuck on one PR that seemingly impacted unrelated code. This is a nice excuse to cover some concepts I haven&amp;rsquo;t touched in my previous articles, such as downloading the .NET symbols on Linux.&#xA;Preliminary inspection The failure was occurring in a Linux test. After a while, I managed to reproduce the issue locally in a docker container. Usually the first step would be to attach a debugger, but I didn&amp;rsquo;t want to spend the time to find the commands to inject the debugger in the container.</description>
+    </item>
+    <item>
+      <title>AccessViolation in ObjectNative::IsLockHeld (part 2 of 2)</title>
+      <link>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</link>
+      <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</guid>
+      <description>This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.&#xA;If you haven&amp;rsquo;t read it, you can find part 1 of the investigation here.&#xA;As a reminder, here is what we uncovered so far:&#xA;The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day&#xA;The crash dump indicated an access violation in method clr!</description>
+    </item>
+    <item>
+      <title>AccessViolation in ObjectNative::IsLockHeld (part 1 of 2)</title>
+      <link>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</link>
+      <pubDate>Thu, 05 Nov 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</guid>
+      <description>This is a two parts article. Part two is available here.&#xA;Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:&#xA;Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .</description>
+    </item>
+    <item>
+      <title>Investigating an InvalidProgramException from a memory dump (part 3 of 3)</title>
+      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</link>
+      <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</guid>
+      <description>Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;In the previous part, we&amp;rsquo;ve located the bad generated IL, stored in an internal CLR structure.</description>
+    </item>
+    <item>
+      <title>Investigating an InvalidProgramException from a memory dump (part 2 of 3)</title>
+      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</link>
+      <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</guid>
+      <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;Let&amp;rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.</description>
+    </item>
+    <item>
+      <title>Investigating an InvalidProgramException from a memory dump (part 1 of 3)</title>
+      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/</link>
+      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/</guid>
+      <description>Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.&#xA;As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.</description>
+    </item>
+    <item>
+      <title>Tricked by WebRequest</title>
+      <link>https://kevingosse.github.io/c-tricked-by-webrequest-209014d99653/</link>
+      <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/c-tricked-by-webrequest-209014d99653/</guid>
+      <description>The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it&amp;rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.</description>
+    </item>
+    <item>
+      <title>Monitor GC stats with a startup hook</title>
+      <link>https://kevingosse.github.io/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</link>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</guid>
+      <description>.NET core startup hooks is a feature I really like, and I had a lot of fun with it in the past. Still, I had yet to find a legitimate use for them, and the opportunity finally came a few days ago.&#xA;What are startup hooks? Let&amp;rsquo;s start by a quick catch-up, for those who don&amp;rsquo;t know what startup hooks are. The feature was introduced with .net core 2.2, and allows to execute any arbitrary code in a .</description>
+    </item>
+    <item>
+      <title>Check what .net core GC keywords are enabled without a debugger</title>
+      <link>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</link>
+      <pubDate>Mon, 18 May 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</guid>
+      <description>… and find an unexpected bug in the process&#xA;We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.&#xA;Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&amp;rsquo;m not sure the second part could be done on Windows without installing additional tools.</description>
+    </item>
+    <item>
+      <title>Performance best practices in C#</title>
+      <link>https://kevingosse.github.io/performance-best-practices-in-c-b85a47bdd93a/</link>
+      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/performance-best-practices-in-c-b85a47bdd93a/</guid>
+      <description>As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&amp;rsquo;re risky or because they perform poorly. The list may seem a bit random because it&amp;rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.</description>
+    </item>
+    <item>
+      <title>.NET ThreadPool starvation, and how queuing makes it worse</title>
+      <link>https://kevingosse.github.io/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</link>
+      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</guid>
+      <description>There has been plenty of talk about ThreadPool starvation in .NET:&#xA;https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/&#xA;https://blogs.msdn.microsoft.com/vsoservice/?p=17665&#xA;Or even on the Criteo&amp;rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/&#xA;What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.&#xA;To illustrate that, consider a web server that would execute this code:&#xA;/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.</description>
+    </item>
+    <item>
+      <title>Turning your training bike into a Speed remake</title>
+      <link>https://kevingosse.github.io/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</link>
+      <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</guid>
+      <description>(for context, this article was written during the containment period in 2020)&#xA;In those days of isolation, finding ways to get a regular physical activity is important, both for health and moral. It turns out that I own a training bike, so it was a good opportunity to take it back from wherever it had been stored for years (yeah, like you kept using it).&#xA;I tend to use the bike while watching series to make it less boring.</description>
+    </item>
+    <item>
+      <title>Switching back to the UI thread in WPF/UWP, in modern C#</title>
+      <link>https://kevingosse.github.io/switching-back-to-the-ui-thread-in-wpf-uwp-in-modern-c-5dc1cc8efa5e/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/switching-back-to-the-ui-thread-in-wpf-uwp-in-modern-c-5dc1cc8efa5e/</guid>
+      <description>It may seem weird that in 2020 I would write an article on this subject. But I found a new approach to this problem that I had some fun experimenting with.&#xA;So what is the problem, to begin with?&#xA;A quick reminder In WinForms/WPF/UWP, you can only update controls from the UI thread. If you have code running in a background thread that needs to update some controls, you need to somehow switch to the UI thread.</description>
+    </item>
+    <item>
+      <title>Another way to use your debugging tools</title>
+      <link>https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
+      <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
+      <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most. So the only choices you have is either to restart now or to spend the Friday with this window eating your precious screen real estate.</description>
+    </item>
+    <item>
+      <title>Dumping stack objects with ClrMD</title>
+      <link>https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/</guid>
+      <description>The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&amp;rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&amp;rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.</description>
+    </item>
+    <item>
+      <title>Debugging and fixing the Twitch desktop client</title>
+      <link>https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</link>
+      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</guid>
+      <description>I&amp;rsquo;ve seen through the years that debugging is often misunderstood. Many people that are unfamiliar with debugging tend to think it&amp;rsquo;s all about mastering difficult and austere tools. I often had coworkers ask me &amp;ldquo;what sequence of commands should I type in WinDbg to debug this kind of issue?&amp;rdquo;, as if debugging was about applying a simple flowchart with a complex tool. This is in fact quite the opposite. Debugging is all about the mindset and the methodology, and the tooling is the simple part.</description>
+    </item>
+    <item>
+      <title>Writing ClrMD extensions for WinDbg and LLDB</title>
+      <link>https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
+      <pubDate>Thu, 14 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
+      <description>You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.</description>
+    </item>
+    <item>
+      <title>Have some fun with .net core startup hooks</title>
+      <link>https://kevingosse.github.io/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</link>
+      <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</guid>
+      <description>One feature of .net core 2.2 that didn&amp;rsquo;t catch my attention immediately is the startup hooks. Put simply, this is a way to register globally a method in an assembly that will be executed whenever a .net core application is started. This unlocks a whole range of scenarios, from injecting a profiler to tweaking a static context in a given environment.&#xA;How does it work? First, you need to create a new .</description>
+    </item>
+    <item>
+      <title>Implementing Java ReferenceQueue and PhantomReference in C#</title>
+      <link>https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</link>
+      <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</guid>
+      <description>After reading Konrad Kokosa&amp;rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.</description>
+    </item>
+    <item>
+      <title>Optimizing the WinDbg DML parser</title>
+      <link>https://kevingosse.github.io/optimizing-the-windbg-dml-parser-9f64419f9/</link>
+      <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/optimizing-the-windbg-dml-parser-9f64419f9/</guid>
+      <description>One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.</description>
+    </item>
+    <item>
+      <title>Memory alignment of doubles in C#</title>
+      <link>https://kevingosse.github.io/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
+      <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
+      <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
+    </item>
   </channel>
 </rss>

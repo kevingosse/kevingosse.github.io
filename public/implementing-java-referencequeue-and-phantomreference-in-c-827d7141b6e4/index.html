@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Implementing Java ReferenceQueue and PhantomReference in C#",
+  
+  "datePublished": "2019-01-09T00:00:00Z",
+  "dateModified": "2019-01-09T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/kevingosse.github.io\/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+  },
+  "description": "After reading Konrad Kokosa\u0026rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. How hard can it be to reimplement it in .NET?">
+
+
+<meta property="og:description" content="The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. How hard can it be to reimplement it in .NET?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Implementing Java ReferenceQueue and PhantomReference in C#">
+<meta name="twitter:title" content="Implementing Java ReferenceQueue and PhantomReference in C#">
+<meta property="og:url" content="https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/">
+<meta property="twitter:url" content="https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. How hard can it be to reimplement it in .NET?">
+<meta name="twitter:description" content="The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. How hard can it be to reimplement it in .NET?">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2019-01-09T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2019-01-09T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="programming">
+    
+      <meta property="article:tag" content="software-development">
+    
+      <meta property="article:tag" content="csharp">
+    
+      <meta property="article:tag" content="java">
+    
+      <meta property="article:tag" content="garbage-collection">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>Implementing Java ReferenceQueue and PhantomReference in C#</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Implementing Java ReferenceQueue and PhantomReference in C#
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2019-01-09T00:00:00Z">
+        
+  
+  
+  
+  
+    January 09 2019
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>After reading <a href="http://tooslowexception.com/do-we-need-jvms-phantomreference-in-net/">Konrad Kokosa&rsquo;s article on Java PhantomReference</a>, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a <code>ReferenceQueue</code> in C#. The Java <code>ReferenceQueue</code> is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory. How hard can it be to reimplement it in .NET?</p>
+<p>We know a way to be notified when an object is collected: its finalizer will be called. Let&rsquo;s try to hack something together:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PhantomReference</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> ReferenceQueue _queue;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> PhantomReference(ReferenceQueue queue)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _queue = queue;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span>    ~PhantomReference()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _queue.Notify(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ReferenceQueue</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> ConcurrentQueue&lt;PhantomReference&gt; _references;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ReferenceQueue()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _references = <span style="color:#66d9ef">new</span> ConcurrentQueue&lt;PhantomReference&gt;();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>   
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PhantomReference Poll()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> _references.TryDequeue(<span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>) ? <span style="color:#66d9ef">value</span> : <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">internal</span> <span style="color:#66d9ef">void</span> Notify(PhantomReference <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _references.Enqueue(<span style="color:#66d9ef">value</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>We defined a base class, <code>PhantomReference</code>, and the <code>ReferenceQueue</code> class itself. The <code>PhantomReference</code> class defines a finalizer that adds the instance to the associated <code>ReferenceQueue</code>. Queued instances are kept until dequeued by calling <code>Poll</code>.</p>
+<p>From there, we can implement the <code>PhantomReferenceFinalizer</code> class (see Konrad&rsquo;s article) on top of it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LargeObject</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> Handle;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Plus some heavy stuff that we don&#39;t want to keep around once the object is no more referenced</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PhantomReferenceFinalizer</span> : PhantomReference&lt;LargeObject&gt;
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> _handle;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PhantomReferenceFinalizer(ReferenceQueue&lt;LargeObject&gt; queue, LargeObject <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>        : <span style="color:#66d9ef">base</span>(queue)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _handle = <span style="color:#66d9ef">value</span>.Handle;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> FinalizeResources()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;I&#39;m cleaning handle &#34;</span> + _handle);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The goal here is to have a way to clean the native resources held by <code>LargeObject</code> without keeping it in memory. Is it that simple? Well there&rsquo;s a critical flaw in our implementation, as illustrated by this code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> queue = <span style="color:#66d9ef">new</span> ReferenceQueue();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        InnerScope(queue);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> InnerScope(ReferenceQueue queue)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> largeObject = <span style="color:#66d9ef">new</span> LargeObject { Handle = <span style="color:#ae81ff">42</span> };
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> phantomReference = <span style="color:#66d9ef">new</span> PhantomReferenceFinalizer(referenceQueue, largeObject);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        GC.Collect();
+</span></span><span style="display:flex;"><span>        GC.WaitForPendingFinalizers();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Console.WriteLine(referenceQueue.Poll() == <span style="color:#66d9ef">null</span>); <span style="color:#75715e">// Will display False even though largeObject is still alive!</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        GC.KeepAlive(largeObject);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>What&rsquo;s the problem? We&rsquo;re actually tracking the lifecycle of our <code>PhantomReference</code> instead of our instance of <code>LargeObject</code>!</p>
+<p>For this to work, we would need some kind of inverted <code>WeakReference</code>, where the object referenced (<code>LargeObject</code>) somehow keeps alive the object that holds the reference (<code>PhantomeReference</code>).</p>
+<p>This unicorn actually exists in the .NET Framework. Its name is <a href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.conditionalweaktable-2?view=netframework-4.7.2&amp;WT.mc_id=DT-MVP-5003493"><code>ConditionalWeakTable</code></a>. It works like a key/value dictionary, except that a value is automatically removed when its key is garbage collected. With that tool in hand, we can finish writing our <code>ReferenceQueue</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PhantomReference</span>&lt;T&gt; <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">class</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> ReferenceQueue&lt;T&gt; _queue;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PhantomReference(ReferenceQueue&lt;T&gt; queue, T <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _queue = queue;
+</span></span><span style="display:flex;"><span>        queue.Track(<span style="color:#66d9ef">value</span>, <span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ~PhantomReference()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _queue.Notify(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ReferenceQueue</span>&lt;T&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">class</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> ConditionalWeakTable&lt;T, PhantomReference&lt;T&gt;&gt; _table;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> ConcurrentQueue&lt;PhantomReference&lt;T&gt;&gt; _references;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ReferenceQueue()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _references = <span style="color:#66d9ef">new</span> ConcurrentQueue&lt;PhantomReference&lt;T&gt;&gt;();
+</span></span><span style="display:flex;"><span>        _table = <span style="color:#66d9ef">new</span> ConditionalWeakTable&lt;T, PhantomReference&lt;T&gt;&gt;();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PhantomReference&lt;T&gt; Poll()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> _references.TryDequeue(<span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>) ? <span style="color:#66d9ef">value</span> : <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">internal</span> <span style="color:#66d9ef">void</span> Notify(PhantomReference&lt;T&gt; reference)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _references.Enqueue(reference);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">internal</span> <span style="color:#66d9ef">void</span> Track(T <span style="color:#66d9ef">value</span>, PhantomReference&lt;T&gt; reference)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _table.Add(<span style="color:#66d9ef">value</span>, reference);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Then we can put everything together and verify that it works properly:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PhantomObjectFinalizer</span> : PhantomReference&lt;LargeObject&gt;
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> _handle;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PhantomObjectFinalizer(ReferenceQueue&lt;LargeObject&gt; queue, LargeObject <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>        : <span style="color:#66d9ef">base</span>(queue, <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _handle = <span style="color:#66d9ef">value</span>.Handle;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> FinalizeResources()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;I&#39;m cleaning handle &#34;</span> + _handle);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> referenceQueue = <span style="color:#66d9ef">new</span> ReferenceQueue&lt;LargeObject&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        InnerScope(referenceQueue);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        GC.Collect();
+</span></span><span style="display:flex;"><span>        GC.WaitForPendingFinalizers();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        PhantomReference&lt;LargeObject&gt; referenceFromQueue;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> ((referenceFromQueue = referenceQueue.Poll()) != <span style="color:#66d9ef">null</span>) 
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Will display &#34;I&#39;m cleaning handle 42&#34;</span>
+</span></span><span style="display:flex;"><span>            ((PhantomObjectFinalizer)referenceFromQueue).FinalizeResources(); 
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Console.WriteLine(<span style="color:#e6db74">&#34;Done&#34;</span>);
+</span></span><span style="display:flex;"><span>        Console.ReadLine();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> InnerScope(ReferenceQueue&lt;LargeObject&gt; referenceQueue)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> largeObject = <span style="color:#66d9ef">new</span> LargeObject { Handle = <span style="color:#ae81ff">42</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> phantomReference = <span style="color:#66d9ef">new</span> PhantomObjectFinalizer(referenceQueue, largeObject);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        GC.Collect();
+</span></span><span style="display:flex;"><span>        GC.WaitForPendingFinalizers();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Console.WriteLine(referenceQueue.Poll() == <span style="color:#66d9ef">null</span>); <span style="color:#75715e">// True</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        GC.KeepAlive(largeObject);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Whether this <code>ReferenceQueue</code> has any practical application is up to debate, but this was a pretty good excuse to talk about the <code>ConditionalWeakTable</code>. Who knows when you may need it?</p>
+<p>But is the <code>ConditionalWeakTable</code> really mandatory? Actually, there is another way to implement the <code>PhantomReference</code>. If we think about it, we need two things:</p>
+<ul>
+<li>
+<p>A way to know whether our target object is still alive</p>
+</li>
+<li>
+<p>A way to be notified when a garbage collection occurs, to know when to check</p>
+</li>
+</ul>
+<p>For the first condition, we can use a <code>WeakReference</code> to track the live status of an object. For the second, we already know of a GC notification system: the finalizer! All we need to do is checking whether the target object is still alive when the finalizer is called. If it is, then we re-register ourselves, to be notified at the next collection:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PhantomReference</span>&lt;T&gt; <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">class</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> ReferenceQueue&lt;T&gt; _queue;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> WeakReference _weakReference;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PhantomReference(ReferenceQueue&lt;T&gt; queue, T <span style="color:#66d9ef">value</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _queue = queue;
+</span></span><span style="display:flex;"><span>        _weakReference = <span style="color:#66d9ef">new</span> WeakReference(<span style="color:#66d9ef">value</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ~PhantomReference()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// A GC occured</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (_weakReference.Target != <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Target is still alive, register for next collection</span>
+</span></span><span style="display:flex;"><span>            GC.ReRegisterForFinalize(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Target is dead, notify the queue</span>
+</span></span><span style="display:flex;"><span>        _queue.Notify(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ReferenceQueue</span>&lt;T&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">class</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> ConcurrentQueue&lt;PhantomReference&lt;T&gt;&gt; _references;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ReferenceQueue()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _references = <span style="color:#66d9ef">new</span> ConcurrentQueue&lt;PhantomReference&lt;T&gt;&gt;();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Notify(PhantomReference&lt;T&gt; reference)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _references.Enqueue(reference);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PhantomReference&lt;T&gt; Poll()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> _references.TryDequeue(<span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> <span style="color:#66d9ef">value</span>) ? <span style="color:#66d9ef">value</span> : <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Of course, this is much less elegant than the <code>ConditionalWeakTable</code>. Still, this is a fun trick to play with.</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/programming/">programming</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/csharp/">csharp</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/java/">java</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/garbage-collection/">garbage-collection</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/" data-tooltip="Have some fun with .net core startup hooks" aria-label="NEXT: Have some fun with .net core startup hooks">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/optimizing-the-windbg-dml-parser-9f64419f9/" data-tooltip="Optimizing the WinDbg DML parser" aria-label="PREVIOUS: Optimizing the WinDbg DML parser">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="gitalk">
+      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+          return;
+        }
+        new Gitalk({
+          clientID: 'Iv1.8114b4896395b29e',
+          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
+          repo: 'kevingosse\/kevingosse.github.io',
+          owner: 'kevingosse',
+          admin: ['kevingosse'],
+          id: 'f201cad0767da0f51dff527171323995',
+          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
+        }).render('gitalk')
+      })()
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/" data-tooltip="Have some fun with .net core startup hooks" aria-label="NEXT: Have some fun with .net core startup hooks">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/optimizing-the-windbg-dml-parser-9f64419f9/" data-tooltip="Optimizing the WinDbg DML parser" aria-label="PREVIOUS: Optimizing the WinDbg DML parser">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

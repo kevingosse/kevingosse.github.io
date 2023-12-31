@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>windbg on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/windbg/</link>
+    <description>Recent content in windbg on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 08 Feb 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/windbg/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Writing native WinDbg extensions in C#</title>
+      <link>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</link>
+      <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</guid>
+      <description>Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:&#xA;Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg&#xA;Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#</description>
+    </item>
+    <item>
+      <title>Finding an instance of thread by id in WinDbg</title>
+      <link>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</link>
+      <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</guid>
+      <description>As you may already know, it&amp;rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:&#xA;0:000&amp;gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &amp;ldquo;ID&amp;rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.</description>
+    </item>
+    <item>
+      <title>Reading AsyncLocal values from a memory dump</title>
+      <link>https://kevingosse.github.io/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</link>
+      <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</guid>
+      <description>This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump. Note that the code provided is written for .NET 5, but should be able to work for .NET Framework with minor modifications (the name of some internal fields have changed across versions).&#xA;Preparing the memory dump First thing first, we need to prepare the memory dump that will serve as example for the whole article.</description>
+    </item>
+    <item>
+      <title>Writing ClrMD extensions for WinDbg and LLDB</title>
+      <link>https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
+      <pubDate>Thu, 14 Mar 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
+      <description>You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.</description>
+    </item>
+    <item>
+      <title>Optimizing the WinDbg DML parser</title>
+      <link>https://kevingosse.github.io/optimizing-the-windbg-dml-parser-9f64419f9/</link>
+      <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/optimizing-the-windbg-dml-parser-9f64419f9/</guid>
+      <description>One of my pet project is writing a custom command window for WinDbg. When testing that custom command window with big outputs, I quickly noticed that the performance was unacceptable: the first few lines would be displayed smoothly, then the application would become slower and slower until almost freezing. I therefore decided to optimize my implementation: tweaking the rendering code, batching updates, … But no matter what I did, the performance was still bad.</description>
+    </item>
+  </channel>
+</rss>

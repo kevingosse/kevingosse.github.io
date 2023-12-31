@@ -1,4 +1,92 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://kevingosse.github.io/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
-theme = 'ananke'
+title = 'minidump.net'
+theme = 'tranquilpeak'
+defaultContentLanguage = "en-us"
+
+[params]
+  sidebarBehavior = 2
+  thumbnailImage = true
+  thumbnailImagePosition = "right"
+  autoThumbnailImage = true
+  coverImage = "images/code.png"
+  imageGallery = true
+  hierarchicalCategories = true
+  syntaxHighlighter = 'highlight.js'
+  dateFormat = "January 02 2006"
+
+[params.comment.gitalk]
+  enable = true
+  clientId = 'Iv1.8114b4896395b29e'
+  clientSecret = '51d5de761d1fbcbfad430e94ebdecdf6765a20b5'
+  owner = 'kevingosse'
+  repo = 'kevingosse/kevingosse.github.io'
+  # See all options: https://github.com/gitalk/gitalk#options
+  [params.comment.gitalk.options]
+    language = "en"
+    perPage = 10
+    distractionFreeMode = false
+    enableHotKey = true
+    pagerDirection = "first"
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  archive = "archives"
+
+[markup]
+  [markup.tableOfContents]
+    endLevel = 3
+    ordered = false
+    startLevel = 1
+
+[[menu.main]]
+  weight = 1
+  identifier = "home"
+  name = "Home"
+  pre = "<i class=\"sidebar-button-icon fas fa-lg fa-home\" aria-hidden=\"true\"></i>"
+  url = "/"
+[[menu.main]]
+  weight = 2
+  identifier = "categories"
+  name = "Categories"
+  pre = "<i class=\"sidebar-button-icon fas fa-lg fa-bookmark\" aria-hidden=\"true\"></i>"
+  url = "/categories"
+[[menu.main]]
+  weight = 3
+  identifier = "tags"
+  name = "Tags"
+  pre = "<i class=\"sidebar-button-icon fas fa-lg fa-tags\" aria-hidden=\"true\"></i>"
+  url = "/tags"
+[[menu.main]]
+  weight = 4
+  identifier = "archives"
+  name = "Archives"
+  pre = "<i class=\"sidebar-button-icon fas fa-lg fa-archive\" aria-hidden=\"true\"></i>"
+  url = "/archives"
+[[menu.main]]
+  weight = 5
+  identifier = "about"
+  name = "About"
+  pre = "<i class=\"sidebar-button-icon fas fa-lg fa-question\" aria-hidden=\"true\"></i>"
+  url = "/#about"
+
+[[menu.misc]]
+  weight = 1
+  identifier = "twitter"
+  name = "Twitter"
+  pre = "<i class=\"sidebar-button-icon fab fa-lg fa-twitter\" aria-hidden=\"true\"></i>"
+  url = "https://twitter.com/kookiz"
+
+[[menu.misc]]
+  weight = 2
+  identifier = "github"
+  name = "GitHub"
+  pre = "<i class=\"sidebar-button-icon fab fa-lg fa-github\" aria-hidden=\"true\"></i>"
+  url = "https://github.com/kevingosse"
+
+[[menu.misc]]
+  weight = 3
+  identifier = "rss"
+  name = "RSS"
+  pre = "<i class=\"sidebar-button-icon fas fa-lg fa-rss\" aria-hidden=\"true\"></i>"
+  url = "/index.xml"

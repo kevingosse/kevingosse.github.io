@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Check what .net core GC keywords are enabled without a debugger",
+  
+  "datePublished": "2020-05-18T00:00:00Z",
+  "dateModified": "2020-05-18T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/kevingosse.github.io\/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+  },
+  "description": "… and find an unexpected bug in the process\nWe recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.\nNote: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I\u0026rsquo;m not sure the second part could be done on Windows without installing additional tools.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="… and find an unexpected bug in the process
+We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
+Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.">
+
+
+<meta property="og:description" content="… and find an unexpected bug in the process
+We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
+Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Check what .net core GC keywords are enabled without a debugger">
+<meta name="twitter:title" content="Check what .net core GC keywords are enabled without a debugger">
+<meta property="og:url" content="https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/">
+<meta property="twitter:url" content="https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="… and find an unexpected bug in the process
+We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
+Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.">
+<meta name="twitter:description" content="… and find an unexpected bug in the process
+We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
+Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2020-05-18T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2020-05-18T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="dotnet">
+    
+      <meta property="article:tag" content="dotnet-core">
+    
+      <meta property="article:tag" content="software-development">
+    
+      <meta property="article:tag" content="garbage-collection">
+    
+      <meta property="article:tag" content="debugging">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>Check what .net core GC keywords are enabled without a debugger</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Check what .net core GC keywords are enabled without a debugger
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-05-18T00:00:00Z">
+        
+  
+  
+  
+  
+    May 18 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p><em><strong>… and find an unexpected bug in the process</strong></em></p>
+<p><a href="https://twitter.com/KooKiz/status/1238046441672761345">We recently ran into performance issues</a>, and many elements seemed to point towards <a href="https://github.com/dotnet/diagnostics/blob/master/documentation/dotnet-trace-instructions.md">the GC verbose events</a> being enabled. To test this, I needed a way to check on live servers whether the events were activated.</p>
+<p><strong>Note:</strong> the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.</p>
+<h1 id="checking-the-implementation">Checking the implementation</h1>
+<p>The first step is to understand how the runtime decides whether those events are enabled or not. A cursory search <a href="https://raw.githubusercontent.com/dotnet/runtime/master/src/coreclr/src/gc/gc.cpp">in the GC source code</a> points to the <code>EVENT_ENABLED</code> macro:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">#if defined(FEATURE_EVENT_TRACE)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// We are explicitly checking whether the event is enabled here.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// Unfortunately some of the ETW macros do not check whether the ETW feature is enabled.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// The ones that do are much less efficient.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (EVENT_ENABLED(GCAllocationTick_V3))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                fire_etw_allocation_event (etw_allocation_running_amount[etw_allocation_index], gen_number, acontext<span style="color:#f92672">-&gt;</span>alloc_ptr);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif </span><span style="color:#75715e">//FEATURE_EVENT_TRACE
+</span></span></span></code></pre></div><p>The macro expands to <code>GCEventEnabled##name</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">#define EVENT_ENABLED(name) GCEventEnabled##name()
+</span></span></span></code></pre></div><p>Which in turn is implemented as:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">inline</span> <span style="color:#66d9ef">bool</span> GCEventEnabled<span style="color:#960050;background-color:#1e0010">##</span>name() { <span style="color:#66d9ef">return</span> GCEventStatus<span style="color:#f92672">::</span>IsEnabled(provider, keyword, level); }
+</span></span></code></pre></div><p>So it looks like the filtering is happening in <code>GCEventStatus</code>. The <code>IsEnabled</code> method simply checks the value of <code>enabledLevels</code> and <code>enabledKeywords</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">__forceinline</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">IsEnabled</span>(GCEventProvider provider, GCEventKeyword keyword, GCEventLevel level)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    assert(level <span style="color:#f92672">&gt;=</span> GCEventLevel_None <span style="color:#f92672">&amp;&amp;</span> level <span style="color:#f92672">&lt;</span> GCEventLevel_Max);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    size_t index <span style="color:#f92672">=</span> <span style="color:#66d9ef">static_cast</span><span style="color:#f92672">&lt;</span>size_t<span style="color:#f92672">&gt;</span>(provider);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (enabledLevels[index].LoadWithoutBarrier() <span style="color:#f92672">&gt;=</span> level)
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">&amp;&amp;</span> (enabledKeywords[index].LoadWithoutBarrier() <span style="color:#f92672">&amp;</span> keyword);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Both are declared as arrays with hard-coded size:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span>Volatile<span style="color:#f92672">&lt;</span>GCEventLevel<span style="color:#f92672">&gt;</span> GCEventStatus<span style="color:#f92672">::</span>enabledLevels[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> {GCEventLevel_None, GCEventLevel_None};
+</span></span><span style="display:flex;"><span>Volatile<span style="color:#f92672">&lt;</span>GCEventKeyword<span style="color:#f92672">&gt;</span> GCEventStatus<span style="color:#f92672">::</span>enabledKeywords[<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> {GCEventKeyword_None, GCEventKeyword_None};
+</span></span></code></pre></div><p>If we can read the value of <code>enabledLevels</code> in a live process, we&rsquo;ll know whether the GC events are enabled or not.</p>
+<h1 id="inspecting-a-live-process">Inspecting a live process</h1>
+<p>How to read a variable in a live process? Usually I&rsquo;d use a debugger, but we were having trouble with LLDB on our servers and I was feeling playful, so I decided to try something else.</p>
+<p>Given sufficient rights, it&rsquo;s possible to read the memory of a process through the file <code>/proc/&lt;pid&gt;/mem</code>. Therefore all we have to do is to figure out the memory address of the <code>enabledLevels</code> array.</p>
+<p>For that, we&rsquo;re going to inspect the symbols, just like a real debugger would. On Linux, there are no PDBs, the symbols are embedded directly in the libraries. They can be extracted <a href="https://linux.die.net/man/1/nm">by using the <code>nm</code> utility</a>.</p>
+<p>If you&rsquo;re not building your own CLR, it&rsquo;s likely that the symbols are not included. You can download them using the <code>dotnet symbol</code> command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ dotnet symbol --modules -d -o ~/symbols /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/*
+</span></span></code></pre></div><p>Then, we can use <code>nm</code> to locate the symbol for <code>GCEventStatus::enabledLevels</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ nm -C ~/symbols/libcoreclr.so | grep GCEventStatus::enabledLevels
+</span></span><span style="display:flex;"><span>0000000000764ff0 b GCEventStatus::enabledLevels
+</span></span></code></pre></div><p>Now we know that the <code>GCEventStatus::enabledLevels</code> array is mapped to the memory offset 0x764ff0. The offset is relative to the base address of the <code>libcoreclr.so</code> module. We can know what address the module is mapped to by reading the <code>/proc/&lt;pid&gt;/maps</code> file:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ cat /proc/2563/maps | grep libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1df40000-7fbf1e18e000 r-xp <span style="color:#ae81ff">00000000</span> 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1e18e000-7fbf1e18f000 rwxp 0024e000 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1e18f000-7fbf1e47e000 r-xp 0024f000 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1e47e000-7fbf1e47f000 r--p 0053e000 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1e47f000-7fbf1e639000 r-xp 0053f000 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1e639000-7fbf1e63a000 ---p 006f9000 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1e63a000-7fbf1e688000 r--p 006f9000 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span><span style="display:flex;"><span>7fbf1e688000-7fbf1e692000 rw-p <span style="color:#ae81ff">00747000</span> 103:02 <span style="color:#ae81ff">9699852</span>                   /usr/share/dotnet/shared/Microsoft.NETCore.App/3.1.1/libcoreclr.so
+</span></span></code></pre></div><p>The file is mapped at different locations, the base address should be the first one (0x7fbf1df40000).</p>
+<p>Putting everything together, the <code>GCEventStatus::enabledLevels</code> array should be mapped at the address: 0x7fbf1df40000 (base address of libcoreclr.so) + 0x764ff0 (offset in the symbols) = 0x7fbf1e6a4ff0</p>
+<p>For some reason, I couldn&rsquo;t use the <code>hexdump</code> utility to read the <code>/proc/&lt;pid&gt;/mem</code> file. I&rsquo;m no Linux expert but apparently this is expected as the file is special. Instead, I used <code>[dd](http://man7.org/linux/man-pages/man1/dd.1.html)</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ dd bs<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> skip<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$((</span><span style="color:#ae81ff">0</span>x7fbf1e6a4ff0<span style="color:#66d9ef">))</span><span style="color:#e6db74">&#34;</span> count<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> status<span style="color:#f92672">=</span>none <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/proc/2563/mem&#34;</span> | od -An -vtu4
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">5</span>          <span style="color:#ae81ff">5</span>
+</span></span></code></pre></div><ul>
+<li>
+<p><code>bs=1</code>: sets the size of the blocks to 1 byte</p>
+</li>
+<li>
+<p><code>skip=&quot;$((0x7fbf1e6a4ff0))&quot;</code> : skips to address 0x7fbf1e6a4ff0</p>
+</li>
+<li>
+<p><code>count=8</code>: reads 8 blocks (= 8 bytes = 2 integers)</p>
+</li>
+<li>
+<p><code>status=none</code>: hides status messages</p>
+</li>
+<li>
+<p><code>if=&quot;/proc/2563/mem&quot;</code> : sets the input file</p>
+</li>
+<li>
+<p><code>od -An -vtu4</code> : formats the output as 4 bytes unsigned integers</p>
+</li>
+</ul>
+<p>For convenience, I&rsquo;ve wrote all the steps in a bash script:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>offset<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0x&#34;</span><span style="color:#66d9ef">$(</span>nm -C $2/libcoreclr.so | grep GCEventStatus::enabledLevels | cut -d <span style="color:#e6db74">&#39; &#39;</span> -f1<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>module<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0x&#34;</span><span style="color:#66d9ef">$(</span>cat /proc/$1/maps | grep -m <span style="color:#ae81ff">1</span> libcoreclr.so | cut -d <span style="color:#e6db74">&#39;-&#39;</span> -f1<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>dd bs<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> skip<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$((</span>$module <span style="color:#f92672">+</span> $offset<span style="color:#66d9ef">))</span><span style="color:#e6db74">&#34;</span> count<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> status<span style="color:#f92672">=</span>none <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/proc/</span>$1<span style="color:#e6db74">/mem&#34;</span> | od -An -vtu4
+</span></span></code></pre></div><h1 id="the-plot-twist">The plot twist</h1>
+<p>Now we can test it with a simple console application. First we start the application and launch the script to check the value of the keywords:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo ./gckeywords.sh <span style="color:#ae81ff">6487</span> /home/kgosse/symbols
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">0</span>         <span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>As expected, the value is 0, meaning that the keywords aren&rsquo;t activated.</p>
+<p>Then, we run <code>dotnet-trace collect --profile gc-collect -p 6487</code> and check the keywords again:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo ./gckeywords.sh <span style="color:#ae81ff">6487</span> /home/kgosse/symbols
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">4</span>        <span style="color:#ae81ff">0</span>
+</span></span></code></pre></div><p>The level is now 4 for one of the providers, which is &ldquo;informational&rdquo;. That&rsquo;s the expected level for the <code>gc-collect</code> profile. Now let&rsquo;s detach dotnet-trace and check again:</p>
+<pre tabindex="0"><code class="language-bsh" data-lang="bsh">$ sudo ./gckeywords.sh 6487 /home/kgosse/symbols
+          5       5
+</code></pre><p>That&hellip; was completely unexpected. Detaching dotnet-trace somehow activated the GC verbose events! If we attach dotnet-trace again:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo ./gckeywords.sh <span style="color:#ae81ff">6487</span> /home/kgosse/symbols
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">4</span>      <span style="color:#ae81ff">5</span>
+</span></span></code></pre></div><p>We see that the first provider switched back to informational. If we detach dotnet-trace again:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ sudo ./gckeywords.sh <span style="color:#ae81ff">6487</span> /home/kgosse/symbols
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">5</span>     <span style="color:#ae81ff">5</span>
+</span></span></code></pre></div><p>&hellip; back to verbose. This gives us a strong lead to understand why the verbose events are mysteriously active on our servers.</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/dotnet-core/">dotnet-core</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/garbage-collection/">garbage-collection</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/debugging/">debugging</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/" data-tooltip="Monitor GC stats with a startup hook" aria-label="NEXT: Monitor GC stats with a startup hook">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/performance-best-practices-in-c-b85a47bdd93a/" data-tooltip="Performance best practices in C#" aria-label="PREVIOUS: Performance best practices in C#">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="gitalk">
+      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+          return;
+        }
+        new Gitalk({
+          clientID: 'Iv1.8114b4896395b29e',
+          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
+          repo: 'kevingosse\/kevingosse.github.io',
+          owner: 'kevingosse',
+          admin: ['kevingosse'],
+          id: '500267f3a9ec84b3a8e670d291b19d1c',
+          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
+        }).render('gitalk')
+      })()
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/" data-tooltip="Monitor GC stats with a startup hook" aria-label="NEXT: Monitor GC stats with a startup hook">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/performance-best-practices-in-c-b85a47bdd93a/" data-tooltip="Performance best practices in C#" aria-label="PREVIOUS: Performance best practices in C#">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

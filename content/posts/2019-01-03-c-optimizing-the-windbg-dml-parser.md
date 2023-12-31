@@ -4,7 +4,7 @@ canonical_url: https://medium.com/criteo-engineering/optimizing-the-windbg-dml-p
 title: 'Optimizing the WinDbg DML parser'
 subtitle: The impact of using the wrong class for the job. Profiling and fixing a
   performance issue in WinDbg.
-date: 2009-01-03
+date: 2019-01-03
 description: The impact of using the wrong class for the job. Profiling and fixing
   a performance issue in WinDbg.
 tags:
@@ -13,6 +13,7 @@ tags:
 - windbg
 - dotnet
 - software-development
+
 author: Kevin Gosse
 ---
 

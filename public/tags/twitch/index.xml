@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>twitch on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/twitch/</link>
+    <description>Recent content in twitch on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 11 May 2019 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/twitch/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Debugging and fixing the Twitch desktop client</title>
+      <link>https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</link>
+      <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</guid>
+      <description>I&amp;rsquo;ve seen through the years that debugging is often misunderstood. Many people that are unfamiliar with debugging tend to think it&amp;rsquo;s all about mastering difficult and austere tools. I often had coworkers ask me &amp;ldquo;what sequence of commands should I type in WinDbg to debug this kind of issue?&amp;rdquo;, as if debugging was about applying a simple flowchart with a complex tool. This is in fact quite the opposite. Debugging is all about the mindset and the methodology, and the tooling is the simple part.</description>
+    </item>
+  </channel>
+</rss>

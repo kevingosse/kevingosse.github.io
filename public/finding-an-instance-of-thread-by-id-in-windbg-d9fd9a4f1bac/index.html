@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Finding an instance of thread by id in WinDbg",
+  
+  "datePublished": "2021-09-16T00:00:00Z",
+  "dateModified": "2021-09-16T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/kevingosse.github.io\/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+  },
+  "description": "As you may already know, it\u0026rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:\n0:000\u0026gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The \u0026ldquo;ID\u0026rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:
+0:000&gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.">
+
+
+<meta property="og:description" content="As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:
+0:000&gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Finding an instance of thread by id in WinDbg">
+<meta name="twitter:title" content="Finding an instance of thread by id in WinDbg">
+<meta property="og:url" content="https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
+<meta property="twitter:url" content="https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:
+0:000&gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.">
+<meta name="twitter:description" content="As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:
+0:000&gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2021-09-16T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2021-09-16T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="dotnet">
+    
+      <meta property="article:tag" content="dotnet-core">
+    
+      <meta property="article:tag" content="programming">
+    
+      <meta property="article:tag" content="debugging">
+    
+      <meta property="article:tag" content="windbg">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>Finding an instance of thread by id in WinDbg</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Finding an instance of thread by id in WinDbg
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2021-09-16T00:00:00Z">
+        
+  
+  
+  
+  
+    September 16 2021
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the <code>!threads</code> command:</p>
+<pre tabindex="0"><code>0:000&gt; !threads
+ThreadCount:      21
+UnstartedThread:  0
+BackgroundThread: 3
+PendingThread:    0
+DeadThread:       0
+Hosted Runtime:   no
+                                                                                                            Lock  
+ DBG   ID     OSID ThreadOBJ           State GC Mode     GC Alloc Context                  Domain           Count Apt Exception
+   0    1     359c 000001C5340BDFB0    2a020 Preemptive  000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 
+   6    2     3e1c 000001C5340E7C00    2b220 Preemptive  0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 
+   7    3     5a4c 000001C5340ECF20  102a220 Preemptive  0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 
+   8    4     1940 000001C534165830  202b020 Preemptive  000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 
+   9    5     7214 000001C534166E60  202b020 Preemptive  000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 
+  10    6     7034 000001C534169C60  202b020 Preemptive  000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 
+  11    7     6e38 000001C53416C720  202b020 Preemptive  000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 
+  12    8     7220 000001C534170E90  202b020 Preemptive  000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 
+  13    9     5684 000001C534173570  202b020 Preemptive  000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 
+  14   10     4364 000001C534179330  202b020 Preemptive  000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 
+  15   11     63ec 000001C534178D20  202b020 Preemptive  000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 
+  16   12     1970 000001C534175CA0  202b020 Preemptive  000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 
+  17   13     6bcc 000001C5341768C0  202b020 Preemptive  000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 
+  18   14     6890 000001C534178100  202b020 Preemptive  000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 
+  19   15     69d0 000001C5341762B0  202b020 Preemptive  000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 
+  20   16     1dc8 000001C534178710  202b020 Preemptive  000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 
+  21   17     1db4 000001C534176ED0  202b020 Preemptive  000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 
+  22   18     6aa8 000001C5341774E0  202b020 Preemptive  000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 
+  23   19     6b94 000001C534177AF0  202b020 Preemptive  000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 
+  24   20      628 000001C534188A20  202b020 Preemptive  000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 
+  25   21     66d8 000001C534187E00  1029220 Preemptive  0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 
+</code></pre><p>The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling <code>thread.ManagedThreadId</code>. Let&rsquo;s say we are interested by the thread with the managed id &ldquo;16&rdquo;.</p>
+<p>You can switch the active thread by retrieving the value of the &ldquo;DBG&rdquo; column (so for the thread with managed id 16, that would be &ldquo;20&rdquo;) and giving it to the <code>~</code> command:</p>
+<pre tabindex="0"><code>0:000&gt; ~20s
+ntdll!NtDelayExecution+0x14:
+00007ffc`c7f4d3f4 c3              ret
+
+0:020&gt; 
+</code></pre><p>When switching thread, WinDbg shows the top frame of the native callstack (here, <code>ntdll!NtDelayExecution+0x14</code>) and changes the prompt to <code>0:020&gt;</code> to show that thread 20 is now the active thread.</p>
+<p>But what if you&rsquo;re interesting in getting the instance of <code>System.Threading.Thread</code> associated to this thread?</p>
+<p>The fourth column of the output of <code>!threads</code> is named &ldquo;ThreadOBJ&rdquo; and contains a value that looks like a pointer. From there, you might be tempted to think this is the address of the thread object, but unfortunately&hellip;</p>
+<pre tabindex="0"><code>0:020&gt; !threads
+ThreadCount:      21
+UnstartedThread:  0
+BackgroundThread: 3
+PendingThread:    0
+DeadThread:       0
+Hosted Runtime:   no
+                                                                                                            Lock  
+ DBG   ID     OSID ThreadOBJ           State GC Mode     GC Alloc Context                  Domain           Count Apt Exception
+[...] 
+  20   16     1dc8 000001C534178710  202b020 Preemptive  000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA
+[...]
+
+0:020&gt; !do 000001C534178710
+&lt;Note: this object has an invalid CLASS field&gt;
+Invalid object
+</code></pre><p>&hellip; this is the address of the native thread object, not the managed one.</p>
+<p>So how can we retrieve the address of the managed thread? We could enumerate all the threads with <code>!dumpheap -mt</code> and inspect all of them individually until finding the right one, but that&rsquo;s going to be really tedious if you have tens, or hundreds of threads. Wouldn&rsquo;t that be great if we could just call <code>Thread.CurrentThread</code> from WinDbg?</p>
+<p>Well it turns out we kind of can. Following <a href="https://github.com/dotnet/coreclr/pull/21328">an optimization in .NET Core 3.0</a>, the value of <code>Thread.CurrentThread</code> is now stored in a thread-static field.</p>
+<p>To retrieve the value, we first need to retrieve the EEClass address:</p>
+<pre tabindex="0"><code>0:020&gt; !name2ee System.Private.CoreLib.dll System.Threading.Thread
+Module:      00007ffb8e704020
+Assembly:    System.Private.CoreLib.dll
+Token:       000000000200026D
+MethodTable: 00007ffb8e8ca8c0
+EEClass:     00007ffb8e8b67d0
+Name:        System.Threading.Thread
+</code></pre><p>We can then give that value to the <code>!dumpclass</code> command (or click on the DML link next to <code>EEClass:</code> ):</p>
+<pre tabindex="0"><code>0:020&gt; !dumpclass 00007ffb8e8b67d0
+Class Name:      System.Threading.Thread
+mdToken:         000000000200026D
+File:            C:\Program Files\dotnet\shared\Microsoft.NETCore.App\5.0.10\System.Private.CoreLib.dll
+Parent Class:    00007ffb8e8b6748
+Module:          00007ffb8e704020
+Method Table:    00007ffb8e8ca8c0
+Vtable Slots:    4
+Total Method Slots:  6
+Class Attributes:    100101  
+NumInstanceFields:   8
+NumStaticFields:     4
+NumThreadStaticFields: 1
+              MT    Field   Offset                 Type VT     Attr            Value Name
+00007ffb8e91c1e8  40009e6        8 ....ExecutionContext  0 instance           _executionContext
+0000000000000000  40009e7       10 ...ronizationContext  0 instance           _synchronizationContext
+00007ffb8e8c7a90  40009e8       18        System.String  0 instance           _name
+00007ffb8e8c1a30  40009e9       20      System.Delegate  0 instance           _delegate
+00007ffb8e800c68  40009ea       28        System.Object  0 instance           _threadStartArg
+00007ffb8e80ee60  40009eb       30        System.IntPtr  1 instance           _DONT_USE_InternalThread
+00007ffb8e80b258  40009ec       38         System.Int32  1 instance           _priority
+00007ffb8e80b258  40009ed       3c         System.Int32  1 instance           _managedThreadId
+00007ffb8e80b258  40009ef      914         System.Int32  1   static                7 s_optimalMaxSpinWaitsPerSpinIteration
+00007ffb8e807238  40009f0      918       System.Boolean  1   static                0 s_isProcessorNumberReallyFast
+0000000000000000  40009f1      760                       0   static 0000000000000000 s_asyncLocalPrincipal
+00007ffb8e8ca8c0  40009f2       18 ....Threading.Thread  0 TLstatic  t_currentThread
+    &gt;&gt; Thread:Value 359c:000001c53436bf88 1940:000001c53436be40 7214:000001c53436c050 7034:000001c53436c128 6e38:000001c53436c200 7220:000001c53436c2d8 5684:000001c53436c3b0 4364:000001c53436c488 63ec:000001c53436c560 1970:000001c53436c638 6bcc:000001c53436c710 6890:000001c53436c7e8 69d0:000001c53436c8c0 1dc8:000001c53436c998 1db4:000001c53436ca70 6aa8:000001c53436cb48 6b94:000001c53436cc20 628:000001c53436ccf8 &lt;&lt;
+</code></pre><p>The last line (the one after the <code>t_currentThread</code> field) gives the value of the field for each thread. The id used is the &ldquo;OS ID&rdquo; given by the <code>!threads</code> command:</p>
+<pre tabindex="0"><code>0:020&gt; !threads
+ThreadCount:      21
+UnstartedThread:  0
+BackgroundThread: 3
+PendingThread:    0
+DeadThread:       0
+Hosted Runtime:   no
+                                                                                                            Lock  
+ DBG   ID     OSID ThreadOBJ           State GC Mode     GC Alloc Context                  Domain           Count Apt Exception
+[...] 
+  20   16     1dc8 000001C534178710  202b020 Preemptive  000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA
+[...]
+</code></pre><p>So in our case we just need to find the value prefixed by <code>1dc8</code> :</p>
+<pre tabindex="0"><code>&gt;&gt; Thread:Value 359c:000001c53436bf88 1940:000001c53436be40 7214:000001c53436c050 7034:000001c53436c128 6e38:000001c53436c200 7220:000001c53436c2d8 5684:000001c53436c3b0 4364:000001c53436c488 63ec:000001c53436c560 1970:000001c53436c638 6bcc:000001c53436c710 6890:000001c53436c7e8 69d0:000001c53436c8c0 1dc8:000001c53436c998 1db4:000001c53436ca70 6aa8:000001c53436cb48 6b94:000001c53436cc20 628:000001c53436ccf8 &lt;&lt;
+</code></pre><p>Then we can use the <code>!dumpobj</code> command to confirm that this is indeed the address of the instance of <code>System.Threading.Thread</code> associated to the thread with managed id 16:</p>
+<pre tabindex="0"><code>0:020&gt; !do 000001c53436c998
+Name:        System.Threading.Thread
+MethodTable: 00007ffb8e8ca8c0
+EEClass:     00007ffb8e8b67d0
+Size:        72(0x48) bytes
+File:        C:\Program Files\dotnet\shared\Microsoft.NETCore.App\5.0.10\System.Private.CoreLib.dll
+Fields:
+              MT    Field   Offset                 Type VT     Attr            Value Name
+[...]
+00007ffb8e80b258  40009ed       3c         System.Int32  1 instance               16 _managedThreadId
+[...]
+</code></pre><p>Of course this won&rsquo;t work if you&rsquo;re using a version of .NET older than 3.0. In that case, well, I hope you like <a href="https://stackoverflow.com/a/4616882/869621">scripting in WinDbg</a> 😉</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/dotnet-core/">dotnet-core</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/programming/">programming</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/debugging/">debugging</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/windbg/">windbg</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/writing-native-windbg-extensions-in-c-5390726f3cec/" data-tooltip="Writing native WinDbg extensions in C#" aria-label="NEXT: Writing native WinDbg extensions in C#">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/" data-tooltip="Reading AsyncLocal values from a memory dump" aria-label="PREVIOUS: Reading AsyncLocal values from a memory dump">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="gitalk">
+      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+          return;
+        }
+        new Gitalk({
+          clientID: 'Iv1.8114b4896395b29e',
+          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
+          repo: 'kevingosse\/kevingosse.github.io',
+          owner: 'kevingosse',
+          admin: ['kevingosse'],
+          id: '49be8a3da7cd15a05d69c1505c4c200a',
+          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
+        }).render('gitalk')
+      })()
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/writing-native-windbg-extensions-in-c-5390726f3cec/" data-tooltip="Writing native WinDbg extensions in C#" aria-label="NEXT: Writing native WinDbg extensions in C#">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/" data-tooltip="Reading AsyncLocal values from a memory dump" aria-label="PREVIOUS: Reading AsyncLocal values from a memory dump">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

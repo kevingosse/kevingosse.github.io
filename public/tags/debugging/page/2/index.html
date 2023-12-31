@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{  
+  "@context":"http://schema.org",
+  "@type":"Website",
+  "@id":"https:\/\/kevingosse.github.io\/",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "name":"minidump.net",
+  "description":"",
+  "url":"https:\/\/kevingosse.github.io\/tags\/debugging\/",
+  "keywords":"[]"
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="">
+
+
+<meta property="og:description" content="">
+<meta property="og:type" content="website">
+<meta property="og:title" content="debugging">
+<meta name="twitter:title" content="debugging">
+<meta property="og:url" content="https://kevingosse.github.io/tags/debugging/">
+<meta property="twitter:url" content="https://kevingosse.github.io/tags/debugging/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="">
+<meta name="twitter:description" content="">
+<meta property="og:locale" content="en-us">
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>debugging</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+      <link rel="alternate" type="application/rss+xml" title="RSS" href="/tags/debugging/index.xml">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/tags/debugging/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+        
+
+      
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        
+          <section class="postShorten-group main-content-wrap">
+            
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/" aria-label="Open the post: Investigating an InvalidProgramException from a memory dump (part 1 of 3)">
+      
+          Investigating an InvalidProgramException from a memory dump (part 1 of 3)
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-08-26T00:00:00Z">
+        
+  
+  
+  
+  
+    August 26 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.
+As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.
+      
+      <p>
+        
+          <a href="https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/" class="postShorten-excerpt_link link" aria-label="Open the post: Investigating an InvalidProgramException from a memory dump (part 1 of 3)">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/" aria-label="Open the post: Check what .net core GC keywords are enabled without a debugger">
+      
+          Check what .net core GC keywords are enabled without a debugger
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-05-18T00:00:00Z">
+        
+  
+  
+  
+  
+    May 18 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        … and find an unexpected bug in the process
+We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.
+Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&rsquo;m not sure the second part could be done on Windows without installing additional tools.
+      
+      <p>
+        
+          <a href="https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/" class="postShorten-excerpt_link link" aria-label="Open the post: Check what .net core GC keywords are enabled without a debugger">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/" aria-label="Open the post: Another way to use your debugging tools">
+      
+          Another way to use your debugging tools
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-02-21T00:00:00Z">
+        
+  
+  
+  
+  
+    February 21 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        It&rsquo;s Friday! And when it&rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:
+It&rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &ldquo;Hide&rdquo; button wasn&rsquo;t grayed out. To make things better, the close button doesn&rsquo;t work either, and the window is top-most. So the only choices you have is either to restart now or to spend the Friday with this window eating your precious screen real estate.
+      
+      <p>
+        
+          <a href="https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/" class="postShorten-excerpt_link link" aria-label="Open the post: Another way to use your debugging tools">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/" aria-label="Open the post: Dumping stack objects with ClrMD">
+      
+          Dumping stack objects with ClrMD
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2019-12-18T00:00:00Z">
+        
+  
+  
+  
+  
+    December 18 2019
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.
+      
+      <p>
+        
+          <a href="https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/" class="postShorten-excerpt_link link" aria-label="Open the post: Dumping stack objects with ClrMD">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/" aria-label="Open the post: Debugging and fixing the Twitch desktop client">
+      
+          Debugging and fixing the Twitch desktop client
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2019-05-11T00:00:00Z">
+        
+  
+  
+  
+  
+    May 11 2019
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        I&rsquo;ve seen through the years that debugging is often misunderstood. Many people that are unfamiliar with debugging tend to think it&rsquo;s all about mastering difficult and austere tools. I often had coworkers ask me &ldquo;what sequence of commands should I type in WinDbg to debug this kind of issue?&rdquo;, as if debugging was about applying a simple flowchart with a complex tool. This is in fact quite the opposite. Debugging is all about the mindset and the methodology, and the tooling is the simple part.
+      
+      <p>
+        
+          <a href="https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/" class="postShorten-excerpt_link link" aria-label="Open the post: Debugging and fixing the Twitch desktop client">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+              
+  
+    
+      
+        
+      
+    
+  
+
+
+  
+
+<article class="postShorten postShorten--thumbnailimg-right">
+  <div class="postShorten-wrap">
+    
+    <div class="postShorten-header">
+      <h1 class="postShorten-title">
+      
+        <a class="link-unstyled" href="https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">
+      
+          Writing ClrMD extensions for WinDbg and LLDB
+        </a>
+      </h1>
+      
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2019-03-14T00:00:00Z">
+        
+  
+  
+  
+  
+    March 14 2019
+  
+
+      </time>
+    
+    
+  </div>
+
+    </div>
+    <div class="postShorten-excerpt">
+      
+        You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.
+      
+      <p>
+        
+          <a href="https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/" class="postShorten-excerpt_link link" aria-label="Open the post: Writing ClrMD extensions for WinDbg and LLDB">Continue reading</a>
+        
+        
+      </p>
+    </div>
+  </div>
+  
+</article>
+
+            
+            
+  <div class="pagination-bar">
+    <ul class="pagination">
+      
+        
+          <li class="pagination-prev">
+            <a class="btn btn--default btn--small" href="/tags/debugging/" aria-label="NEWER POSTS">
+              <i class="fa fa-angle-left text-base icon-mr"></i>
+              <span>NEWER POSTS</span>
+            </a>
+          </li>
+        
+        
+      
+      <li class="pagination-number">page 2 of 2</li>
+    </ul>
+  </div>
+
+
+          </section>
+        
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": ".NET ThreadPool starvation, and how queuing makes it worse",
+  
+  "datePublished": "2020-04-27T00:00:00Z",
+  "dateModified": "2020-04-27T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/kevingosse.github.io\/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+  },
+  "description": "There has been plenty of talk about ThreadPool starvation in .NET:\nhttps://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/\nhttps://blogs.msdn.microsoft.com/vsoservice/?p=17665\nOr even on the Criteo\u0026rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/\nWhat is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.\nTo illustrate that, consider a web server that would execute this code:\n/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="There has been plenty of talk about ThreadPool starvation in .NET:
+https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
+https://blogs.msdn.microsoft.com/vsoservice/?p=17665
+Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
+What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
+To illustrate that, consider a web server that would execute this code:
+/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
+
+
+<meta property="og:description" content="There has been plenty of talk about ThreadPool starvation in .NET:
+https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
+https://blogs.msdn.microsoft.com/vsoservice/?p=17665
+Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
+What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
+To illustrate that, consider a web server that would execute this code:
+/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".NET ThreadPool starvation, and how queuing makes it worse">
+<meta name="twitter:title" content=".NET ThreadPool starvation, and how queuing makes it worse">
+<meta property="og:url" content="https://kevingosse.github.io/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/">
+<meta property="twitter:url" content="https://kevingosse.github.io/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="There has been plenty of talk about ThreadPool starvation in .NET:
+https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
+https://blogs.msdn.microsoft.com/vsoservice/?p=17665
+Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
+What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
+To illustrate that, consider a web server that would execute this code:
+/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
+<meta name="twitter:description" content="There has been plenty of talk about ThreadPool starvation in .NET:
+https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/
+https://blogs.msdn.microsoft.com/vsoservice/?p=17665
+Or even on the Criteo&rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/
+What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.
+To illustrate that, consider a web server that would execute this code:
+/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2020-04-27T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2020-04-27T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="software-development">
+    
+      <meta property="article:tag" content="dotnet">
+    
+      <meta property="article:tag" content="threads">
+    
+      <meta property="article:tag" content="csharp">
+    
+      <meta property="article:tag" content="scalability">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>.NET ThreadPool starvation, and how queuing makes it worse</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      .NET ThreadPool starvation, and how queuing makes it worse
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2020-04-27T00:00:00Z">
+        
+  
+  
+  
+  
+    April 27 2020
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>There has been plenty of talk about ThreadPool starvation in .NET:</p>
+<ul>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/archive/blogs/vancem/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall?WT.mc_id=DT-MVP-5003493">https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/</a></p>
+</li>
+<li>
+<p><a href="https://devblogs.microsoft.com/devopsservice/?p=17665&amp;WT.mc_id=DT-MVP-5003493">https://blogs.msdn.microsoft.com/vsoservice/?p=17665</a></p>
+</li>
+<li>
+<p>Or even on the Criteo&rsquo;s blog: <a href="http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/">http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/</a></p>
+</li>
+</ul>
+<p>What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.</p>
+<p>To illustrate that, consider a web server that would execute this code:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#75715e">/// ProcessRequest is called for every new request</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> ProcessRequest()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    DoSomethingAsync().Wait();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>You start an asynchronous operation (<code>DoSomethingAsync</code>) then block the current thread. At some point, the asynchronous operation will need a thread to finish executing, so it&rsquo;ll ask the ThreadPool for a new one. You end up using two threads for an operation that could be done with just one: one waiting actively on the Wait() method call and another one performing the continuation. In most cases this is fine. But it can become a problem if you deal with a burst of requests:</p>
+<ul>
+<li>
+<p>Request 1 arrives at the server. <code>ProcessRequest</code> is called from a ThreadPool thread. It starts the asynchronous operation then waits on it</p>
+</li>
+<li>
+<p>Requests 2, 3, 4, and 5 arrive at the server</p>
+</li>
+<li>
+<p>The asynchronous operation completes and its continuation is enqueued to the ThreadPool</p>
+</li>
+<li>
+<p>In the meantime, since 4 requests have arrived, 4 calls to <code>ProcessRequest</code> have been enqueued before your continuation</p>
+</li>
+<li>
+<p>Each of those requests will, in turn, start an asynchronous operation and block their ThreadPool thread</p>
+</li>
+</ul>
+<p>Combined with the fact that the ThreadPool grows very slowly (one thread per second or so), it&rsquo;s easy to understand how a burst of requests can push a system into a situation of thread starvation. But there&rsquo;s something missing in the picture: while the burst could temporarily lock the system unless the workload is continuously increasing, the ThreadPool should be capable of growing enough to eventually recover.</p>
+<p>Yet, it does not fit what we observed on our own servers. We usually restart our instances as soon as starvation happens, but in one case we didn&rsquo;t. The ThreadPool grew until its hardcoded limit (32767 threads), and the system never recovered:</p>
+<p><img src="data:image/jpeg;base64,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QC5c4XLnHJ6SrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOFy5wEq4ALlzhcucBKuAC5c4XLnASrgAuXOPLlzgJVwe4fK1f/btW+2v/AJzH1QZlY9o+V69+3at9tf8AzmNfhONXkjB45r/H6kDdbrTSWG26pMQgktkSUvLIiLHcREYm4/rvW03v1+IANGJ+pX/Ix4f6dH8Rx/Xetpvfr8Q4/rvW03v1+IAOSjj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiHH9d62m9+vxAAA4/rvW03v1+Icf13rab36/EAADj+u9bTe/X4hx/Xetpvfr8QAAOP671tN79fiNUmTJapclSpDpmbqzMzWZmZmYANXhf3+hk8V+31P//Z" alt=""></p>
+<p>If you do the math, 32767 threads should be more than enough to handle the 1000–2000 QPS that our servers process, even if every request required 10 threads!</p>
+<p>It seems there&rsquo;s something else going on.</p>
+<h1 id="the-part-where-things-get-worse">The part where things get worse</h1>
+<p>Let&rsquo;s consider the following code. Take a minute to guess what will happen:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading.Tasks;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Starvation
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Console.WriteLine(Environment.ProcessorCount);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            ThreadPool.SetMinThreads(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Factory.StartNew(
+</span></span><span style="display:flex;"><span>                Producer,
+</span></span><span style="display:flex;"><span>                TaskCreationOptions.None);
+</span></span><span style="display:flex;"><span>            Console.ReadLine();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Producer()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Process();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">200</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">async</span> Task Process()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">await</span> Task.Yield();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> tcs = <span style="color:#66d9ef">new</span> TaskCompletionSource&lt;<span style="color:#66d9ef">bool</span>&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Run(() =&gt;
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>                tcs.SetResult(<span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>            });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            tcs.Task.Wait();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Console.WriteLine(<span style="color:#e6db74">&#34;Ended - &#34;</span> + DateTime.Now.ToLongTimeString());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Producer enqueues 5 calls to Process every second. In Process, we yield to avoid blocking the caller, then we start a task that will wait 1 second and wait for it. In total, we start 5 tasks per second and each of those tasks will need an additional task. So we need 10 threads to absorb the constant workload. The ThreadPool is manually configured to start with 8 threads, so we are 2 threads short. My expectations are that the program will struggle for 2 seconds until the ThreadPool grows to absorb the workload. Then it needs to grow a bit further to process the additional work-items that we enqueued during the 2 seconds. After a few seconds, the situation will stabilize.</p>
+<p>But if you run the program, you&rsquo;ll see that it managed to display &ldquo;Ended&rdquo; a few times in the console, then nothing happens anymore:</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA4YAAAE2CAIAAACyRBsGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAgAElEQVR4nO3db4gbeZ7n+W86057qmp696bmDhQsJMrdcvUNF790NLhBRhUCiOY6qjmWbJa6XJMH9zH4gQflBDAmmH9zc9ZrVro61QYLruv03uSXyaIKjH6jL+4dFAUmXNpaqgd2p6LlrezaTy4w5ZqpuqrK6291TtlP3IEJSRCgi9CeVGXb6/aIe2Ar9fvH7hbLkT/7+RKxcaz0SAAAAID9rIvJh7St5NwMAAAAvqNfbv7qUdxsAAADwoiOSAgAAIGdEUgAAAOSMSAoAAICcEUkBAACQMyIpAAAAckYkBQAAQM6IpAAAAMgZkRQAAAA5W8s+7Lp/8icP/vPUWr74+aOf/+LR05OT//Jrv/WnB39W+r2/+db/8N9fukTeBQAAwHRTIukvfvnod//mqzI4mb3Ga//d3/rjj92/+qu/+spXeE4pAAAAppsSSUWkWPivf+s3U8PlYDAYDEREVlZkZWVFRJ48efqf/vjj5bUQAADguefHpGxBqHo2rKysfPjhh9euXUs8+tFHH73++utLbPBMc+v/8kf//n/6wb/5g//9X//P//Rf/y//4l99f+f+33/v/X/2o96XX375+eeff/LJJ5988skvf/nLo7/4+Y1/+H63/7Ps2h7ee3Nl7Ob98ZH7N1fevPcw4e3hN6W+8VRmPnVuUvt8/2bK5cy7Ybk3IO8rE27GYqd/4bqW8cM07VzJRaPfNisrK7P+sC7vx/oCf4gA5jbIlHfr4j788MPXX3/9o48+mjzk59EPP/xwiaebKZJ+8ssvP/7zv3Q/+f9++pef/Mlnf/F/ffHn//cv/t9PHz968vhx5H0rsvobT1Zfeppe08N7b668eusb748u//vyo/F34VvfvvHBD3+cS7rJ8dQzSmzhw3tvrrwtocv52s/OvQ+5X7o5r8w5ROjoKd76wWAw+MFbi1T0onUts8CUc6VXeGN8rQaD979x69XzTWAX+EMEcMFdu3YtMZWO8mjaAOpipkTSwWDw9OnJV15a/dp/cfm3f/vyV796afXK08HqlyeXvpRLT0Xk0qVLq6urq6urKyuXVi6d/MZv/9WlK0+ePk1ee/rw3ndvyd0H4a+/t34Q/i586/fvSl6ZNL9TzyihhQ9//MMP3rj7+6HL+c47V5+FhuXegGfjypzei9W186jwrR8MHtx94923zzGUXuAPEcCFN5lKzyiPytRIejIYPH168tJvrK79xsnnv/7iL3752RePf/6rk0e/Pnn05cmXIrK6unb58uXLly+vrl5auTS48tUvL609efo0caD0/j+69cGN7yV98z6896b/a/vVb31Hbv2juf6xGM9+jX/xD83WjV70Z+H9d9+8P1lwyqn9KhNWEIzquB+d5o/MGMaWJ8TaNmMXJlt49evfkA9++iCrxRMNiI6QjNcmTFyfaA2jCmZq2JTaxg3wWzM+FB0fmvUaznxl7t9cWXn7Xfng1qujCsPniF7+Uftv3lyJf7L+O5PKTp4iNuyV0in/jKODc3/oF6Frk/WEag+da+4Ko66+870b8u6PIu1L/PlLbkna/0HDSzR8//gL4QJ/iFGTV/LhvTfjXx7Dv2VcdgDPlHAqPbs8KjNO3P/y8a+9409/PfjVpStPVq88vXT5yeqVp5dWT0RkZUVEBiIDEVlZHVz5yq/XLj9OruX+j96VG9+eMj909VvfeSP0j8U0D++9+fbHdx/4U1/fGb326g+/82A8TTf+Wv34+z967cFgMPjBWwkFs059/+ar8fFdkfs3V0Z1DL7307dvfRBuV2h9woO7H789/gcmdt45ujDZwrd+/+4b776dvAw2uQGZxtcnVsODu6/N17Ck2lI+lA9uvfpd+cPgNDI+Msc1nPnKvPWDweD9G/LG3WG75OGPfzpsVuTs4fb/4Ns35OPRioiHP/5h8JtVYtnJU8z+ubz7dnAl3r/xwa3v+k1/obomkv7zEDN7hQlefe2NYbcX+MlMk/6FcIE/xGjZiSt59Z0/vPvGu98PEvJ3b8ndB36/0i87MJeVGeTdxotglErPLo+KiFxrPRqk+0n/P/zFp5/9g/+j+63mP/7b9/7Xb7f/4d/93/7B//hPvv/3/sUf/P3/81/+/Ivjzz///NNPP/30009/8Yuf/9nnf/4H/+4f/9sHvX++s/vo0US179+IrepK9uDuG5G3xf8eVOV/pSYcHB2LFX9w943QgaRa0079/g2JVJl8onD/4oeirYied44uZDRbJNLG9AbEDo1fj16f5E9r9oZN1pZcMH6acbl5ruEcVyah4qRD6e1PPFGs2ugpQn/L+FzSfz5fpK6l/zzEGzpjhSl9GlV26p/MtP+zYjVc4A8xud2TXw7pLUhtNHDRyAzbm86nJQsY7WT68MMPz6L+a61HM42SXlodrF15unb5yerlJ2uXH69dfrJ2+emlSyeDgb+W9NLq6qWTk8Fvrr70915763e/9vVTZeSr73zvxszjpFe/9Z033n07Mi/9o+GklO/V0NilfOPrV1MLppz64++/+fa7N97/ycR6g4c/+zhUn/gjL+M2RA7J1a9/wx/HmDzvXF1IvDhX3/nJwB+4eDWoJaMBmcZlEoe052xYtLbUD+WN116NtnNUZOZrmNKAhCuTZDyB+Pa7ye0P7VB5+OMffhC6MGllk037XKLHhq+/YF1L/nmYMMe1mvTwZx+Pmz3nT2ZWnSlfCGkNuxgf4rhs1pfD2ytvvztatpV52QE8g0bz9Rl78E9vpki6snqyevnJ6tqT1bWnq5efrl5+urb65NKlk5PByZMnjx8/fvzll48fP34sJ/LXX/rrX137zeRaQpNl2d769o1gpmcovdjVd34SzC+FIkr89+2k3aSJBRNOnXr+Bz9d6Ft08rzzdSGlhaNtG4nHlmj+hk0rOL+5PrvsK3P/5spKaALxRtoph//mh//Fn7Xs6b2IXTvTCh/89IM3vvOtIF8t6Sdz2hfCBf4Qh1KvpJ/OIxF/mV8IAM5WeP1o2h78pZhxlPRk9fKT1StP1i4/WVt7srr2ePXy40urJ4PBYDAQkRWRwcnJydOnT09OnqbeV+vqt77zxgcz7V2K3DXl6re+80ZsI0D8l/mr7/xk9KU+c/CNF0w4tYjIN773kwd35darE8s1J040/idpsg2xEZTJ887ehYyb54z2TExtQEKjp/Qu9cVZGpZZMPLhjj7aBa7hLFcm5uHPPpbxEPho7Cy1d/dD/+LPXnZk9s8l8ewvRteSfx5mN/3uUvdvjgbsFvjJjBn9H5TxhTC1Yc/7h5hYdlzJve/e+sb7D+7KaP3pXN/SAHI1uZ/p7FLpTJH0v1r7zd/72t/4vb929b/9rVf/m69+/W+9/LvqS6/9zuBrJyejJDo4CQRbnZJcfecn79+ILem/f/Pm/fAeUV/krin+PG14U+vb7w7vn+IXH/rG16/K1Xe+d+OD0GL5h/duJo8+xAsmnXrU7vHugPDNAd4IrfG/f3M8MzbZhu/eEr/Fk+eduwuhFj6892Zkp+33g9n2jAbIq6+NfzEINzoqVsPDe/fuJ1Wb1rDs2mIFxx9u6KOd6xrOfmV8kX/9h/80Prz33azpw7e+feODH37/hxK+c09G2cQbIWR9LtlejK75En8e5pB5M6iH995cefvdG+8HY3IL/GSm/R+U8YUw2bAL8yGOvw/TruSwkqvv/OEolM74LQ0gb2n7688qlc6yvenXv/7Vz7/4YvTfF18cHx9//tlnnx0ff/7FF8eff/75Z5999pdDn31+nLy9KTBc0u8b71JKW1Y/WSi2t2Dy1cgkVfKy/5SC0TdGivh13rgbbmqolhvvZzQ5ui0g+uIcXZhsYWw2bmJjR3INo1LhRidvWJisYLaGZdcW2+bwfvgyxuub5RrOd2WG5Ud7pUZ1RbePJGyqi54wpWz8FAlbORLaP/nzmbFB7aJ2LevnIXULT2aF0a+biZ+wUe/n+8lM/D8oeraJL4Rowy7Khxi9+JNXMtqoyN+yvkmAC0pmkHcbIyRzM5O/4WlZ57rWerRyrfXow1rqI+z/4x+7//n/+bO11dVZruPoan7x2afG3/07L7300uylJjy89+arP/1eLguMFjz1/Zsr33/tweQ+qDOQ48XJNnfDln3Rntkrc3p0LccKF5H0s/1MNAwAnkGvt381JZKenJx8+umnX3755Vz1fuUrX/md3/mdU94M7DnLpPdvrrwt759Xc5/Zf9nmbdjSc/wze2VOj67lWOHcUr4Q8m8YADyTpkdSZLh/M3xnlRvnlkcvknMcWgbOFl8IALAwIikAAABy9nr7VzPtuAcAAADODpEUAAAAOSOSAgAAIGdEUgAAAOSMSAoAAICcEUkBAACQMyIpAAAAckYkBQAAQM6IpAAAAMjZmoic8mH0AAAAeJENBoPj4+NTVHCFUVIAAADkjEgKAACAnBFJAQAAkDMiKQAAAHK2NvqTWu+0DSX4i2fVtlpuPk0CAADAiyUYJVXrnbZx1Kz4mo5itBt6vi0DAADAC8KPpGpVU8TZ6wYvdncsT0plMikAAABO6datW1Pf40dS9+BIpLCuDl/dKCriHe6fXdMAAADwAvDz6NRUGkzcd3csTzHanboqotY7Zsmz7rCWFAAAAIsLJ9HsVDrcce+2tio1S4y2bbeNo2aFzU0AAABY3CiD3r17N/bKpGEkVesdu631a5VKpemUTNvu1NW0MgAAAECGWB6dmkqD7U3124biNP2h0e52pemIYlxnexMAAAAWNkqisT9P8iNpfDvT/qEX2e4EAAAAzGMyg2akUj+S7h964WFR/bqhiNfvsZwUAAAA80tLn2mv+09vcltbNem0Tds2/ZedZmW7m1gAAAAAWK7RA0Xd1lallWdLAAAA8IK6NP0tAAAAwFkikgIAACBnRFIAAADkjEgKAACAnK1NfwsAAACQ6U//9E8XK/jKK68Io6QAAADIHZEUAAAAOVtmJNUbtt3Qp79vGaUAAABwYQwjqd6wYzr1C/OIe7Xese2k4Bvq9dzdDcpGKg1ONHlgsRZGPpT5GhhUGC7kvxR6xa+eXwcAAEDuwqOkTrMSstW6CI+4V+sd274tu5Y3cUhv2GYp6HPNEqM9T+hT65ulyfraxlFwDZtOyZytvowWdrdHn8acDVSrmuJYlqdo1ViR8St6Od4DAACAfFzstaR6o631a5Wt1v7EIbW+WRKnud0VERG3tevIZH5Lo9ZvG4rTbDrhc5VD9Ul3x/IU4/rUEciMFkb4DSxuzNi+qqZ4h71eP5xJN4qKZ1nOsBK9XLCaCTkYAADg3E2NpGq9Y3fq6nhKOjZUF5pcNmOjbuF55/Qp6XipZepupw32qlVNEWevO2pQuSSxTDox0T2iXzcUz9rphl9T1wviHY6Dpdvre1JYDxdOqjC9hfEGrxdmeFfw3qqmeP2e60YzqYhIb88plXUR0cuFfm9fJNZGAACAHMw0SqoY7XZxN5iQVozbo1ClN2yzYNUqw8nqUBm9YZvSrIynscepNKPUudkoKqMEqdY7timW5c02DKk3zJJn3UkIkhPFZx7WnH7ShBScZphI/Vwcy6TdPadU1tX6ZqHfuwgrMwAAwEUQjqQlM7y9KTyu6Vm1YEa6uzeeP1brmynZLDg0SlDdHcsTf3Quq1Qe1HqnrfVrle1e/Ijb2kpYUutP+O9ONN/t9T0pbQ7Tulq/bSgzVZhtOJycloITjBOpiHtwNBz7HQ6zdnesQvl6UUikAADgmRF+epPTrGwnD8MdHSTFzqqmJB/xByEVo20bkVqmlcqm1jvtUMzzrNqpd2BVG7ZRCOqZafo6WES6lXCZ3NZWs2ibQZ89q2l5pnY4ZYnoVN3tSjc4c6dtazP0OXqBu3uOaWpVNVTK7fULba2/44rIwZEYxQ0R0ikAAMjTGT5QND3hLsZtbVVay6ps/9CTkmEcNSvDeLlRVMTrZ0dIf/r8TlqvRvlRRERvGItF72Rua9cx/HCZWada1RQRxbRtc/yiVlVb41HgpV5IAACA0ztFJHUPjoLNMX5G0sslkWBh6P6hJ0ZZl+5EessqdY7cXt8zjKPx/iZ1vSDelMls/7ZJscFf07bNhPjtb8BfZiSfib9tK9IavWGbWlWdWJgAAADwrDjNTaC6e+MbJ+mNyNZ5f2WlmXQb9oxS58lt7TrjFvoT8tEVopMb5EP3CR3tzPJvbBrNo2q9Y5uF0frb9ArnoDfMxDWsMRvFyI0ERPxfDxStWi0uuGACAADgrIVHSUuR2d4Z1mp2t2vrnbY/aOg0K7X1TrsYHHJbWzXptMM1DsfuMkotXSTzBrPZw451tyvSsIctPP0yg9BaV8+qVWZc55rRwmhgd5qVytQG6uWSeFZ09YE/IKxpEqzmjQsNWQMAAORi5Vrr0Uf1l/NuBgAAAJ5Xg8Hgj/7ojxYr+8orr3zzvSsX++lNAAAAeA4QSQEAAJAzIikAAAByRiQFAABAzoikAAAAyNkZPr0JAAAAL4hXXnnlNMUZJQUAAEDOlhlJ9YZtJz2v6SxKAQAA4MIYRlK9Yccs+ODLZ5H/JM+E4Bvq9dzdDcpGKg1ONHlgsRZGPpT5GhhUGC408TxTv3p+HQAAALkLj5L6j2sfmvY00eeDWu/Y9m3ZtbyJQ3rDNktBn2uWGO15Qp9a3yzFXtIbdts4Cq5h0ymZs9WX0cLu9ujTmLOBalVTHMvyFK0aKzJ+RS/HewAAAJCPi72WVG+0tX6tstXanzik1jdL4jSD59q7rV1HJvNbGrV+21CcZtMJn6scqk+6O5anGNenjkBmtDDCb2BxY8b2VTXFO+z1+uFMulFUPMtyhpXo5YLVTMjBAAAA525qJFXrHbtTV8dT0rGhutDkshkbdQvPO6dPScdLLVN3O22wV61qijh73VGDyiWJZdKJie4R/bqheNZON/yaul4Q73AcLN1e35PCerhwUoXpLYw3eL0ww7uC91Y1xev3XDeaSUVEentOqayLiF4u9Hv7IrE2AgAA5GCmUVLFaLeLu8GEtGLcHoUqvWGbBatWGU5Wh8roDduUZmU8jT1OpRmlzs1GURklSLXesU2xLG+2YUi9YZY8605CkJwoPvOw5vSTJqTgNMNE6ufiWCbt7jmlsq7WNwv93kVYmQEAAC6CcCQtmeHtTeFxTc+qBTPS3b3x/LFa30zJZsGhUYLq7lie+KNzWaXyoNY7ba1fq2z34kfc1lbCklp/wn93ovlur+9JaXOY1tX6bUOZqcJsw+HktBScYJxIRdyDo+HY73CYtbtjFcrXi0IiBQAAz4zwrfKdZmU7eRju6CApdlY1JfmIPwipGG3biNQyrVQ2td5ph2KeZ9VOvQOr2rCNQlDPTNPXwSLSrYTL5La2mkXbDPrsWU3LM7XDKUtEp+puV7rBmTttW5uhz9EL3N1zTFOrqqFSbq9faGv9HVdEDo7EKG6IkE4BAECezvDpTekJdzFua6vSWlZl+4eelAzjqFkZxsuNoiJePztC+tPnd9J6NcqPIiJ6w1gseidzW7uO4YfLzDrVqqaIKKZtm+MXtaraGo8CL/VCAgAAnN4pIql7cBRsjvEzkl4uiQQLQ/cPPTHKunQn0ltWqXPk9vqeYRyN9zep6wXxpkxm+7dNig3+mrZtJsRvfwP+MiP5TPxtW5HW6A3b1KrqxMIEAACAZ8VpbgLV3RvfOElvRLbO+ysrzaTbsGeUOk9ua9cZt9CfkI+uEJ3cIB+6T+hoZ5Z/Y9NoHlXrHdssjNbfplc4B71hJq5hjdkoRm4kIOL/eqBo1WpxwQUTAAAAZy08SlqKzPbOsFazu11b77T9QUOnWamtd9rF4JDb2qpJpx2ucTh2l1Fq6SKZN5jNHnasu12Rhj1s4emXGYTWunpWrTLjOteMFkYDu9OsVKY2UC+XxLOiqw/8AWFNk2A1b1xoyBoAACAXK9dajz6qv5x3MwAAAPC8GgwGx8fHCxf/5ntXLvbTmwAAAPAcIJICAAAgZ0RSAAAA5IxICgAAgJwRSQEAAJAzIikAAAByRiQFAABAzpYZSfWGbSc9r+ksSgEAAODCGEZSvWHHLPjgy2eR/yTPhOAb6vXc3Q3KRioNTjR5YLEWRj6U+RoYVBguNPE8U796fh0AAAC5C4+S+o9rH5r2NNHng1rv2PZt2bW8iUN6wzZLQZ9rlhjteUKfWt8sxV7SG3bbOAquYdMpmbPVl9HC7vbo05izgWpVUxzL8hStGisyfkUvx3sAAACQj4u9llRvtLV+rbLV2p84pNY3S+I0g+fau61dRybzWxq1fttQnGbTCZ+rHKpPujuWpxjXp45AZrQwwm9gcWPG9lU1xTvs9frhTLpRVDzLcoaV6OWC1UzIwQAAAOduaiRV6x27U1fHU9KxobrQ5LIZG3ULzzunT0nHSy1TdzttsFetaoo4e91Rg8oliWXSiYnuEf26oXjWTjf8mrpeEO9wHCzdXt+Twnq4cFKF6S2MN3i9MMO7gvdWNcXr91w3mklFRHp7Tqmsi4heLvR7+yKxNgIAAORgplFSxWi3i7vBhLRi3B6FKr1hmwWrVhlOVofK6A3blGZlPI09TqUZpc7NRlEZJUi13rFNsSxvtmFIvWGWPOtOQpCcKD7zsOb0kyak4DTDROrn4lgm7e45pbKu1jcL/d5FWJkBAAAugnAkLZnh7U3hcU3PqgUz0t298fyxWt9MyWbBoVGC6u5Ynvijc1ml8qDWO22tX6ts9+JH3NZWwpJaf8J/d6L5bq/vSWlzmNbV+m1DmanCbMPh5LQUnGCcSEXcg6Ph2O9wmLW7YxXK14tCIgUAAM+MtdCfnWZlO3kY7uggKXZWNSX5iD8IqRht24jUMq1UNrXeaYdinmfVTr0Dq9qwjUJQz0zT18Ei0q2Ey+S2tppF2wz67FlNyzO1wylLRKfqble6wZk7bVuboc/RC9zdc0xTq6qhUm6vX2hr/R1XRA6OxChuiJBOAQBAntamv2VR6Ql3MW5rq9JaVmX7h56UDOOoWRnGy42iIl4/O0L60+d30no1yo8iInrDWCx6J3Nbu47hh8vMOtWqpogopm2b4xe1qtoajwIv9UICAACc3ikiqXtwFGyO8TOSXi6JBAtD9w89Mcq6dCfSW1apc+T2+p5hHI33N6nrBfGmTGb7t02KDf6atm0mxG9/A/4yI/lM/G1bkdboDdvUqurEwgQAAIBnxWluAtXdG984SW9Ets77KyvNpNuwZ5Q6T25r1xm30J+Qj64QndwgH7pP6Ghnln9j02geVesd2yyM1t+mVzgHvWEmrmGN2ShGbiQg4v96oGjVanHBBRMAAABnLTxKWorM9s6wVrO7XVvvtP1BQ6dZqa132sXgkNvaqkmnHa5xOHaXUWrpIpk3mM0edqy7XZGGPWzh6ZcZhNa6elatMuM614wWRgO706xUpjZQL5fEs6KrD/wBYU2TYDVvXGjIGgAAIBcr11qPPqq/nHczAAAA8LwaDAbHx8cLF//me1cu9tObAAAA8BwgkgIAACBnRFIAAADkjEgKAACAnBFJAQAAkDMiKQAAAHJGJAUAAEDOlhlJ9YZtJz2v6SxKAQAA4MIYRlK9Yccs+ODLZ5H/JM+E4Bvq9dzdDcpGKg1ONHlg4Ramn2umCsO9mnieqV8rvw4AAIDchUdJ/ce1D017mujzQa13bPu27FrexCG9YZuloM81S4z2PKlUrW+WYi/pDbttHAXXsOmUzNnqy2hh+rmmVlrVFMeyPEWrxtowfkUvz1srAADA2bjYa0n1Rlvr1ypbrf2JQ2p9syROM3iuvdvadWQyv6VR67cNxWk2nfC5yqH6pLtjeYpxfeoIZEYLM841tX1VTfEOe71+OJNuFBXPshyluBG0t2A103MwAADA+ZkaSdV6x+7U1fGUdGzsLzT3bcZG3cKLAWLTwxmllqm7nTbYq1Y1RZy97qhB5ZLEMunERPeIft1QPGunG35NXS+IdzgOlm6v70lhPVw4qcL0Fmacaxq1qilev+e60UwqItLbc0plXUT0cqHf2xeJtREAACAHM42SKka7XdwNJqQV4/YoVOkN2yxYtcpwsjpURm/YpjQr42nscSrNKHVuNorKKEGq9Y5timV5MhxBzKQ3zJJn3UkIkhPFZ6pvsXNlGCZSPxfHMml3zymVdbW+Wej3LsLKDAAAcBGEI2nJDG9vCo9relYtmJHu7jmjoKXWN9Pykn9oNLbX3bE88UfnskrlQa132lq/VtnuxY+4ra2EJbX+hP/uRPPdXt+T0uYwrav124YyU4WZbUs+15RSo0Qq4h4cDcd+1fWCiIh0d6xC+XpRSKQAAOCZsRb6s9OsbCdPEB8dJMXOqqYkH/EHIRWjbRuRWqaVyqbWO+1QzPOs2ql3YFUbtlEI6plp+jpY2LmVcJnc1lazaJtBnz2raXmmdpi6RPRU58osFrnA3T3HNLWqGrpSbq9faGv9HVdEDo7EKG6IkE4BAECe1qa/ZVHpCXcxbmur0lpWZfuHnpQM46hZGUa+jaIiXj87QvoLO++k9aq7XRkf0hvGYtF7tnOlUauaIqKYtm2OX9Sqams8CrzUCwkAAHB6p4ik7sFRsDnGz116uSQSLAzdP/TEKOvSnUhUWaXOkdvre4ZxNN7fpK4XxJsyme3fNik2+GvatpkQv/0N+ItH8nnOFeJv24q8Q2/YplZVJxYmAAAAPCtOcxOo7t74xkl6I7J13l9ZaSbdhj2j1HlyW7vOuIX+JHl01ebkBvnudiWi6Qxv5hrNiGq9Y5uF0frb9AozzHqumI1i5EYCIv6vB4pWrRYXXDABAABw1sKjpKXIbO8MazW727X1TtsfyHOaldp6p10MDrmtrZp02uEah2N3GaWWLpJ5g9nsYce62xVp2MMWnn6ZQWitq2fVKjOuc81q4fz0ckk8K7r6wB8Q1jQJVvPGhYasAQAAcrFyrfXoo/rLeTcDAAAAz6vBYHB8fLxw8W++dxJlvpYAABRVSURBVOViP70JAAAAzwEiKQAAAHJGJAUAAEDOiKQAAADIGZEUAAAAOSOSAgAAIGdEUgAAAORsmZFUb9h20vOazqIUAAAALoxhJNUbdsyMD758HvhP8kwIvqFez93doGyk0uBEkwcWbmH6uWaqMNyrieeZ+rXy6wAAAMhdeJTUf4T60IKPtHzGqPWObd+WXcubOKQ3bLMU9LlmidGeJ5Wq9c1S7CW9YbeNo+bwkfQlc7b6MlqYfq6plVY1xbEsT9GqsTaMX9HL89YKAABwNi72WlK90db6tcpWa3/ikFrfLInTDJ5r77Z2HZnMb2nU+m1DcZpNJ3yucqg+6e5YnmJcnzoCmdHCjHNNbV9VU7zDXq8fzqQbRcWzLEcpbgTtLVjN9BwMAABwfqZGUrXesTt1dTwlHRv7C819m7FRt/BigNj0cEapZepupw32qlVNEWevO2pQuSSxTDox0T2iXzcUz9rphl9T1wviHY6Dpdvre1JYDxdOqjC9hRnnmkataorX77luNJOKiPT2nFJZFxG9XOj39kVibQQAAMjBTKOkitFuF3eDCWnFuD0KVXrDNgtWrTKcrA6V0Ru2Kc3KeBp7nEozSp2bjaIySpBqvWObYlmeDEcQM+kNs+RZdxKC5ETxmepb7FwZhonUz8WxTNrdc0plXa1vFvq9i7AyAwAAXAThSFoyw9ubwuOanlULZqS7e84oaKn1zbS85B8aje11dyxP/NG5rFJ5UOudttavVbZ78SNuaythSa0/4b870Xy31/ektDlM62r9tqHMVGFm25LPNaXUKJGKuAdHw7Ffdb0gIiLdHatQvl4UEikAAHhmrIX+7DQr28kTxEcHSbGzqinJR/xBSMVo20aklmmlsqn1TjsU8zyrduodWNWGbRSCemaavg4Wdm4lXCa3tdUs2mbQZ89qWp6pHaYuET3VuTKLRS5wd88xTa2qhq6U2+sX2lp/xxWRgyMxihsipFMAAJCntelvWVR6wl2M29qqtJZV2f6hJyXDOGpWhpFvo6iI18+OkP7CzjtpvepuV8aH9IaxWPSe7Vxp1KqmiCimbZvjF7Wq2hqPAi/1QgIAAJzeKSKpe3AUbI7xc5deLokEC0P3Dz0xyrp0JxJVVqlz5Pb6nmEcjfc3qesF8aZMZvu3TYoN/pq2bSbEb38D/uKRfJ5zhfjbtiLv0Bu2qVXViYUJAAAAz4rT3ASquze+cZLeiGyd91dWmkm3Yc8odZ7c1q4zbqE/SR5dtTm5Qb67XYloOsObuUYzolrv2GZhtP42vcIMs54rZqMYuZGAiP/rgaJVq8UFF0wAAACctfAoaSky2zvDWs3udm290/YH8pxmpbbeaReDQ25rqyaddrjG4dhdRqmli2TeYDZ72LHudkUa9rCFp19mEFrr6lm1yozrXLNaOD+9XBLPiq4+8AeENU2C1bxxoSFrAACAXKxcaz36qP5y3s0AAADA82owGBwfHy9c/JvvXbnYT28CAADAc4BICgAAgJwRSQEAAJAzIikAAAByRiQFAABAzoikAAAAyBmRFAAAADlbZiTVG7ad9LymsygFAACAC2MYSfWGHTPjgy+fB/6TPBOCb6jXc3c3KBupNDjR5IGFW5h+rpkqDPdq4nmmfq38OgAAAHIXHiX1H6E+tOAjLZ8xar1j27dl1/ImDukN2ywFfa5ZYrTnSaVqfbMUe0lv2G3jqDl8JH3JnK2+jBamn2tqpVVNcSzLU7RqrA3jV/TyvLUCAACcjYu9llRvtLV+rbLV2p84pNY3S+I0g+fau61dRybzWxq1fttQnGbTCZ+rHKpPujuWpxjXp45AZrQw41xT21fVFO+w1+uHM+lGUfEsy1GKG0F7C1YzPQcDAACcn6mRVK137E5dHU9Jx8b+QnPfZmzULbwYIDY9nFFqmbrbaYO9alVTxNnrjhpULkksk05MdI/o1w3Fs3a64dfU9YJ4h+Ng6fb6nhTWw4WTKkxvYca5plGrmuL1e64bzaQiIr09p1TWRUQvF/q9fZFYGwEAAHIw0yipYrTbxd1gQloxbo9Cld6wzYJVqwwnq0Nl9IZtSrMynsYep9KMUudmo6iMEqRa79imWJYnwxHETHrDLHnWnYQgOVF8pvoWO1eGYSL1c3Esk3b3nFJZV+ubhX7vIqzMAAAAF0E4kpbM8Pam8LimZ9WCGenunjMKWmp9My0v+YdGY3vdHcsTf3Quq1Qe1HqnrfVrle1e/Ijb2kpYUutP+O9ONN/t9T0pbQ7Tulq/bSgzVZjZtuRzTSk1SqQi7sHRcOxXXS+IiEh3xyqUrxeFRAoAAJ4Za6E/O83KdvIE8dFBUuysakryEX8QUjHathGpZVqpbGq90w7FPM+qnXoHVrVhG4Wgnpmmr4OFnVsJl8ltbTWLthn02bOalmdqh6lLRE91rsxikQvc3XNMU6uqoSvl9vqFttbfcUXk4EiM4oYI6RQAAORpbfpbFpWecBfjtrYqrWVVtn/oSckwjpqVYeTbKCri9bMjpL+w805ar7rblfEhvWEsFr1nO1cataopIopp2+b4Ra2qtsajwEu9kAAAAKd3ikjqHhwFm2P83KWXSyLBwtD9Q0+Msi7diUSVVeocub2+ZxhH4/1N6npBvCmT2f5tk2KDv6Ztmwnx29+Av3gkn+dcIf62rcg79IZtalV1YmECAADAs+I0N4Hq7o1vnKQ3Ilvn/ZWVZtJt2DNKnSe3teuMW+hPkkdXbU5ukO9uVyKazvBmrtGMqNY7tlkYrb9NrzDDrOeK2ShGbiQg4v96oGjVanHBBRMAAABnLTxKWorM9s6wVrO7XVvvtP2BPKdZqa132sXgkNvaqkmnHa5xOHaXUWrpIpk3mM0edqy7XZGGPWzh6ZcZhNa6elatMuM616wWzk8vl8SzoqsP/AFhTZNgNW9caMgaAAAgFyvXWo8+qr+cdzMAAADwvBoMBsfHxwsX/+Z7Vy7205sAAADwHCCSAgAAIGdEUgAAAOSMSAoAAICcEUkBAACQMyIpAAAAckYkBQAAQM6WGUn1hm0nPa/pLEoBAADgwhg+vWny0Z6LP0LomRM8VynhQfTjXs/d3aBspNLQA5zmexxUcgsnPpTZ6wwqDPfKfyn0il/96R9bBQAAcErhB4pexHCi1jttQ6ym5ZlG7JDesM1S0Ge13mm3OzJ7KlXrm6XYS8P6trrBXzr1/Rnqy2ihyKIfilrVFMeyCoZWVVtuuA3K6BW9HO8BAABAPi72WlK90db6tcpWa3/ikFrfLInTDOKe29p1RNGq6mz1qvXbhuI0m074XOVQfdLdsTzFuD51QUJGC09BrWqKd9jr9b1QnzaKimdZjlLcCNpbsJqWt8zTAgAALGZqJFXrHbtTV9V6x/Z16pHcpjfsodjMf/hQfLVoRqll6m5XUsYp1aqmiLM3Gn/UyyWJZVK/y7Hu+m++biietRMZvFTXC+IdjoOl2+t7UlgPF06qML2Fp6BWNcXr91w3mklFRHp7Tqmsi4heLvR7+yKxNgIAAORgplFSxWi3i7uVSqVSaTqKcXsUqvSGbRasWqUSHAuV0Ru2Kc3RkZI5TqUZpc7NRlEZJUi13rFNsSxPhiOImfSGWfKsOwlBcqL4TPVlK5kpqT7dMJH6uTiWSbt7Tqmsq/XNQr93MVYKAwCA5184ko7TTzwBeVYtmJHu7jmjoKXWN1OyWXBoNI7Y3bE88UfnskrlQa132lq/VtnuxY+4ra1KZWIM05/w351ovtvre1LaHKZ1tX57uM9pSoUZutuVoZrllczEIdvJHo0SqYh7cDQc+1XXC36lO1ahfL0oJFIAAPDMmG1709FBUuysakryEX8QUjHadmTDztG0UtnC29llOXcEqDZsoxDUM9P0dbCIdCvhMrmtrWbRNoM+e1bT8kztcFlLRN3WHUtrT+5WSmhi5AJ39xzT1Kpq6Eq5vX6hrfV3XBE5OBKjuCFCOgUAAHlam/6WRS17A7/b2qq0llXZ/qEnJcM4CjbISzCV38+OkP4i0jtpvepuV8aH9IaxWPRO4R4ciRSmvk2taoqIYtq2OX5Rq6qt8SjwUi8kAADA6Z0ikvoZaV0djrHp5ZJIsDB0/9ATo6xLdyK9ZZU6R26v7xnG0Xh/k7peEG/KZLZ/26TY4K9p22bSLU/LJXGaS4zk/oWalnH9bVuR1ugN29Sq6sTCBAAAgGfFaW4C1d0b3zgpdld3f2WlmbQjJ6PUeXJbu864hf6EfHSF6OQG+dDaztHOLKdZqVRieVStd2yzMFp/m17h7PSGGb7HVKqNYuRGAiL+rweKVq0WF1wwAQAAcNbCo6SlyGzvDGs1u9u19U7bHzR0mpXaeqddDA65ra2adNrhGodjdxmlli6SeYPZ7GHHutsVadjDFp5+mUForatn1SozrnPNaGFk8azTrFSmt08vl8SzoqsP/AFhTZNgNW9caMgaAAAgFyvXWo8+qr+cdzMAAADwvBoMBsfHxwsX/+Z7Vy7205sAAADwHCCSAgAAIGdEUgAAAOSMSAoAAICcEUkBAACQMyIpAAAAckYkBQAAQM6WGUn1hm0nPa/pLEoBAADgwhg+vWny0Z4zPL3peRE8BinhQfTjXs/d3aBspNLw85bmehxUcgsnPpTZ6wwqDPfKfyn0il/96R9bBQAAcErhB4pexHCi1jttQ6ym5ZlG7JDesM1S0Ge13mm3OzJ7KlXrm6XYS8P6trrBXzr1/Rnqy2ihyKIfilrVFMeyCoZWVVtuuA3K6BW9HO8BAABAPi72WlK90db6tcpWa3/ikFrfLInTDOKe29p1RNGq6mz1qvXbhuI0m074XOVQfdLdsTzFuD51QUJGC09BrWqKd9jr9b1QnzaKimdZjlLcCNpbsJqWt8zTAgAALGZqJFXrHbtTV9V6x/Z16pHcpjfsodjMf/hQfLVoRqll6m5XUsYp1aqmiLM3Gn/UyyWJZVK/y7Hu+m++biietRMZvFTXC+IdjoOl2+t7UlgPF06qML2Fp6BWNcXr91w3mklFRHp7Tqmsi4heLvR7+yKxNgIAAORgplFSxWi3i7uVSqVSaTqKcXsUqvSGbRasWqUSHAuV0Ru2Kc3RkZI5TqUZpc7NRlEZJUi13rFNsSxPhiOImfSGWfKsOwlBcqL4TPVlK5kpqT7dMJH6uTiWSbt7Tqmsq/XNQr93MVYKAwCA5184ko7TTzwBeVYtmJHu7jmjoKXWN1OyWXBoNI7Y3bE88UfnskrlQa132lq/VtnuxY+4ra1KZWIM05/w351ovtvre1LaHKZ1tX57uM9pSoUZutuVoZrllczEIdvJHo0SqYh7cDQc+1XXC36lO1ahfL0oJFIAAPDMmG1709FBUuysakryEX8QUjHadmTDztG0UtnC29llOXcEqDZsoxDUM9P0dbCIdCvhMrmtrWbRNoM+e1bT8kztcFlLRN3WHUtrT+5WSmhi5AJ39xzT1Kpq6Eq5vX6hrfV3XBE5OBKjuCFCOgUAAHlam/6WRS17A7/b2qq0llXZ/qEnJcM4CjbISzCV38+OkP4i0jtpvepuV8aH9IaxWPRO4R4ciRSmvk2taoqIYtq2OX5Rq6qt8SjwUi8kAADA6Z0ikvoZaV0djrHp5ZJIsDB0/9ATo6xLdyK9ZZU6R26v7xnG0Xh/k7peEG/KZLZ/26TY4K9p22bSLU/LJXGaS4zk/oWalnH9bVuR1ugN29Sq6sTCBAAAgGfFaW4C1d0b3zgpdld3f2WlmbQjJ6PUeXJbu864hf6EfHSF6OQG+dDaztHOLKdZqVRieVStd2yzMFp/m17h7PSGGb7HVKqNYuRGAiL+rweKVq0WF1wwAQAAcNbCo6SlyGzvDGs1u9u19U7bHzR0mpXaeqddDA65ra2adNrhGodjdxmlli6SeYPZ7GHHutsVadjDFp5+mUForatn1SozrnPNaGFk8azTrFSmt08vl8SzoqsP/AFhTZNgNW9caMgaAAAgFyvXWo8+qr+cdzMAAADwvBoMBsfHxwsX/+Z7Vy7205sAAADwHCCSAgAAIGdEUgAAAOSMSAoAAICcEUkBAACQMyIpAAAAckYkBQAAQM6IpAAAAMgZkRQAAAA5I5ICAAAgZ0RSAAAA5IxICgAAgJwRSQEAAJAzIikAAAByRiQFAABAzoikAAAAyBmRFAAAADkjkgIAACBnayIyGAzSDq+srJxjYwAAAPAiYpQUAAAAOSOSAgAAIGdEUgAAAOSMSAoAAICcrQl7mAAAAJArRkkBAACQMyIpAAAAckYkBQAAQM6IpAAAAMgZkRQAAAA5I5ICAAAgZ0RSAAAA5IxICgAAgJwRSQEAAJAzIikAAAByRiQFAABAzoikAAAAyBmRFAAAADkjkgIAACBnRFIAAADkjEgKAACAnBFJAQAAkDMiKQAAAHJGJAUAAEDOiKQAAADIGZEUAAAAOSOSAgAAIGdEUgAAAOSMSAoAAICcEUkBAACQMyIpAAAAckYkBQAAQM6IpAAAAMgZkRQAAAA5I5ICAAAgZ0RSAAAA5IxICgAAgJwRSQEAAJAzIikAAAByRiQFAABAzoikAAAAyBmRFAAAADkjkgIAACBnRFIAAADkjEgKAACAnBFJAQAAkDMiKQAAAHJGJAUAAEDOiKQAAADIGZEUAAAAOSOSAgAAIGdEUgAAAOSMSAoAAICcEUkBAACQMyIpAAAAckYkBQAAQM6IpAAAAMgZkRQAAAA5I5ICAAAgZ0RSAAAA5IxICgAAgJwRSQEAALBkt27dmut1IikAAACWbzJ9puVRIZICAADgjIQzaEYeFSIpAAAAlu7u3bv+H/wkOsqjo9djiKQAAABYvlgqlfQ8KkRSAAAAnJFwBs3Io0IkBQAAwNnxk2h2HhUiKQAAAM7U1DwqRFIAAADkjkgKAACAnBFJAQAAkDMiKQAAAHJGJAUAAEDOiKQAAADI2cq11qO82wAAAIAX2v8Pb7WieNQan1QAAAAASUVORK5CYII=" alt=""></p>
+<p><em>Note that this code assumes that <code>Environment.ProcessorCount</code> is lower or equal to 8 on your machine. If it&rsquo;s bigger, then the ThreadPool will start with more thread available, and you need to lower the delay of the <code>Thread.Sleep</code> in <code>Producer()</code> to set the same conditions.</em></p>
+<p>Looking at the task manager, we can see that CPU usage is 0 and the number of threads is growing at about one per second:</p>
+<p><img src="data:image/png;base64,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" alt=""></p>
+<p>Here I&rsquo;ve let it run for a while and got to a whopping 989 threads, yet still nothing is happening! Even though 10 threads should be enough to handle the workload. So what&rsquo;s going on?</p>
+<p>Every bit is important in that code. For instance, if we remove <code>Task.Yield</code> and manually start new tasks instead in <code>Producer</code> (the comments indicate the changes):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading.Tasks;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Starvation
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Console.WriteLine(Environment.ProcessorCount);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            ThreadPool.SetMinThreads(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Factory.StartNew(
+</span></span><span style="display:flex;"><span>                Producer,
+</span></span><span style="display:flex;"><span>                TaskCreationOptions.None);
+</span></span><span style="display:flex;"><span>            Console.ReadLine();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Producer()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Creating a new task instead of just calling Process</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Needed to avoid blocking the loop since we removed the Task.Yield</span>
+</span></span><span style="display:flex;"><span>                Task.Factory.StartNew(Process);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">200</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">async</span> Task Process()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Removed the Task.Yield</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> tcs = <span style="color:#66d9ef">new</span> TaskCompletionSource&lt;<span style="color:#66d9ef">bool</span>&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Run(() =&gt;
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>                tcs.SetResult(<span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>            });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            tcs.Task.Wait();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Console.WriteLine(<span style="color:#e6db74">&#34;Ended - &#34;</span> + DateTime.Now.ToLongTimeString());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Then we get the predicted behavior! The application struggles a bit at first, until the ThreadPool grows enough. Then we have a steady stream of messages, and the number of threads is stable (29 in my case).</p>
+<p>What if we take that working code but start <code>Producer</code> in its own thread?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading.Tasks;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Starvation
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Console.WriteLine(Environment.ProcessorCount);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            ThreadPool.SetMinThreads(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Factory.StartNew(
+</span></span><span style="display:flex;"><span>                Producer,
+</span></span><span style="display:flex;"><span>                TaskCreationOptions.LongRunning); <span style="color:#75715e">// Start in a dedicated thread</span>
+</span></span><span style="display:flex;"><span>            Console.ReadLine();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Producer()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Process();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">200</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">async</span> Task Process()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">await</span> Task.Yield();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> tcs = <span style="color:#66d9ef">new</span> TaskCompletionSource&lt;<span style="color:#66d9ef">bool</span>&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Run(() =&gt;
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>                tcs.SetResult(<span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>            });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            tcs.Task.Wait();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Console.WriteLine(<span style="color:#e6db74">&#34;Ended - &#34;</span> + DateTime.Now.ToLongTimeString());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This frees one thread from the ThreadPool, so we should expect it to work slightly better. Yet, we end up with the first case: the application displays a few messages before locking up, and the number of threads grows indefinitely.</p>
+<p>Let&rsquo;s put <code>Producer</code> back to a ThreadPool thread, but use the <code>PreferFairness</code> flag when starting the <code>Process</code> tasks:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">using</span> System.Threading.Tasks;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> Starvation
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Console.WriteLine(Environment.ProcessorCount);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            ThreadPool.SetMinThreads(<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Factory.StartNew(
+</span></span><span style="display:flex;"><span>                Producer,
+</span></span><span style="display:flex;"><span>                TaskCreationOptions.None);
+</span></span><span style="display:flex;"><span>            Console.ReadLine();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Producer()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Task.Factory.StartNew(Process, TaskCreationOptions.PreferFairness); <span style="color:#75715e">// Using PreferFairness</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">200</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">async</span> Task Process()
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> tcs = <span style="color:#66d9ef">new</span> TaskCompletionSource&lt;<span style="color:#66d9ef">bool</span>&gt;();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Task.Run(() =&gt;
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                Thread.Sleep(<span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>                tcs.SetResult(<span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>            });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            tcs.Task.Wait();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Console.WriteLine(<span style="color:#e6db74">&#34;Ended - &#34;</span> + DateTime.Now.ToLongTimeString());
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Then once again we end up with the first situation: the application locks up, and the number of threads increases indefinitely.</p>
+<p>So, what is really going on?</p>
+<h1 id="the-threadpool-queuing-algorithm">The ThreadPool queuing algorithm</h1>
+<p>To understand what&rsquo;s happening, we need to dig into the internals of the ThreadPool. More specifically, in the way, the work-items are queued.</p>
+<p>There are a few articles out there explaining how the ThreadPool queuing works (<a href="http://www.danielmoth.com/Blog/New-And-Improved-CLR-4-Thread-Pool-Engine.aspx">http://www.danielmoth.com/Blog/New-And-Improved-CLR-4-Thread-Pool-Engine.aspx</a>). In a nutshell, the important part is that the ThreadPool has multiple queues. For N threads in the ThreadPool, there are N+1 queues: one local queue for each thread, and one global queue. The rules for picking in which queue your item will go are simple:</p>
+<p>The item will be enqueued to the global queue:</p>
+<ul>
+<li>
+<p>If the thread that enqueues the item is not a ThreadPool thread</p>
+</li>
+<li>
+<p>If it uses <code>ThreadPool.QueueUserWorkItem</code> or <code>ThreadPool.UnsafeQueueUserWorkItem</code></p>
+</li>
+<li>
+<p>If it uses <code>Task.Factory.StartNew</code> with the <code>TaskCreationOptions.PreferFairness</code> flag</p>
+</li>
+<li>
+<p>If it uses <code>Task.Yield</code> on the default task scheduler</p>
+</li>
+</ul>
+<p>In pretty much all other cases, the item will be enqueued to the thread&rsquo;s local queue.</p>
+<p>How are the items dequeued? Whenever a ThreadPool thread is free, it will start looking into its local queue, and dequeue items in LIFO order. If the local queue is empty, then the thread will look into the global queue and dequeue in the FIFO order. If the global queue is also empty, then the thread will look into the local queues of other threads and dequeue in FIFO order (to reduce the contention with the owner of the queue, which dequeues in LIFO order).</p>
+<h3 id="how-does-that-impact-us-lets-go-back-to-our-faulty-code">How does that impact us? Let&rsquo;s go back to our faulty code.</h3>
+<p>In all the variations of the code, the <code>Thread.Sleep(1000)</code> is enqueued in a local queue, because <code>Process</code> is always executed in a ThreadPool thread. But in some cases we enqueue <code>Process</code> in the global queue and in others in the local queues:</p>
+<ul>
+<li>
+<p>In the first version of the code, we use <code>Task.Yield</code>, which queues to the global queue</p>
+</li>
+<li>
+<p>In the second version, we use <code>Task.Factory.StartNew</code>, which queues to the local queue</p>
+</li>
+<li>
+<p>In the third version, we change the <code>Producer</code> thread to not use the ThreadPool, so <code>Task.Factory.StartNew</code> enqueues to the global queue</p>
+</li>
+<li>
+<p>In the fourth version, <code>Producer</code> is a ThreadPool thread again but we use <code>TaskCreationOptions.PreferFairness</code> when enqueuing <code>Process</code>, thus using the global queue again</p>
+</li>
+</ul>
+<p>We can see that the only version that worked was the one not using the global queue. From there, it&rsquo;s just a matter of connecting the dots:</p>
+<ul>
+<li>
+<p>Initial condition: we put our system in a state where the ThreadPool is starved (i.e. all the threads are busy)</p>
+</li>
+<li>
+<p>We enqueue 5 items per second into the global queue</p>
+</li>
+<li>
+<p>Each of those items, when executing, enqueues another item into the local queue and waits for it</p>
+</li>
+<li>
+<p>When a new thread is spawned by the ThreadPool, that thread will first look into its own local queue which is empty (since it&rsquo;s newborn). Then it&rsquo;ll pick an item from the global queue</p>
+</li>
+<li>
+<p>Since we enqueue into the global queue faster than the ThreadPool grows (5 items per second versus 1 thread per second), it&rsquo;s completely impossible for the system to recover. Because of the priority induced by the usage of the global queue, <strong>the more threads we add, the more pressure we put on the system</strong></p>
+</li>
+</ul>
+<p>When using the local queue instead (second version of the code), the newborn threads will pick items from the other threads&rsquo; local queues since the global queue is empty. Therefore, <strong>new threads help alleviate the pressure on the system.</strong></p>
+<h3 id="how-does-it-translate-to-a-real-world-scenario">How does it translate to a real-world scenario?</h3>
+<p>Take the case of an HTTP-based service. The HTTP stack, whether it uses Windows&rsquo; http.sys or another API, is most likely native. When it forwards new requests to the .NET user code, it&rsquo;ll queue them in the ThreadPool. Those items will necessarily end up in the global queue since the native HTTP stack can&rsquo;t possibly use .NET ThreadPool threads. Then the user code relies on async/await, and very likely uses the local queues all the way. It means that in a situation of starvation, new threads spawned by the ThreadPool will process the new requests (enqueued in the global queue by the native code) rather than completing the ones already in the pipe (enqueued in the local queues). Therefore, <strong>we end up in the situation previously described where every new thread adds even more pressure to the system.</strong></p>
+<p>Another situation where things can turn ugly is if the blocking code is running as part of the callback of a timer. Timer callbacks are enqueued into the global queue. I believe such a case can be found here (pay close attention to the <code>TimerQueueTimer.Fire</code> call at the beginning of the callstack for the 1202 threads shown): <a href="https://devblogs.microsoft.com/devopsservice/?p=17665&amp;WT.mc_id=DT-MVP-5003493">https://blogs.msdn.microsoft.com/vsoservice/?p=17665</a>.</p>
+<h1 id="what-can-we-do-about-that">What can we do about that?</h1>
+<p>From a user-code perspective, unfortunately not much. Of course, in an ideal world, we would use non-blocking code and never end up in a ThreadPool starvation situation. Using a dedicated pool of threads around the blocking calls can help a lot, as you stop competing with the global queue for new threads. Having a back-pressure system is a good idea too. At Criteo we&rsquo;re experimenting with a back-pressure system that measures how long it takes for the ThreadPool to dequeue an item from a local queue. If it takes longer than a few configured threshold, then we stop processing incoming requests until the system recovers. So far it shows promising results.</p>
+<p>From a BCL perspective, I believe we should treat the global queue as just another local queue. I can&rsquo;t really see a reason why it should be treated in priority compared to all other local queues. If we&rsquo;re afraid that the global queue would grow quicker than the other queues, we could put a weight on the random selection of the queue. It would probably require some adjustments, but this is worth exploring.</p>
+<p><a href="https://labs.criteo.com/2018/10/net-threadpool-starvation-and-how-queuing-makes-it-worse/"><em>Article originally posted on Criteo Labs</em></a></p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/threads/">threads</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/csharp/">csharp</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/scalability/">scalability</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/performance-best-practices-in-c-b85a47bdd93a/" data-tooltip="Performance best practices in C#" aria-label="NEXT: Performance best practices in C#">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/" data-tooltip="Turning your training bike into a Speed remake" aria-label="PREVIOUS: Turning your training bike into a Speed remake">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="gitalk">
+      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+          return;
+        }
+        new Gitalk({
+          clientID: 'Iv1.8114b4896395b29e',
+          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
+          repo: 'kevingosse\/kevingosse.github.io',
+          owner: 'kevingosse',
+          admin: ['kevingosse'],
+          id: '80617b7e37b0bd77b883e4950a4f9c62',
+          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
+        }).render('gitalk')
+      })()
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/performance-best-practices-in-c-b85a47bdd93a/" data-tooltip="Performance best practices in C#" aria-label="NEXT: Performance best practices in C#">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/" data-tooltip="Turning your training bike into a Speed remake" aria-label="PREVIOUS: Turning your training bike into a Speed remake">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

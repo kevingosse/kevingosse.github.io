@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>async on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/async/</link>
+    <description>Recent content in async on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 28 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/async/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Switching back to the UI thread in WPF/UWP, in modern C#</title>
+      <link>https://kevingosse.github.io/switching-back-to-the-ui-thread-in-wpf-uwp-in-modern-c-5dc1cc8efa5e/</link>
+      <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/switching-back-to-the-ui-thread-in-wpf-uwp-in-modern-c-5dc1cc8efa5e/</guid>
+      <description>It may seem weird that in 2020 I would write an article on this subject. But I found a new approach to this problem that I had some fun experimenting with.&#xA;So what is the problem, to begin with?&#xA;A quick reminder In WinForms/WPF/UWP, you can only update controls from the UI thread. If you have code running in a background thread that needs to update some controls, you need to somehow switch to the UI thread.</description>
+    </item>
+  </channel>
+</rss>

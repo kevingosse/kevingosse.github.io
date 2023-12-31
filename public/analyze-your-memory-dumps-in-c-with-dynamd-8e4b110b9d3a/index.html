@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Analyze your memory dumps in C# with DynaMD",
+  
+  "datePublished": "2021-07-16T00:00:00Z",
+  "dateModified": "2021-07-16T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name":  null ,
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/kevingosse.github.io\/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+  },
+  "description": "Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.\nNot everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel \u0026ldquo;natural\u0026rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="">
+<meta name="keywords" content="">
+<meta name="description" content="Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.
+Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &ldquo;natural&rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.">
+
+
+<meta property="og:description" content="Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.
+Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &ldquo;natural&rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Analyze your memory dumps in C# with DynaMD">
+<meta name="twitter:title" content="Analyze your memory dumps in C# with DynaMD">
+<meta property="og:url" content="https://kevingosse.github.io/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/">
+<meta property="twitter:url" content="https://kevingosse.github.io/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.
+Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &ldquo;natural&rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.">
+<meta name="twitter:description" content="Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.
+Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &ldquo;natural&rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2021-07-16T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2021-07-16T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="csharp">
+    
+      <meta property="article:tag" content="dotnet">
+    
+      <meta property="article:tag" content="debugging">
+    
+      <meta property="article:tag" content="programming">
+    
+      <meta property="article:tag" content="software-development">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+
+
+
+
+
+
+    <title>Analyze your memory dumps in C# with DynaMD</title>
+
+    <link rel="icon" href="/favicon.png">
+    
+
+    
+
+    <link rel="canonical" href="https://kevingosse.github.io/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/categories" title="Categories">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-bookmark" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Categories</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Analyze your memory dumps in C# with DynaMD
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2021-07-16T00:00:00Z">
+        
+  
+  
+  
+  
+    July 16 2021
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use <a href="https://github.com/microsoft/clrmd">the ClrMD library</a>, that will give you everything you need to inspect the memory dump from C# code.</p>
+<p>Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &ldquo;natural&rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump. To do so, I needed to:</p>
+<ul>
+<li>
+<p>Retrieve the <a href="https://docs.microsoft.com/en-us/dotnet/framework/additional-apis/connectiongroup?WT.mc_id=DT-MVP-5003493"><code>ConnectionGroup</code></a> associated to the given host</p>
+</li>
+<li>
+<p>Iterate on the connections (stored in the <a href="https://docs.microsoft.com/en-us/dotnet/framework/additional-apis/m_connectionlist?WT.mc_id=DT-MVP-5003493"><code>connectionGroup.m_ConnectionList</code></a> list)</p>
+</li>
+<li>
+<p>Find the ones with a pending request and print the URL</p>
+</li>
+</ul>
+<p>With ClrMD, that code would look like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Program</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> target = DataTarget.LoadDump(<span style="color:#e6db74">@&#34;dump.dmp&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> runtime = target.ClrVersions[<span style="color:#ae81ff">0</span>].CreateRuntime();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> heap = runtime.Heap;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> obj <span style="color:#66d9ef">in</span> heap.EnumerateObjects())
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (obj.Type?.Name != <span style="color:#e6db74">&#34;System.Net.ConnectionGroup&#34;</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> connectionGroup = obj;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> servicePoint = connectionGroup.ReadObjectField(<span style="color:#e6db74">&#34;m_ServicePoint&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (servicePoint.ReadStringField(<span style="color:#e6db74">&#34;m_Host&#34;</span>) != <span style="color:#e6db74">&#34;contoso.com&#34;</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> connections = connectionGroup.ReadObjectField(<span style="color:#e6db74">&#34;m_ConnectionList&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">var</span> array = connections.ReadObjectField(<span style="color:#e6db74">&#34;_items&#34;</span>).AsArray();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; array.Length; i++)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> connection = array.GetObjectValue(i);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (connection.IsNull)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">var</span> currentRequest = connection.ReadObjectField(<span style="color:#e6db74">&#34;m_CurrentRequest&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (!currentRequest.IsNull)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">var</span> uri = currentRequest.ReadObjectField(<span style="color:#e6db74">&#34;_Uri&#34;</span>).ReadStringField(<span style="color:#e6db74">&#34;m_String&#34;</span>);
+</span></span><span style="display:flex;"><span>                    Console.WriteLine(uri);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>I feel like those repeated <code>ReadObjectField</code> calls add a lot of noise, and accessing the array is not straightforward.</p>
+<p>To make all of this easier, I wrote the <a href="https://github.com/kevingosse/dynamd">DynaMD</a> library. This is a helper that runs on top of ClrMD, and leverages the C# <code>dynamic</code> keyword to expose the structures in a much more fluent way. When rewritten with DynaMD, the previous code becomes:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main(<span style="color:#66d9ef">string</span>[] args)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> target = DataTarget.LoadDump(<span style="color:#e6db74">@&#34;dump.dmp&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> runtime = target.ClrVersions[<span style="color:#ae81ff">0</span>].CreateRuntime();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> heap = runtime.Heap;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> connectionGroup <span style="color:#66d9ef">in</span> heap.GetProxies(<span style="color:#e6db74">&#34;System.Net.ConnectionGroup&#34;</span>))
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> ((<span style="color:#66d9ef">string</span>)connectionGroup.m_ServicePoint.m_Host != <span style="color:#e6db74">&#34;contoso.com&#34;</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> connection <span style="color:#66d9ef">in</span> connectionGroup.m_ConnectionList._items)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (connection?.m_CurrentRequest == <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">continue</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Console.WriteLine((<span style="color:#66d9ef">string</span>)connection.m_CurrentRequest._Uri.m_String);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Of course it&rsquo;s always a matter of personal preference, but I find this version much easier to write and read.</p>
+<p>So, what is DynaMD capable of?</p>
+<h1 id="introduction-to-dynamd">Introduction to DynaMD</h1>
+<p>The first step is of course to install <a href="https://www.nuget.org/packages/DynaMD/">the nuget package</a>. The versions 1.0.8+ use ClrMD 2.*, you can use a previous version if for some reason you need ClrMD 1.*.</p>
+<p>Then, there are multiple ways to retrieve a dynamic proxy to an object:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#75715e">// Retrieve an instance by its address</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> proxy = heap.GetProxy(<span style="color:#ae81ff">0x00001000</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Iterate on all instances of a given type</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> proxy <span style="color:#66d9ef">in</span> heap.GetProxies&lt;<span style="color:#66d9ef">string</span>&gt;()) { }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// or (if you don&#39;t reference the type)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> proxy <span style="color:#66d9ef">in</span> heap.GetProxies(<span style="color:#e6db74">&#34;System.String&#34;</span>)) { }
+</span></span></code></pre></div><p><code>proxy</code> is <code>dynamic</code>, so you don&rsquo;t get any autocompletion. But, knowing the structure of the object, you can access any field just like you would with a &ldquo;real&rdquo; object:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>Console.WriteLine(proxy.Value);
+</span></span><span style="display:flex;"><span>Console.WriteLine((<span style="color:#66d9ef">string</span>)proxy.Child.Name);
+</span></span><span style="display:flex;"><span>Console.WriteLine(proxy.Description.Size.Width * proxy.Description.Size.Height);
+</span></span></code></pre></div><p>Only fields are supported, but automatic properties are translated:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomeType</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> _backingField;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> Field1 =&gt; _backingField;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> Field2 { <span style="color:#66d9ef">get</span>; }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> proxy = heap.GetProxies&lt;SomeType&gt;().First();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> value1 = proxy._backingField; <span style="color:#75715e">// Calling proxy.Field1 is not supported</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> value2 = proxy.Field2; <span style="color:#75715e">// Automatically translated to &lt;Field2&gt;k__BackingField</span>
+</span></span></code></pre></div><p>At some point, you&rsquo;ll probably need to materialize the value of a field. This is done automatically for primitive types:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomeType</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> IntValue;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">double</span> DoubleValue;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> proxy = heap.GetProxies&lt;SomeType&gt;().First();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> intValue = proxy.IntValue; <span style="color:#75715e">// Automatically converted to an int</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">double</span> doubleValue = proxy.DoubleValue; <span style="color:#75715e">// Automatically converted to a double</span>
+</span></span></code></pre></div><p>DynaMD also supports explicit conversion to <code>string</code> or <a href="https://docs.microsoft.com/en-us/dotnet/framework/interop/blittable-and-non-blittable-types?WT.mc_id=DT-MVP-5003493">blittable structs</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">BlittableStruct</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> Value;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomeType</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> BlittableStruct StructValue;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DateTime DateTimeValue;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> StringValue;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> proxy = heap.GetProxies&lt;SomeType&gt;().First();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>BlittableStruct structValue = (BlittableStruct)proxy.StructValue;
+</span></span><span style="display:flex;"><span>DateTime dateTimeValue = (DateTime)proxy.DateTimeValue;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">string</span> stringValue = (<span style="color:#66d9ef">string</span>)proxy.stringValue;
+</span></span></code></pre></div><blockquote>
+<p>If you don&rsquo;t know what &ldquo;blittable structs&rdquo; are, you can think of them as &ldquo;any object that is stored as a single chunk of consecutive memory&rdquo;. In other words, a blittable struct in C# would be a struct that only contains primitive types and other blittable structs. No references.</p>
+</blockquote>
+<p>When dealing with arrays, you can directly enumerate the contents, get the length, or use an indexer:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SomeType</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span>[] ArrayValue;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> proxy = heap.GetProxies&lt;SomeType&gt;().First();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#e6db74">&#34;Length: &#34;</span> + proxy.ArrayValue.Length);
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#e6db74">&#34;First element: &#34;</span> + proxy.ArrayValue[<span style="color:#ae81ff">0</span>]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">int</span> <span style="color:#66d9ef">value</span> <span style="color:#66d9ef">in</span> proxy.ArrayValue)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    Console.WriteLine(<span style="color:#66d9ef">value</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>To retrieve the address of a proxified object, explicitly cast it to <code>ulong</code>. Also, calling <code>.ToString()</code> on a proxy will return the address encoded in hexadecimal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> proxy = heap.GetProxy(<span style="color:#ae81ff">0x1000</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> address = (<span style="color:#66d9ef">ulong</span>)proxy;
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#e6db74">&#34;{0:x2}&#34;</span>, address); <span style="color:#75715e">// 0x1000</span>
+</span></span><span style="display:flex;"><span>Console.WriteLine(proxy); <span style="color:#75715e">// 0x1000</span>
+</span></span></code></pre></div><p>To retrieve the instance of ClrType, call <code>GetClrType()</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>ClrType type = proxy.GetClrType();
+</span></span></code></pre></div><p>That&rsquo;s all the library is capable of doing for now, but this should be enough to cover most scenarios. I&rsquo;m still working on an experimental branch that would allow to cast a proxy to any reference type, I hope I&rsquo;ll be able to release something in the coming months.</p>
+<p>Feel free to contribute or report bugs <a href="https://github.com/kevingosse/dynamd">on the GitHub repository</a>!</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/csharp/">csharp</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/debugging/">debugging</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/programming/">programming</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/software-development/">software-development</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/" data-tooltip="Reading AsyncLocal values from a memory dump" aria-label="NEXT: Reading AsyncLocal values from a memory dump">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/showing-unresolved-functions-in-perfview-ab6cd899cb94/" data-tooltip="Showing unresolved functions in PerfView" aria-label="PREVIOUS: Showing unresolved functions in PerfView">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+  
+    <div id="gitalk">
+      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+      (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+          return;
+        }
+        new Gitalk({
+          clientID: 'Iv1.8114b4896395b29e',
+          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
+          repo: 'kevingosse\/kevingosse.github.io',
+          owner: 'kevingosse',
+          admin: ['kevingosse'],
+          id: '15dfce53441a9e22aa9a7c4cdca39144',
+          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
+        }).render('gitalk')
+      })()
+    </script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2023 minidump.net. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/" data-tooltip="Reading AsyncLocal values from a memory dump" aria-label="NEXT: Reading AsyncLocal values from a memory dump">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/showing-unresolved-functions-in-perfview-ab6cd899cb94/" data-tooltip="Showing unresolved functions in PerfView" aria-label="PREVIOUS: Showing unresolved functions in PerfView">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+  
+  
+    <li class="post-action">
+      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
+        <i class="fa fa-comment"></i>
+      </a>
+    </li>
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+    <h4 id="about-card-name"></h4>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

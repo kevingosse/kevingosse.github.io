@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>low-level-programming on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/low-level-programming/</link>
+    <description>Recent content in low-level-programming on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 26 Jul 2022 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/low-level-programming/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Why function pointers can&#39;t be used on instance methods in C#</title>
+      <link>https://kevingosse.github.io/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</link>
+      <pubDate>Tue, 26 Jul 2022 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</guid>
+      <description>A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&amp;rsquo;t working as expected. Here is a simplified version:&#xA;public unsafe class Getter { private delegate*&amp;lt;Obj, SomeStruct&amp;gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&amp;lt;Obj, SomeStruct&amp;gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&amp;#34;Property&amp;#34;); Console.</description>
+    </item>
+  </channel>
+</rss>

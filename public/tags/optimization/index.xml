@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>optimization on minidump.net</title>
+    <link>https://kevingosse.github.io/tags/optimization/</link>
+    <description>Recent content in optimization on minidump.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 02 Jun 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://kevingosse.github.io/tags/optimization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Showing unresolved functions in PerfView</title>
+      <link>https://kevingosse.github.io/showing-unresolved-functions-in-perfview-ab6cd899cb94/</link>
+      <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
+      <guid>https://kevingosse.github.io/showing-unresolved-functions-in-perfview-ab6cd899cb94/</guid>
+      <description>One thing that has bothered me quite a bit with PerfView is how it groups all unresolved frames under the same &amp;ldquo;?!?&amp;rdquo; name. I understand that it&amp;rsquo;s a way to reduce noise, but when trying to reduce the CPU usage of an application it can be unsettling.&#xA;Take the following example:&#xA;Here, &amp;ldquo;?!?&amp;rdquo; is presented as top offender, accounting for more than 7% of the total CPU usage. But I&amp;rsquo;m missing critical information to know whether I should consider it as a bottleneck or not.</description>
+    </item>
+  </channel>
+</rss>
