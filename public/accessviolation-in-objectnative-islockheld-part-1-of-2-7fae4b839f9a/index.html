@@ -107,8 +107,6 @@ Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.css" integrity="sha512-MLcK/YRapzET1qTBXrOiZE6bGBgtATMo2bIyalVJ8EKDEGNoeA3SPQkvWAR0zNS650YG13ocXBMeioDuZcSRuQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
     
     
     <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
@@ -495,12 +493,6 @@ Index SyncBlock MonitorHeld Recursion Owning Thread Info  SyncBlock Owner
     
   
   
-    <li class="post-action">
-      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
-        <i class="fa fa-comment"></i>
-      </a>
-    </li>
-  
   <li class="post-action">
     
       <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
@@ -514,27 +506,17 @@ Index SyncBlock MonitorHeld Recursion Owning Thread Info  SyncBlock Owner
 
             
   
-    <div id="gitalk">
-      <noscript>Please enable JavaScript to view the comments powered by Gitalk.</noscript>
+<div id="utterances">
+      <noscript>Please enable JavaScript to view the comments powered by Utterances.</noscript>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.7.2/gitalk.min.js" integrity="sha512-EcTCcXV46teiNwe0VcnM5A038tcY+BaQYO4nW6Gh2i7v4/HjBVg7xx3+JBLl9WofDds//INJAiEGAtdgr8PWyA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript">
-      (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-          document.getElementById('gitalk').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
-          return;
-        }
-        new Gitalk({
-          clientID: 'Iv1.8114b4896395b29e',
-          clientSecret: '51d5de761d1fbcbfad430e94ebdecdf6765a20b5',
-          repo: 'kevingosse.github.io',
-          owner: 'kevingosse',
-          admin: ['kevingosse'],
-          id: '47c5ef7c25adfea888194d4ea8a88182',
-          ...{"distractionfreemode":false,"enablehotkey":true,"language":"en","pagerdirection":"first","perpage":10}
-        }).render('gitalk')
-      })()
-    </script>
+<script src="https://utteranc.es/client.js"
+        repo="kevingosse/kevingosse.github.io"
+        issue-term="title"
+        label="comments"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
   
 
 
@@ -581,12 +563,6 @@ Index SyncBlock MonitorHeld Recursion Owning Thread Info  SyncBlock Owner
     </li>
     
   
-  
-    <li class="post-action">
-      <a class="post-action-btn btn btn--default" href="#gitalk" aria-label="Leave a comment">
-        <i class="fa fa-comment"></i>
-      </a>
-    </li>
   
   <li class="post-action">
     
