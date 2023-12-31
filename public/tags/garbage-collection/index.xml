@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>garbage-collection on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/garbage-collection/</link>
+    <link>https://minidump.net/tags/garbage-collection/</link>
     <description>Recent content in garbage-collection on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 21 Jun 2020 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/garbage-collection/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/garbage-collection/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Monitor GC stats with a startup hook</title>
-      <link>https://kevingosse.github.io/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</link>
+      <link>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</link>
       <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</guid>
+      <guid>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</guid>
       <description>.NET core startup hooks is a feature I really like, and I had a lot of fun with it in the past. Still, I had yet to find a legitimate use for them, and the opportunity finally came a few days ago.&#xA;What are startup hooks? Let&amp;rsquo;s start by a quick catch-up, for those who don&amp;rsquo;t know what startup hooks are. The feature was introduced with .net core 2.2, and allows to execute any arbitrary code in a .</description>
     </item>
     <item>
       <title>Check what .net core GC keywords are enabled without a debugger</title>
-      <link>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</link>
+      <link>https://minidump.net/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</link>
       <pubDate>Mon, 18 May 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</guid>
+      <guid>https://minidump.net/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</guid>
       <description>… and find an unexpected bug in the process&#xA;We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.&#xA;Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&amp;rsquo;m not sure the second part could be done on Windows without installing additional tools.</description>
     </item>
     <item>
       <title>Implementing Java ReferenceQueue and PhantomReference in C#</title>
-      <link>https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</link>
+      <link>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</link>
       <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</guid>
+      <guid>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</guid>
       <description>After reading Konrad Kokosa&amp;rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.</description>
     </item>
   </channel>

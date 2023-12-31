@@ -13,16 +13,23 @@
   "dateModified": "2021-09-16T00:00:00Z",
   "author": {
     "@type": "Person",
-    "name":  null ,
+    "name": "Kevin Gosse",
+    
+    "image": "https://minidump.net/images/profile.png"
     
   },
   "mainEntityOfPage": { 
     "@type": "WebPage",
-    "@id": "https:\/\/kevingosse.github.io\/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac\/" 
+    "@id": "https:\/\/minidump.net\/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac\/" 
   },
   "publisher": {
     "@type": "Organization",
     "name": "minidump.net",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://minidump.net/images/profile.png"
+    }
     
   },
   "description": "As you may already know, it\u0026rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:\n0:000\u0026gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The \u0026ldquo;ID\u0026rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.",
@@ -34,7 +41,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
-<meta name="author" content="">
+<meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
 <meta name="description" content="As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:
 0:000&gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.">
@@ -45,8 +52,8 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Finding an instance of thread by id in WinDbg">
 <meta name="twitter:title" content="Finding an instance of thread by id in WinDbg">
-<meta property="og:url" content="https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
-<meta property="twitter:url" content="https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
+<meta property="og:url" content="https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
+<meta property="twitter:url" content="https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
 <meta property="og:site_name" content="minidump.net">
 <meta property="og:description" content="As you may already know, it&rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:
 0:000&gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &ldquo;ID&rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.">
@@ -79,11 +86,18 @@
 
 <meta name="twitter:card" content="summary">
 
+  <meta name="twitter:site" content="@kookiz">
+
+
+  <meta name="twitter:creator" content="@kookiz">
 
 
 
 
 
+
+  <meta property="og:image" content="https://minidump.net/images/profile.png">
+  <meta property="twitter:image" content="https://minidump.net/images/profile.png">
 
 
 
@@ -97,7 +111,7 @@
 
     
 
-    <link rel="canonical" href="https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
+    <link rel="canonical" href="https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -105,7 +119,7 @@
     
     
     
-    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    <link rel="stylesheet" href="https://minidump.net/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
     
     
 
@@ -127,6 +141,16 @@
 
       <nav id="sidebar" data-behavior="2">
   <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Kevin Gosse</h4>
+        
+          <h5 class="sidebar-profile-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</h5>
+        
+      </div>
     
     <ul class="sidebar-buttons">
       
@@ -215,6 +239,16 @@
       <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
       
       <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.buymeacoffee.com/kevingosse" target="_blank" rel="noopener" title="Buy me a coffee">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-coffee" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Buy me a coffee</span>
     </a>
   </li>
 
@@ -443,6 +477,30 @@ Fields:
       </a>
     </li>
     
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
   
   
   <li class="post-action">
@@ -457,6 +515,52 @@ Fields:
 
 
             
+
+<link href="https://fonts.googleapis.com/css?family=Cookie&amp;display=swap" rel="stylesheet">
+<div class="bmc-btn-container"><a class="bmc-btn" target="_blank" href="https://buymeacoffee.com/kevingosse">☕<span class="bmc-btn-text">Enjoyed the article? Buy me a coffee</span></a></div>
+
+<style>
+    .bmc-btn {
+        min-width: 210px;
+        color: #000000;
+        background-color: #FFFFFF !important;
+        height: 60px;
+        border-radius: 12px;
+        font-size: 28px;
+        font-weight: Normal;
+        border: none;
+        line-height: 27px;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Cookie', cursive !important;
+        -webkit-box-sizing: border-box !important;
+        box-sizing: border-box !important;
+    }
+
+    .bmc-btn:hover, .bmc-btn:active, .bmc-btn:focus {
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .bmc-btn-text {
+        margin-left: 8px;
+        display: inline-block;
+        line-height: 0;
+        width: 100%;
+        flex-shrink: 0;
+        font-family: [FONT] !important;
+    }
+
+    .logo-outline {
+        fill: #000000;
+    }
+
+    .logo-coffee {
+        fill: #ffffff;
+    }</style>
+
   
 <div id="utterances">
       <noscript>Please enable JavaScript to view the comments powered by Utterances.</noscript>
@@ -476,7 +580,7 @@ Fields:
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2023 minidump.net. All Rights Reserved
+    &copy; 2023 Kevin Gosse. All Rights Reserved
   </span>
 </footer>
 
@@ -514,6 +618,30 @@ Fields:
       </a>
     </li>
     
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
   
   
   <li class="post-action">
@@ -529,6 +657,38 @@ Fields:
 
       </div>
       
+<div id="share-options-bar" class="share-options-bar" data-behavior="2">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fminidump.net%2Ffinding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https%3A%2F%2Fminidump.net%2Ffinding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=https%3A%2F%2Fminidump.net%2Ffinding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fminidump.net%2Ffinding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
 
     </div>
     
@@ -538,7 +698,11 @@ Fields:
       <i class="fa fa-times"></i>
     </div>
     
-    <h4 id="about-card-name"></h4>
+      <img id="about-card-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Kevin Gosse</h4>
+    
+      <div id="about-card-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</div>
     
     
     
@@ -550,7 +714,7 @@ Fields:
     
   
     
-      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+      <div id="cover" style="background-image:url('https://minidump.net/images/code.png');"></div>
     
   
 
@@ -563,7 +727,7 @@ Fields:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+<script src="https://minidump.net/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
 
 
 

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>java on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/java/</link>
+    <link>https://minidump.net/tags/java/</link>
     <description>Recent content in java on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 09 Jan 2019 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/java/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Implementing Java ReferenceQueue and PhantomReference in C#</title>
-      <link>https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</link>
+      <link>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</link>
       <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</guid>
+      <guid>https://minidump.net/implementing-java-referencequeue-and-phantomreference-in-c-827d7141b6e4/</guid>
       <description>After reading Konrad Kokosa&amp;rsquo;s article on Java PhantomReference, I got reminded of a coding challenge a coworker gave me a few months ago, about implementing a ReferenceQueue in C#. The Java ReferenceQueue is a mechanism that allows the developer to know when an object has been garbage collected. One of the usages described by Konrad is the ability to cleanup native resources without keeping an object (and its graph of references) in memory.</description>
     </item>
   </channel>

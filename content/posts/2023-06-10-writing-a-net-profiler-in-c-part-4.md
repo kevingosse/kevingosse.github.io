@@ -15,8 +15,6 @@ tags:
 author: Kevin Gosse
 ---
 
-# Writing a .NET profiler in C# — Part 4
-
 [In part 1](/writing-a-net-profiler-in-c-part-1-d3978aae9b12), we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. [In part 2](/writing-a-net-profiler-in-c-part-2-8039da001e43), we refined the solution to use instance methods instead of static methods. [In part 3](/writing-a-net-profiler-in-c-part-3-7d2c59fc017f), we automated the process using a source generator. At this point, we have everything we need to expose an instance of [`ICorProfilerCallback`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilercallback-interface?WT.mc_id=DT-MVP-5003493). However, to write a profiler we also need to be able to call methods from [`ICorProfilerInfo`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilerinfo-interface?WT.mc_id=DT-MVP-5003493), this will be the subject of this part.
 
 As a reminder, we ended up with this implementation of `ICorProfilerCallback`:

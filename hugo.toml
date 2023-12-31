@@ -1,4 +1,4 @@
-baseURL = 'https://kevingosse.github.io/'
+baseURL = 'https://minidump.net/'
 languageCode = 'en-us'
 title = 'minidump.net'
 theme = 'tranquilpeak'
@@ -29,6 +29,12 @@ defaultContentLanguage = "en-us"
     endLevel = 3
     ordered = false
     startLevel = 1
+
+[author]
+  name = "Kevin Gosse"
+  twitter = "kookiz"
+  picture = "images/profile.png"
+  bio = "Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM."
 
 [[menu.main]]
   weight = 1
@@ -81,3 +87,30 @@ defaultContentLanguage = "en-us"
   name = "RSS"
   pre = "<i class=\"sidebar-button-icon fas fa-lg fa-rss\" aria-hidden=\"true\"></i>"
   url = "/index.xml"
+
+[[menu.misc]]
+  weight = 4
+  identifier = "buymeacoffee"
+  name = "Buy me a coffee"
+  pre = "<i class=\"sidebar-button-icon fas fa-lg fa-coffee\" aria-hidden=\"true\"></i>"
+  url = "https://www.buymeacoffee.com/kevingosse"
+
+[[params.sharingOptions]]
+    name = "Twitter"
+    icon = "fab fa-twitter"
+    url = "https://twitter.com/intent/tweet?text=%s"
+
+  [[params.sharingOptions]]
+    name = "Linkedin"
+    icon = "fab fa-linkedin"
+    url = "https://www.linkedin.com/feed/?shareActive=true&text=%s"
+
+  [[params.sharingOptions]]
+    name = "Reddit"
+    icon = "fab fa-reddit"
+    url = "https://www.reddit.com/submit?url=%s"
+
+  [[params.sharingOptions]]
+    name = "Hacker News"
+    icon = "fab fa-hacker-news"
+    url = "https://news.ycombinator.com/submitlink?u=%s"

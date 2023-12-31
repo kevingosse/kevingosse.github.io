@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>bugs on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/bugs/</link>
+    <link>https://minidump.net/tags/bugs/</link>
     <description>Recent content in bugs on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 14 Aug 2020 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/bugs/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/bugs/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Tricked by WebRequest</title>
-      <link>https://kevingosse.github.io/c-tricked-by-webrequest-209014d99653/</link>
+      <link>https://minidump.net/c-tricked-by-webrequest-209014d99653/</link>
       <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/c-tricked-by-webrequest-209014d99653/</guid>
+      <guid>https://minidump.net/c-tricked-by-webrequest-209014d99653/</guid>
       <description>The Datadog .NET tracer uses the HTTP protocol to communicate with the agent (usually installed on the same machine) and send traces every second. We originally used HttpClient to handle the communication. However, we ran into some dependencies errors on .NET Framework (it&amp;rsquo;s a bit complicated and outside of the scope of the article, but it has something to do with us instrumenting the System.Net.HttpClient assembly while at the same time having a dependency on it), and so we decided to switch to HttpWebRequest.</description>
     </item>
   </channel>

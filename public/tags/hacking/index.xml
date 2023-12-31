@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>hacking on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/hacking/</link>
+    <link>https://minidump.net/tags/hacking/</link>
     <description>Recent content in hacking on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 21 Feb 2020 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/hacking/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/hacking/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Another way to use your debugging tools</title>
-      <link>https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
+      <link>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
+      <guid>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
       <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most. So the only choices you have is either to restart now or to spend the Friday with this window eating your precious screen real estate.</description>
     </item>
   </channel>

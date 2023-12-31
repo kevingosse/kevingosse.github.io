@@ -2,101 +2,101 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>dotnet-core on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/dotnet-core/</link>
+    <link>https://minidump.net/tags/dotnet-core/</link>
     <description>Recent content in dotnet-core on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/dotnet-core/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/dotnet-core/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>SuppressGCTransition</title>
-      <link>https://kevingosse.github.io/suppressgctransition-b9a8a774edbd/</link>
+      <link>https://minidump.net/suppressgctransition-b9a8a774edbd/</link>
       <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/suppressgctransition-b9a8a774edbd/</guid>
+      <guid>https://minidump.net/suppressgctransition-b9a8a774edbd/</guid>
       <description>While working on the second edition of the Pro .NET Memory Management book, I did some research on the SuppressGCTransition attribute introduced in .NET 5, and figured it would make a nice complimentary article.&#xA;SuppressGCTransition is an attribute you can only apply on a method decorated with the DllImport attribute. It greatly reduces the overhead of the p/invoke, as illustrated with this benchmark:&#xA;public class SuppressGcTransitionBenchmark { [Benchmark(Baseline = true)] public int PInvoke() { return Increment(42); [DllImport(&amp;#34;NativeLib.</description>
     </item>
     <item>
       <title>Writing a .NET profiler in C# — Part 4</title>
-      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</link>
+      <link>https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</link>
       <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</guid>
-      <description>Writing a .NET profiler in C# — Part 4 In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback.</description>
+      <guid>https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/</guid>
+      <description>In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.</description>
     </item>
     <item>
       <title>Writing a .NET profiler in C#   — Part 3</title>
-      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</link>
+      <link>https://minidump.net/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</link>
       <pubDate>Fri, 03 Mar 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</guid>
+      <guid>https://minidump.net/writing-a-net-profiler-in-c-part-3-7d2c59fc017f/</guid>
       <description>In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. Now that we know how to interact with the profiling API, we&amp;rsquo;re going to write a source generator to automatically generate the boilerplate code needed to implement the 70+ methods declared in the ICorProfilerCallback interface.</description>
     </item>
     <item>
       <title>Writing a .NET profiler in C#  —  Part 2</title>
-      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-2-8039da001e43/</link>
+      <link>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</link>
       <pubDate>Wed, 11 Jan 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-2-8039da001e43/</guid>
+      <guid>https://minidump.net/writing-a-net-profiler-in-c-part-2-8039da001e43/</guid>
       <description>In the first part, we saw how to mimick the layout of a COM object, and use it to expose a fake instance of IClassFactory. It worked nicely, but our solution used static methods, so it wouldn&amp;rsquo;t be convenient to track the state of the objects whenever multiple instances are expected. It would be great if we could map our COM object to an actual instance of an object in .</description>
     </item>
     <item>
       <title>Using GC.KeepAlive in async methods</title>
-      <link>https://kevingosse.github.io/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</link>
+      <link>https://minidump.net/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</link>
       <pubDate>Mon, 05 Sep 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</guid>
+      <guid>https://minidump.net/c-using-gc-keepalive-in-async-methods-8d20fd79f0a0/</guid>
       <description>[C#] Using GC.KeepAlive in async methods Can you figure out what&amp;rsquo;s wrong with this code?&#xA;var taskCompletionSource = new TaskCompletionSource(); MyDelegateType myDelegate = () =&amp;gt; taskCompletionSource.SetResult(); NativeMethods.MyNativeMethod(myDelegate); await taskCompletionSource.Task; GC.KeepAlive(myDelegate); It turns out that when running in an actual application, there is a probability that myDelegate will get collected despite the call to GC.KeepAlive.&#xA;This code was posted in an issue in the dotnet/runtime repository, and I followed it closely because I really couldn&amp;rsquo;t tell what the error was.</description>
     </item>
     <item>
       <title>Why function pointers can&#39;t be used on instance methods in C#</title>
-      <link>https://kevingosse.github.io/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</link>
+      <link>https://minidump.net/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</link>
       <pubDate>Tue, 26 Jul 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</guid>
+      <guid>https://minidump.net/c-why-function-pointers-cant-be-used-on-instance-methods-8a99fc99b040/</guid>
       <description>A few days ago, a github issue in the dotnet/runtime repository piqued my interest. To summarize, the author was wondering why their code wasn&amp;rsquo;t working as expected. Here is a simplified version:&#xA;public unsafe class Getter { private delegate*&amp;lt;Obj, SomeStruct&amp;gt; _functionPointer; public Getter(string propName) { var methodInfo = typeof(Obj).GetProperty(propName).GetGetMethod(); _functionPointer = (delegate*&amp;lt;Obj, SomeStruct&amp;gt;)methodInfo.MethodHandle.GetFunctionPointer(); } public SomeStruct GetFromFunctionPointer(Obj target) { var v = _functionPointer(target); return v; } } public struct SomeStruct { public int Value1; public int Value2; public int Value3; public int Value4; } public class Obj { public SomeStruct Property { get; set; } } class Program { static void Main(string[] args) { var obj = new Obj { Property = new SomeStruct { Value1 = 42 } }; var getter = new Getter(&amp;#34;Property&amp;#34;); Console.</description>
     </item>
     <item>
       <title>Writing a .NET profiler in C# - Part 1</title>
-      <link>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</link>
+      <link>https://minidump.net/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</link>
       <pubDate>Mon, 11 Jul 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</guid>
+      <guid>https://minidump.net/writing-a-net-profiler-in-c-part-1-d3978aae9b12/</guid>
       <description>.NET has a very powerful profiling API, that allows to closely monitor the runtime, dynamically rewrite methods during execution, walk the callstack of threads at arbitrary points in time, and much more. However, the entry cost to learn how to use that API is quite high. The first reason is that many features require a good knowledge of how the .NET metadata system works. The other reason is that all the documentation and examples are written in C++.</description>
     </item>
     <item>
       <title>Finding an instance of thread by id in WinDbg</title>
-      <link>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</link>
+      <link>https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</link>
       <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</guid>
+      <guid>https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</guid>
       <description>As you may already know, it&amp;rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:&#xA;0:000&amp;gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &amp;ldquo;ID&amp;rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.</description>
     </item>
     <item>
       <title>An unconventional way of investigating a NullReferenceException</title>
-      <link>https://kevingosse.github.io/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
+      <link>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
       <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
+      <guid>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
       <description>The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.&#xA;As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.&#xA;Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:</description>
     </item>
     <item>
       <title>Monitor GC stats with a startup hook</title>
-      <link>https://kevingosse.github.io/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</link>
+      <link>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</link>
       <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</guid>
+      <guid>https://minidump.net/monitor-gc-stats-with-a-startup-hook-55aa03dedea3/</guid>
       <description>.NET core startup hooks is a feature I really like, and I had a lot of fun with it in the past. Still, I had yet to find a legitimate use for them, and the opportunity finally came a few days ago.&#xA;What are startup hooks? Let&amp;rsquo;s start by a quick catch-up, for those who don&amp;rsquo;t know what startup hooks are. The feature was introduced with .net core 2.2, and allows to execute any arbitrary code in a .</description>
     </item>
     <item>
       <title>Check what .net core GC keywords are enabled without a debugger</title>
-      <link>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</link>
+      <link>https://minidump.net/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</link>
       <pubDate>Mon, 18 May 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</guid>
+      <guid>https://minidump.net/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</guid>
       <description>… and find an unexpected bug in the process&#xA;We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.&#xA;Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&amp;rsquo;m not sure the second part could be done on Windows without installing additional tools.</description>
     </item>
     <item>
       <title>Turning your training bike into a Speed remake</title>
-      <link>https://kevingosse.github.io/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</link>
+      <link>https://minidump.net/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</link>
       <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</guid>
+      <guid>https://minidump.net/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</guid>
       <description>(for context, this article was written during the containment period in 2020)&#xA;In those days of isolation, finding ways to get a regular physical activity is important, both for health and moral. It turns out that I own a training bike, so it was a good opportunity to take it back from wherever it had been stored for years (yeah, like you kept using it).&#xA;I tend to use the bike while watching series to make it less boring.</description>
     </item>
     <item>
       <title>Memory alignment of doubles in C#</title>
-      <link>https://kevingosse.github.io/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
+      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
       <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
+      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
       <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
     </item>
   </channel>

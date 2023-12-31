@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>life on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/life/</link>
+    <link>https://minidump.net/tags/life/</link>
     <description>Recent content in life on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 14 Apr 2020 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/life/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/life/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Turning your training bike into a Speed remake</title>
-      <link>https://kevingosse.github.io/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</link>
+      <link>https://minidump.net/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</link>
       <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</guid>
+      <guid>https://minidump.net/turning-your-training-bike-into-a-speed-remake-bceb4ea3d114/</guid>
       <description>(for context, this article was written during the containment period in 2020)&#xA;In those days of isolation, finding ways to get a regular physical activity is important, both for health and moral. It turns out that I own a training bike, so it was a good opportunity to take it back from wherever it had been stored for years (yeah, like you kept using it).&#xA;I tend to use the bike while watching series to make it less boring.</description>
     </item>
   </channel>

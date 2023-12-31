@@ -1,4 +1,50 @@
-{{ if .IsPage }}
+﻿{{ if .IsPage }}
+
+<link href="https://fonts.googleapis.com/css?family=Cookie&amp;display=swap" rel="stylesheet">
+<div class="bmc-btn-container"><a class="bmc-btn" target="_blank" href="https://buymeacoffee.com/kevingosse">☕<span class="bmc-btn-text">Enjoyed the article? Buy me a coffee</span></a></div>
+
+<style>
+    .bmc-btn {
+        min-width: 210px;
+        color: #000000;
+        background-color: #FFFFFF !important;
+        height: 60px;
+        border-radius: 12px;
+        font-size: 28px;
+        font-weight: Normal;
+        border: none;
+        line-height: 27px;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Cookie', cursive !important;
+        -webkit-box-sizing: border-box !important;
+        box-sizing: border-box !important;
+    }
+
+    .bmc-btn:hover, .bmc-btn:active, .bmc-btn:focus {
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .bmc-btn-text {
+        margin-left: 8px;
+        display: inline-block;
+        line-height: 0;
+        width: 100%;
+        flex-shrink: 0;
+        font-family: [FONT] !important;
+    }
+
+    .logo-outline {
+        fill: #000000;
+    }
+
+    .logo-coffee {
+        fill: #ffffff;
+    }</style>
+
   {{ if and (.Site.Params.comment.disqus.enable) (not (.Site.Config.Privacy.Disqus.Disable)) }}
     <div id="disqus_thread">
       <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>

@@ -2,122 +2,122 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>debugging on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/debugging/</link>
+    <link>https://minidump.net/tags/debugging/</link>
     <description>Recent content in debugging on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 08 Feb 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/debugging/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/debugging/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Writing native WinDbg extensions in C#</title>
-      <link>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</link>
+      <link>https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/</link>
       <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</guid>
+      <guid>https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/</guid>
       <description>Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:&#xA;Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg&#xA;Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#</description>
     </item>
     <item>
       <title>Finding an instance of thread by id in WinDbg</title>
-      <link>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</link>
+      <link>https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</link>
       <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</guid>
+      <guid>https://minidump.net/finding-an-instance-of-thread-by-id-in-windbg-d9fd9a4f1bac/</guid>
       <description>As you may already know, it&amp;rsquo;s possible to list all the managed threads in a .NET memory dump using the !threads command:&#xA;0:000&amp;gt; !threads ThreadCount: 21 UnstartedThread: 0 BackgroundThread: 3 PendingThread: 0 DeadThread: 0 Hosted Runtime: no Lock DBG ID OSID ThreadOBJ State GC Mode GC Alloc Context Domain Count Apt Exception 0 1 359c 000001C5340BDFB0 2a020 Preemptive 000001C53439A3F8:000001C53439C000 000001c53225e5b0 -00001 MTA 6 2 3e1c 000001C5340E7C00 2b220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Finalizer) 7 3 5a4c 000001C5340ECF20 102a220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) 8 4 1940 000001C534165830 202b020 Preemptive 000001C53436DEC8:000001C53436F388 000001c53225e5b0 -00001 MTA 9 5 7214 000001C534166E60 202b020 Preemptive 000001C53436F4E0:000001C534371388 000001c53225e5b0 -00001 MTA 10 6 7034 000001C534169C60 202b020 Preemptive 000001C534371588:000001C534371FD0 000001c53225e5b0 -00001 MTA 11 7 6e38 000001C53416C720 202b020 Preemptive 000001C534372448:000001C534373FD0 000001c53225e5b0 -00001 MTA 12 8 7220 000001C534170E90 202b020 Preemptive 000001C534374348:000001C534375FD0 000001c53225e5b0 -00001 MTA 13 9 5684 000001C534173570 202b020 Preemptive 000001C534376410:000001C534377FD0 000001c53225e5b0 -00001 MTA 14 10 4364 000001C534179330 202b020 Preemptive 000001C5343784C8:000001C534379FD0 000001c53225e5b0 -00001 MTA 15 11 63ec 000001C534178D20 202b020 Preemptive 000001C53437A688:000001C53437BFD0 000001c53225e5b0 -00001 MTA 16 12 1970 000001C534175CA0 202b020 Preemptive 000001C53437C6B8:000001C53437DFD0 000001c53225e5b0 -00001 MTA 17 13 6bcc 000001C5341768C0 202b020 Preemptive 000001C53437E7C8:000001C53437FFD0 000001c53225e5b0 -00001 MTA 18 14 6890 000001C534178100 202b020 Preemptive 000001C534380908:000001C534381FD0 000001c53225e5b0 -00001 MTA 19 15 69d0 000001C5341762B0 202b020 Preemptive 000001C534382A38:000001C534383FD0 000001c53225e5b0 -00001 MTA 20 16 1dc8 000001C534178710 202b020 Preemptive 000001C534384B78:000001C534385FD0 000001c53225e5b0 -00001 MTA 21 17 1db4 000001C534176ED0 202b020 Preemptive 000001C534386CC8:000001C534387FD0 000001c53225e5b0 -00001 MTA 22 18 6aa8 000001C5341774E0 202b020 Preemptive 000001C534388E28:000001C534389FD0 000001c53225e5b0 -00001 MTA 23 19 6b94 000001C534177AF0 202b020 Preemptive 000001C53438AF98:000001C53438BFD0 000001c53225e5b0 -00001 MTA 24 20 628 000001C534188A20 202b020 Preemptive 000001C53438D490:000001C53438DFD0 000001c53225e5b0 -00001 MTA 25 21 66d8 000001C534187E00 1029220 Preemptive 0000000000000000:0000000000000000 000001c53225e5b0 -00001 MTA (Threadpool Worker) The &amp;ldquo;ID&amp;rdquo; column gives you the managed thread id, which is the same value that you could retrieve from the code by calling thread.</description>
     </item>
     <item>
       <title>Reading AsyncLocal values from a memory dump</title>
-      <link>https://kevingosse.github.io/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</link>
+      <link>https://minidump.net/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</link>
       <pubDate>Thu, 16 Sep 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</guid>
+      <guid>https://minidump.net/reading-asynclocal-values-from-a-memory-dump-8be356a46b29/</guid>
       <description>This article explains how AsyncLocal values are stored in .NET and how to retrieve them from a memory dump. Note that the code provided is written for .NET 5, but should be able to work for .NET Framework with minor modifications (the name of some internal fields have changed across versions).&#xA;Preparing the memory dump First thing first, we need to prepare the memory dump that will serve as example for the whole article.</description>
     </item>
     <item>
       <title>Analyze your memory dumps in C# with DynaMD</title>
-      <link>https://kevingosse.github.io/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</link>
+      <link>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</link>
       <pubDate>Fri, 16 Jul 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</guid>
+      <guid>https://minidump.net/analyze-your-memory-dumps-in-c-with-dynamd-8e4b110b9d3a/</guid>
       <description>Whenever you need to analyze complex structures in a .NET memory dump, the WinDbg scripting API quickly shows its limits. In those cases, you can instead use the ClrMD library, that will give you everything you need to inspect the memory dump from C# code.&#xA;Not everything is perfect however, and sometimes I feel like the ClrMD syntax does not feel &amp;ldquo;natural&amp;rdquo; enough. To take one concrete example, for an investigation I had to retrieve the URLs of the pending HTTP requests in a memory dump.</description>
     </item>
     <item>
       <title>An unconventional way of investigating a NullReferenceException</title>
-      <link>https://kevingosse.github.io/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
+      <link>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</link>
       <pubDate>Tue, 16 Mar 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
+      <guid>https://minidump.net/an-unconventional-way-of-investigating-a-nullreferenceexception-5628cca01d6a/</guid>
       <description>The crash This one started when trying to understand why an integration test was failing, only on Linux with ARM64.&#xA;As I had no ARM64 dev environment available, I first tried adding more and more traces and let the test run in the CI, without much success.&#xA;Eventually, I realized this was leading nowhere, and took the time to setup an ARM64 VM to investigate further. After running the test with LLDB (see my previous article to learn how to fetch the symbols for the CLR), I found out that the process was raising two segmentations faults, and the second one caused the crash:</description>
     </item>
     <item>
       <title>Debugging a native deadlock in a .NET Linux application</title>
-      <link>https://kevingosse.github.io/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</link>
+      <link>https://minidump.net/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</link>
       <pubDate>Tue, 09 Feb 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</guid>
+      <guid>https://minidump.net/investigating-a-native-deadlock-in-a-net-linux-application-97979a005ebd/</guid>
       <description>This story begins when one of our integrations tests started got stuck on one PR that seemingly impacted unrelated code. This is a nice excuse to cover some concepts I haven&amp;rsquo;t touched in my previous articles, such as downloading the .NET symbols on Linux.&#xA;Preliminary inspection The failure was occurring in a Linux test. After a while, I managed to reproduce the issue locally in a docker container. Usually the first step would be to attach a debugger, but I didn&amp;rsquo;t want to spend the time to find the commands to inject the debugger in the container.</description>
     </item>
     <item>
       <title>AccessViolation in ObjectNative::IsLockHeld (part 2 of 2)</title>
-      <link>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</link>
+      <link>https://minidump.net/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</link>
       <pubDate>Wed, 25 Nov 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</guid>
+      <guid>https://minidump.net/accessviolation-in-objectnative-islockheld-part-2-of-2-a703e484113c/</guid>
       <description>This is the second part of an investigation where I tried to understand why an application was randomly crashing with an AccessViolationException.&#xA;If you haven&amp;rsquo;t read it, you can find part 1 of the investigation here.&#xA;As a reminder, here is what we uncovered so far:&#xA;The server runs Orchard, with the Datadog .NET tracer, and crashes about once or twice per day&#xA;The crash dump indicated an access violation in method clr!</description>
     </item>
     <item>
       <title>AccessViolation in ObjectNative::IsLockHeld (part 1 of 2)</title>
-      <link>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</link>
+      <link>https://minidump.net/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</link>
       <pubDate>Thu, 05 Nov 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</guid>
+      <guid>https://minidump.net/accessviolation-in-objectnative-islockheld-part-1-of-2-7fae4b839f9a/</guid>
       <description>This is a two parts article. Part two is available here.&#xA;Symptoms To monitor the stability of the Datadog .NET tracer, we have a reliability environment where we continuously run mainstream applications such as Orchard. This story starts when, while preparing a release, we discovered that the latest version of our tracer was crashing the app with the message:&#xA;Application: w3wp.exe Framework Version: v4.0.30319 Description: The process was terminated due to an internal error in the .</description>
     </item>
     <item>
       <title>Investigating an InvalidProgramException from a memory dump (part 3 of 3)</title>
-      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</link>
+      <link>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</link>
       <pubDate>Thu, 10 Sep 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</guid>
+      <guid>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-3-of-3-c1d912075cb1/</guid>
       <description>Investigating an InvalidProgramException from a memory dump (part 3 of 3) In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;In the previous part, we&amp;rsquo;ve located the bad generated IL, stored in an internal CLR structure.</description>
     </item>
     <item>
       <title>Investigating an InvalidProgramException from a memory dump (part 2 of 3)</title>
-      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</link>
+      <link>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</link>
       <pubDate>Tue, 01 Sep 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</guid>
+      <guid>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-2-of-3-daaecd8f3cf4/</guid>
       <description>In this series of article, we&amp;rsquo;re retracing how I debugged an InvalidProgramException, caused by a bug in the Datadog profiler, from a memory dump sent by a customer.&#xA;Part 1: Preliminary exploration&#xA;Part 2: Finding the generated IL&#xA;Part 3: Identifying the error and fixing the bug&#xA;Let&amp;rsquo;s start with a quick reminder. The profiler works by rewriting the IL of interesting methods to inject instrumentation code. The InvalidProgramException is thrown by the JIT when trying to compile the IL emitted by the profiler, which must be somehow invalid.</description>
     </item>
     <item>
       <title>Investigating an InvalidProgramException from a memory dump (part 1 of 3)</title>
-      <link>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/</link>
+      <link>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/</link>
       <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/</guid>
+      <guid>https://minidump.net/investigating-an-invalidprogramexception-from-a-memory-dump-part-1-of-3-bce634460cc3/</guid>
       <description>Datadog automated instrumentation for .NET works by rewriting the IL of interesting methods to emit traces that are then sent to the back-end. This is a complex piece of logic, written using the profiler API, and ridden with corner-cases. And as always with complex code, bugs are bound to happen, and those can be very difficult to diagnose.&#xA;As it turns out, we had customer reports of applications throwing InvalidProgramException when using our instrumentation.</description>
     </item>
     <item>
       <title>Check what .net core GC keywords are enabled without a debugger</title>
-      <link>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</link>
+      <link>https://minidump.net/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</link>
       <pubDate>Mon, 18 May 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</guid>
+      <guid>https://minidump.net/check-what-net-core-gc-keywords-are-enabled-without-a-debugger-d616745c0d0e/</guid>
       <description>… and find an unexpected bug in the process&#xA;We recently ran into performance issues, and many elements seemed to point towards the GC verbose events being enabled. To test this, I needed a way to check on live servers whether the events were activated.&#xA;Note: the whole article is about .net core on Linux. While the first part (implementation) can be transposed to any OS, I&amp;rsquo;m not sure the second part could be done on Windows without installing additional tools.</description>
     </item>
     <item>
       <title>Another way to use your debugging tools</title>
-      <link>https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
+      <link>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
+      <guid>https://minidump.net/another-way-to-use-your-debugging-tools-7e7f498d7a2b/</guid>
       <description>It&amp;rsquo;s Friday! And when it&amp;rsquo;s Friday and your computer is managed by Criteo, you have a chance to get this nice popup:&#xA;It&amp;rsquo;s really nice to warn me that my computer is going to restart in a few hours. But it would be even better if the &amp;ldquo;Hide&amp;rdquo; button wasn&amp;rsquo;t grayed out. To make things better, the close button doesn&amp;rsquo;t work either, and the window is top-most. So the only choices you have is either to restart now or to spend the Friday with this window eating your precious screen real estate.</description>
     </item>
     <item>
       <title>Dumping stack objects with ClrMD</title>
-      <link>https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/</link>
+      <link>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</link>
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/</guid>
+      <guid>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</guid>
       <description>The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&amp;rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&amp;rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.</description>
     </item>
     <item>
       <title>Debugging and fixing the Twitch desktop client</title>
-      <link>https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</link>
+      <link>https://minidump.net/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</link>
       <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</guid>
+      <guid>https://minidump.net/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186/</guid>
       <description>I&amp;rsquo;ve seen through the years that debugging is often misunderstood. Many people that are unfamiliar with debugging tend to think it&amp;rsquo;s all about mastering difficult and austere tools. I often had coworkers ask me &amp;ldquo;what sequence of commands should I type in WinDbg to debug this kind of issue?&amp;rdquo;, as if debugging was about applying a simple flowchart with a complex tool. This is in fact quite the opposite. Debugging is all about the mindset and the methodology, and the tooling is the simple part.</description>
     </item>
     <item>
       <title>Writing ClrMD extensions for WinDbg and LLDB</title>
-      <link>https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
+      <link>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</link>
       <pubDate>Thu, 14 Mar 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
+      <guid>https://minidump.net/writing-clrmd-extensions-for-windbg-and-lldb-916427956f66/</guid>
       <description>You may have already read the CriteoLabs article about how to write ClrMD extensions for WinDbg. As we move to Linux, we realized that we could not use our debugging toolbox anymore as it was written for WinDbg. Since LLDB is the common debugger for .net NET Core on Linux, I decided to write a compatibility layer to be able to load our extensions in the new environment. And while I was at it, I tried to make the overall process of writing such a debugger extension a bit simpler.</description>
     </item>
   </channel>

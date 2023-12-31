@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>memory-management on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/memory-management/</link>
+    <link>https://minidump.net/tags/memory-management/</link>
     <description>Recent content in memory-management on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 03 Jan 2009 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/memory-management/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/memory-management/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Memory alignment of doubles in C#</title>
-      <link>https://kevingosse.github.io/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
+      <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>
       <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
+      <guid>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</guid>
       <description>A while ago, I mentioned on Twitter an interesting quirk of objects in .NET: when running in 64 bits, objects are aligned on a 8-bytes boundary despite having a 32 bits header, and therefore 32 bits are &amp;ldquo;lost&amp;rdquo; before each object:&#xA;It bothers me so much that on #dotnet on 64-bit, 4 bytes are wasted for *every class instance* because objects are aligned on a 8 bytes boundary and the header has a fixed size of 4 bytes.</description>
     </item>
   </channel>

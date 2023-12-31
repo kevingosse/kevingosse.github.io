@@ -2,255 +2,255 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/</link>
+    <link>https://minidump.net/tags/</link>
     <description>Recent content in Tags on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 12 Aug 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>dotnet</title>
-      <link>https://kevingosse.github.io/tags/dotnet/</link>
+      <link>https://minidump.net/tags/dotnet/</link>
       <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/dotnet/</guid>
+      <guid>https://minidump.net/tags/dotnet/</guid>
       <description></description>
     </item>
     <item>
       <title>dotnet-core</title>
-      <link>https://kevingosse.github.io/tags/dotnet-core/</link>
+      <link>https://minidump.net/tags/dotnet-core/</link>
       <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/dotnet-core/</guid>
+      <guid>https://minidump.net/tags/dotnet-core/</guid>
       <description></description>
     </item>
     <item>
       <title>performance</title>
-      <link>https://kevingosse.github.io/tags/performance/</link>
+      <link>https://minidump.net/tags/performance/</link>
       <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/performance/</guid>
+      <guid>https://minidump.net/tags/performance/</guid>
       <description></description>
     </item>
     <item>
       <title>programming</title>
-      <link>https://kevingosse.github.io/tags/programming/</link>
+      <link>https://minidump.net/tags/programming/</link>
       <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/programming/</guid>
+      <guid>https://minidump.net/tags/programming/</guid>
       <description></description>
     </item>
     <item>
       <title>software-development</title>
-      <link>https://kevingosse.github.io/tags/software-development/</link>
+      <link>https://minidump.net/tags/software-development/</link>
       <pubDate>Sat, 12 Aug 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/software-development/</guid>
+      <guid>https://minidump.net/tags/software-development/</guid>
       <description></description>
     </item>
     <item>
       <title>csharp</title>
-      <link>https://kevingosse.github.io/tags/csharp/</link>
+      <link>https://minidump.net/tags/csharp/</link>
       <pubDate>Sat, 10 Jun 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/csharp/</guid>
+      <guid>https://minidump.net/tags/csharp/</guid>
       <description></description>
     </item>
     <item>
       <title>datadog</title>
-      <link>https://kevingosse.github.io/tags/datadog/</link>
+      <link>https://minidump.net/tags/datadog/</link>
       <pubDate>Sun, 12 Feb 2023 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/datadog/</guid>
+      <guid>https://minidump.net/tags/datadog/</guid>
       <description></description>
     </item>
     <item>
       <title>asynchronous</title>
-      <link>https://kevingosse.github.io/tags/asynchronous/</link>
+      <link>https://minidump.net/tags/asynchronous/</link>
       <pubDate>Mon, 05 Sep 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/asynchronous/</guid>
+      <guid>https://minidump.net/tags/asynchronous/</guid>
       <description></description>
     </item>
     <item>
       <title>low-level-programming</title>
-      <link>https://kevingosse.github.io/tags/low-level-programming/</link>
+      <link>https://minidump.net/tags/low-level-programming/</link>
       <pubDate>Tue, 26 Jul 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/low-level-programming/</guid>
+      <guid>https://minidump.net/tags/low-level-programming/</guid>
       <description></description>
     </item>
     <item>
       <title>debugging</title>
-      <link>https://kevingosse.github.io/tags/debugging/</link>
+      <link>https://minidump.net/tags/debugging/</link>
       <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/debugging/</guid>
+      <guid>https://minidump.net/tags/debugging/</guid>
       <description></description>
     </item>
     <item>
       <title>nativeaot</title>
-      <link>https://kevingosse.github.io/tags/nativeaot/</link>
+      <link>https://minidump.net/tags/nativeaot/</link>
       <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/nativeaot/</guid>
+      <guid>https://minidump.net/tags/nativeaot/</guid>
       <description></description>
     </item>
     <item>
       <title>windbg</title>
-      <link>https://kevingosse.github.io/tags/windbg/</link>
+      <link>https://minidump.net/tags/windbg/</link>
       <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/windbg/</guid>
+      <guid>https://minidump.net/tags/windbg/</guid>
       <description></description>
     </item>
     <item>
       <title>optimization</title>
-      <link>https://kevingosse.github.io/tags/optimization/</link>
+      <link>https://minidump.net/tags/optimization/</link>
       <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/optimization/</guid>
+      <guid>https://minidump.net/tags/optimization/</guid>
       <description></description>
     </item>
     <item>
       <title>perfview</title>
-      <link>https://kevingosse.github.io/tags/perfview/</link>
+      <link>https://minidump.net/tags/perfview/</link>
       <pubDate>Wed, 02 Jun 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/perfview/</guid>
+      <guid>https://minidump.net/tags/perfview/</guid>
       <description></description>
     </item>
     <item>
       <title>lldb</title>
-      <link>https://kevingosse.github.io/tags/lldb/</link>
+      <link>https://minidump.net/tags/lldb/</link>
       <pubDate>Tue, 09 Feb 2021 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/lldb/</guid>
+      <guid>https://minidump.net/tags/lldb/</guid>
       <description></description>
     </item>
     <item>
       <title>bugs</title>
-      <link>https://kevingosse.github.io/tags/bugs/</link>
+      <link>https://minidump.net/tags/bugs/</link>
       <pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/bugs/</guid>
+      <guid>https://minidump.net/tags/bugs/</guid>
       <description></description>
     </item>
     <item>
       <title>garbage-collection</title>
-      <link>https://kevingosse.github.io/tags/garbage-collection/</link>
+      <link>https://minidump.net/tags/garbage-collection/</link>
       <pubDate>Sun, 21 Jun 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/garbage-collection/</guid>
+      <guid>https://minidump.net/tags/garbage-collection/</guid>
       <description></description>
     </item>
     <item>
       <title>best-practices</title>
-      <link>https://kevingosse.github.io/tags/best-practices/</link>
+      <link>https://minidump.net/tags/best-practices/</link>
       <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/best-practices/</guid>
+      <guid>https://minidump.net/tags/best-practices/</guid>
       <description></description>
     </item>
     <item>
       <title>scalability</title>
-      <link>https://kevingosse.github.io/tags/scalability/</link>
+      <link>https://minidump.net/tags/scalability/</link>
       <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/scalability/</guid>
+      <guid>https://minidump.net/tags/scalability/</guid>
       <description></description>
     </item>
     <item>
       <title>threads</title>
-      <link>https://kevingosse.github.io/tags/threads/</link>
+      <link>https://minidump.net/tags/threads/</link>
       <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/threads/</guid>
+      <guid>https://minidump.net/tags/threads/</guid>
       <description></description>
     </item>
     <item>
       <title>iot</title>
-      <link>https://kevingosse.github.io/tags/iot/</link>
+      <link>https://minidump.net/tags/iot/</link>
       <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/iot/</guid>
+      <guid>https://minidump.net/tags/iot/</guid>
       <description></description>
     </item>
     <item>
       <title>life</title>
-      <link>https://kevingosse.github.io/tags/life/</link>
+      <link>https://minidump.net/tags/life/</link>
       <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/life/</guid>
+      <guid>https://minidump.net/tags/life/</guid>
       <description></description>
     </item>
     <item>
       <title>raspberry-pi</title>
-      <link>https://kevingosse.github.io/tags/raspberry-pi/</link>
+      <link>https://minidump.net/tags/raspberry-pi/</link>
       <pubDate>Tue, 14 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/raspberry-pi/</guid>
+      <guid>https://minidump.net/tags/raspberry-pi/</guid>
       <description></description>
     </item>
     <item>
       <title>async</title>
-      <link>https://kevingosse.github.io/tags/async/</link>
+      <link>https://minidump.net/tags/async/</link>
       <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/async/</guid>
+      <guid>https://minidump.net/tags/async/</guid>
       <description></description>
     </item>
     <item>
       <title>uwp</title>
-      <link>https://kevingosse.github.io/tags/uwp/</link>
+      <link>https://minidump.net/tags/uwp/</link>
       <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/uwp/</guid>
+      <guid>https://minidump.net/tags/uwp/</guid>
       <description></description>
     </item>
     <item>
       <title>wpf</title>
-      <link>https://kevingosse.github.io/tags/wpf/</link>
+      <link>https://minidump.net/tags/wpf/</link>
       <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/wpf/</guid>
+      <guid>https://minidump.net/tags/wpf/</guid>
       <description></description>
     </item>
     <item>
       <title>friday</title>
-      <link>https://kevingosse.github.io/tags/friday/</link>
+      <link>https://minidump.net/tags/friday/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/friday/</guid>
+      <guid>https://minidump.net/tags/friday/</guid>
       <description></description>
     </item>
     <item>
       <title>fun</title>
-      <link>https://kevingosse.github.io/tags/fun/</link>
+      <link>https://minidump.net/tags/fun/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/fun/</guid>
+      <guid>https://minidump.net/tags/fun/</guid>
       <description></description>
     </item>
     <item>
       <title>hacking</title>
-      <link>https://kevingosse.github.io/tags/hacking/</link>
+      <link>https://minidump.net/tags/hacking/</link>
       <pubDate>Fri, 21 Feb 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/hacking/</guid>
+      <guid>https://minidump.net/tags/hacking/</guid>
       <description></description>
     </item>
     <item>
       <title>clrmd</title>
-      <link>https://kevingosse.github.io/tags/clrmd/</link>
+      <link>https://minidump.net/tags/clrmd/</link>
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/clrmd/</guid>
+      <guid>https://minidump.net/tags/clrmd/</guid>
       <description></description>
     </item>
     <item>
       <title>javascript</title>
-      <link>https://kevingosse.github.io/tags/javascript/</link>
+      <link>https://minidump.net/tags/javascript/</link>
       <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/javascript/</guid>
+      <guid>https://minidump.net/tags/javascript/</guid>
       <description></description>
     </item>
     <item>
       <title>twitch</title>
-      <link>https://kevingosse.github.io/tags/twitch/</link>
+      <link>https://minidump.net/tags/twitch/</link>
       <pubDate>Sat, 11 May 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/twitch/</guid>
+      <guid>https://minidump.net/tags/twitch/</guid>
       <description></description>
     </item>
     <item>
       <title>net-core</title>
-      <link>https://kevingosse.github.io/tags/net-core/</link>
+      <link>https://minidump.net/tags/net-core/</link>
       <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/net-core/</guid>
+      <guid>https://minidump.net/tags/net-core/</guid>
       <description></description>
     </item>
     <item>
       <title>java</title>
-      <link>https://kevingosse.github.io/tags/java/</link>
+      <link>https://minidump.net/tags/java/</link>
       <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/java/</guid>
+      <guid>https://minidump.net/tags/java/</guid>
       <description></description>
     </item>
     <item>
       <title>memory-management</title>
-      <link>https://kevingosse.github.io/tags/memory-management/</link>
+      <link>https://minidump.net/tags/memory-management/</link>
       <pubDate>Sat, 03 Jan 2009 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/tags/memory-management/</guid>
+      <guid>https://minidump.net/tags/memory-management/</guid>
       <description></description>
     </item>
   </channel>

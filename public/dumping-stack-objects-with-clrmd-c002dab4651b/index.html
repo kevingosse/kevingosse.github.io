@@ -13,16 +13,23 @@
   "dateModified": "2019-12-18T00:00:00Z",
   "author": {
     "@type": "Person",
-    "name":  null ,
+    "name": "Kevin Gosse",
+    
+    "image": "https://minidump.net/images/profile.png"
     
   },
   "mainEntityOfPage": { 
     "@type": "WebPage",
-    "@id": "https:\/\/kevingosse.github.io\/dumping-stack-objects-with-clrmd-c002dab4651b\/" 
+    "@id": "https:\/\/minidump.net\/dumping-stack-objects-with-clrmd-c002dab4651b\/" 
   },
   "publisher": {
     "@type": "Organization",
     "name": "minidump.net",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://minidump.net/images/profile.png"
+    }
     
   },
   "description": "The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It\u0026rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you\u0026rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.",
@@ -34,7 +41,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
-<meta name="author" content="">
+<meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
 <meta name="description" content="How to implement the WinDbg DumpStackObjects command in ClrMD">
 
@@ -43,8 +50,8 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Dumping stack objects with ClrMD">
 <meta name="twitter:title" content="Dumping stack objects with ClrMD">
-<meta property="og:url" content="https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/">
-<meta property="twitter:url" content="https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/">
+<meta property="og:url" content="https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/">
+<meta property="twitter:url" content="https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/">
 <meta property="og:site_name" content="minidump.net">
 <meta property="og:description" content="How to implement the WinDbg DumpStackObjects command in ClrMD">
 <meta name="twitter:description" content="How to implement the WinDbg DumpStackObjects command in ClrMD">
@@ -75,11 +82,18 @@
 
 <meta name="twitter:card" content="summary">
 
+  <meta name="twitter:site" content="@kookiz">
+
+
+  <meta name="twitter:creator" content="@kookiz">
 
 
 
 
 
+
+  <meta property="og:image" content="https://minidump.net/images/profile.png">
+  <meta property="twitter:image" content="https://minidump.net/images/profile.png">
 
 
 
@@ -93,7 +107,7 @@
 
     
 
-    <link rel="canonical" href="https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/">
+    <link rel="canonical" href="https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -101,7 +115,7 @@
     
     
     
-    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    <link rel="stylesheet" href="https://minidump.net/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
     
     
 
@@ -123,6 +137,16 @@
 
       <nav id="sidebar" data-behavior="2">
   <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Kevin Gosse</h4>
+        
+          <h5 class="sidebar-profile-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</h5>
+        
+      </div>
     
     <ul class="sidebar-buttons">
       
@@ -211,6 +235,16 @@
       <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
       
       <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.buymeacoffee.com/kevingosse" target="_blank" rel="noopener" title="Buy me a coffee">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-coffee" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Buy me a coffee</span>
     </a>
   </li>
 
@@ -503,6 +537,30 @@
       </a>
     </li>
     
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
   
   
   <li class="post-action">
@@ -517,6 +575,52 @@
 
 
             
+
+<link href="https://fonts.googleapis.com/css?family=Cookie&amp;display=swap" rel="stylesheet">
+<div class="bmc-btn-container"><a class="bmc-btn" target="_blank" href="https://buymeacoffee.com/kevingosse">☕<span class="bmc-btn-text">Enjoyed the article? Buy me a coffee</span></a></div>
+
+<style>
+    .bmc-btn {
+        min-width: 210px;
+        color: #000000;
+        background-color: #FFFFFF !important;
+        height: 60px;
+        border-radius: 12px;
+        font-size: 28px;
+        font-weight: Normal;
+        border: none;
+        line-height: 27px;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Cookie', cursive !important;
+        -webkit-box-sizing: border-box !important;
+        box-sizing: border-box !important;
+    }
+
+    .bmc-btn:hover, .bmc-btn:active, .bmc-btn:focus {
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .bmc-btn-text {
+        margin-left: 8px;
+        display: inline-block;
+        line-height: 0;
+        width: 100%;
+        flex-shrink: 0;
+        font-family: [FONT] !important;
+    }
+
+    .logo-outline {
+        fill: #000000;
+    }
+
+    .logo-coffee {
+        fill: #ffffff;
+    }</style>
+
   
 <div id="utterances">
       <noscript>Please enable JavaScript to view the comments powered by Utterances.</noscript>
@@ -536,7 +640,7 @@
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2023 minidump.net. All Rights Reserved
+    &copy; 2023 Kevin Gosse. All Rights Reserved
   </span>
 </footer>
 
@@ -574,6 +678,30 @@
       </a>
     </li>
     
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
   
   
   <li class="post-action">
@@ -589,6 +717,38 @@
 
       </div>
       
+<div id="share-options-bar" class="share-options-bar" data-behavior="2">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fminidump.net%2Fdumping-stack-objects-with-clrmd-c002dab4651b%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https%3A%2F%2Fminidump.net%2Fdumping-stack-objects-with-clrmd-c002dab4651b%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=https%3A%2F%2Fminidump.net%2Fdumping-stack-objects-with-clrmd-c002dab4651b%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fminidump.net%2Fdumping-stack-objects-with-clrmd-c002dab4651b%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
 
     </div>
     
@@ -598,7 +758,11 @@
       <i class="fa fa-times"></i>
     </div>
     
-    <h4 id="about-card-name"></h4>
+      <img id="about-card-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Kevin Gosse</h4>
+    
+      <div id="about-card-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</div>
     
     
     
@@ -610,7 +774,7 @@
     
   
     
-      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+      <div id="cover" style="background-image:url('https://minidump.net/images/code.png');"></div>
     
   
 
@@ -623,7 +787,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+<script src="https://minidump.net/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
 
 
 

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>net-core on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/net-core/</link>
+    <link>https://minidump.net/tags/net-core/</link>
     <description>Recent content in net-core on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 01 Feb 2019 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/net-core/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/net-core/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Have some fun with .net core startup hooks</title>
-      <link>https://kevingosse.github.io/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</link>
+      <link>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</link>
       <pubDate>Fri, 01 Feb 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</guid>
+      <guid>https://minidump.net/c-have-some-fun-with-net-core-startup-hooks-498b9ad001e1/</guid>
       <description>One feature of .net core 2.2 that didn&amp;rsquo;t catch my attention immediately is the startup hooks. Put simply, this is a way to register globally a method in an assembly that will be executed whenever a .net core application is started. This unlocks a whole range of scenarios, from injecting a profiler to tweaking a static context in a given environment.&#xA;How does it work? First, you need to create a new .</description>
     </item>
   </channel>

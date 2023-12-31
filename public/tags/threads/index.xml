@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>threads on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/threads/</link>
+    <link>https://minidump.net/tags/threads/</link>
     <description>Recent content in threads on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 27 Apr 2020 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/threads/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/threads/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>.NET ThreadPool starvation, and how queuing makes it worse</title>
-      <link>https://kevingosse.github.io/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</link>
+      <link>https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</link>
       <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</guid>
+      <guid>https://minidump.net/net-threadpool-starvation-and-how-queuing-makes-it-worse-512c8d570527/</guid>
       <description>There has been plenty of talk about ThreadPool starvation in .NET:&#xA;https://blogs.msdn.microsoft.com/vancem/2018/10/16/diagnosing-net-core-threadpool-starvation-with-perfview-why-my-service-is-not-saturating-all-cores-or-seems-to-stall/&#xA;https://blogs.msdn.microsoft.com/vsoservice/?p=17665&#xA;Or even on the Criteo&amp;rsquo;s blog: http://labs.criteo.com/2018/09/monitor-finalizers-contention-and-threads-in-your-application/&#xA;What is it about? This is one of the numerous ways asynchronous code can break if you wait synchronously on a task.&#xA;To illustrate that, consider a web server that would execute this code:&#xA;/// ProcessRequest is called for every new request public void ProcessRequest() { DoSomethingAsync().Wait(); } You start an asynchronous operation (DoSomethingAsync) then block the current thread.</description>
     </item>
   </channel>

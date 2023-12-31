@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>best-practices on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/best-practices/</link>
+    <link>https://minidump.net/tags/best-practices/</link>
     <description>Recent content in best-practices on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 12 May 2020 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/best-practices/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/best-practices/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Performance best practices in C#</title>
-      <link>https://kevingosse.github.io/performance-best-practices-in-c-b85a47bdd93a/</link>
+      <link>https://minidump.net/performance-best-practices-in-c-b85a47bdd93a/</link>
       <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/performance-best-practices-in-c-b85a47bdd93a/</guid>
+      <guid>https://minidump.net/performance-best-practices-in-c-b85a47bdd93a/</guid>
       <description>As I recently had to compile a list of best practices in C# for Criteo, I figured it would be nice to share it publicly. The goal of this article is to provide a non-exhaustive list of code patterns to avoid, either because they&amp;rsquo;re risky or because they perform poorly. The list may seem a bit random because it&amp;rsquo;s out of context, but all the items have been spotted in our code at some point and have caused production issues.</description>
     </item>
   </channel>

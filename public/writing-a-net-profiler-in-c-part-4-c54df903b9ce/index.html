@@ -13,19 +13,26 @@
   "dateModified": "2023-06-10T00:00:00Z",
   "author": {
     "@type": "Person",
-    "name":  null ,
+    "name": "Kevin Gosse",
+    
+    "image": "https://minidump.net/images/profile.png"
     
   },
   "mainEntityOfPage": { 
     "@type": "WebPage",
-    "@id": "https:\/\/kevingosse.github.io\/writing-a-net-profiler-in-c-part-4-c54df903b9ce\/" 
+    "@id": "https:\/\/minidump.net\/writing-a-net-profiler-in-c-part-4-c54df903b9ce\/" 
   },
   "publisher": {
     "@type": "Organization",
     "name": "minidump.net",
     
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://minidump.net/images/profile.png"
+    }
+    
   },
-  "description": "Writing a .NET profiler in C# — Part 4 In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback.",
+  "description": "In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.",
   "keywords": []
 }
 
@@ -34,20 +41,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
-<meta name="author" content="">
+<meta name="author" content="Kevin Gosse">
 <meta name="keywords" content="">
-<meta name="description" content="Writing a .NET profiler in C# — Part 4 In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback.">
+<meta name="description" content="In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.">
 
 
-<meta property="og:description" content="Writing a .NET profiler in C# — Part 4 In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback.">
+<meta property="og:description" content="In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Writing a .NET profiler in C# — Part 4">
 <meta name="twitter:title" content="Writing a .NET profiler in C# — Part 4">
-<meta property="og:url" content="https://kevingosse.github.io/writing-a-net-profiler-in-c-part-4-c54df903b9ce/">
-<meta property="twitter:url" content="https://kevingosse.github.io/writing-a-net-profiler-in-c-part-4-c54df903b9ce/">
+<meta property="og:url" content="https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/">
+<meta property="twitter:url" content="https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/">
 <meta property="og:site_name" content="minidump.net">
-<meta property="og:description" content="Writing a .NET profiler in C# — Part 4 In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback.">
-<meta name="twitter:description" content="Writing a .NET profiler in C# — Part 4 In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback.">
+<meta property="og:description" content="In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.">
+<meta name="twitter:description" content="In part 1, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. In part 2, we refined the solution to use instance methods instead of static methods. In part 3, we automated the process using a source generator. At this point, we have everything we need to expose an instance of ICorProfilerCallback. However, to write a profiler we also need to be able to call methods from ICorProfilerInfo, this will be the subject of this part.">
 <meta property="og:locale" content="en-us">
 
   
@@ -75,11 +82,18 @@
 
 <meta name="twitter:card" content="summary">
 
+  <meta name="twitter:site" content="@kookiz">
+
+
+  <meta name="twitter:creator" content="@kookiz">
 
 
 
 
 
+
+  <meta property="og:image" content="https://minidump.net/images/profile.png">
+  <meta property="twitter:image" content="https://minidump.net/images/profile.png">
 
 
 
@@ -93,7 +107,7 @@
 
     
 
-    <link rel="canonical" href="https://kevingosse.github.io/writing-a-net-profiler-in-c-part-4-c54df903b9ce/">
+    <link rel="canonical" href="https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/">
 
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -101,7 +115,7 @@
     
     
     
-    <link rel="stylesheet" href="https://kevingosse.github.io/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    <link rel="stylesheet" href="https://minidump.net/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
     
     
 
@@ -123,6 +137,16 @@
 
       <nav id="sidebar" data-behavior="2">
   <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Kevin Gosse</h4>
+        
+          <h5 class="sidebar-profile-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</h5>
+        
+      </div>
     
     <ul class="sidebar-buttons">
       
@@ -214,6 +238,16 @@
     </a>
   </li>
 
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.buymeacoffee.com/kevingosse" target="_blank" rel="noopener" title="Buy me a coffee">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-coffee" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Buy me a coffee</span>
+    </a>
+  </li>
+
 
     </ul>
   </div>
@@ -255,8 +289,7 @@
           
           <div class="post-content markdown">
             <div class="main-content-wrap">
-              <h1 id="writing-a-net-profiler-in-c--part-4">Writing a .NET profiler in C# — Part 4</h1>
-<p><a href="/writing-a-net-profiler-in-c-part-1-d3978aae9b12">In part 1</a>, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. <a href="/writing-a-net-profiler-in-c-part-2-8039da001e43">In part 2</a>, we refined the solution to use instance methods instead of static methods. <a href="/writing-a-net-profiler-in-c-part-3-7d2c59fc017f">In part 3</a>, we automated the process using a source generator. At this point, we have everything we need to expose an instance of <a href="https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilercallback-interface?WT.mc_id=DT-MVP-5003493"><code>ICorProfilerCallback</code></a>. However, to write a profiler we also need to be able to call methods from <a href="https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilerinfo-interface?WT.mc_id=DT-MVP-5003493"><code>ICorProfilerInfo</code></a>, this will be the subject of this part.</p>
+              <p><a href="/writing-a-net-profiler-in-c-part-1-d3978aae9b12">In part 1</a>, we saw how NativeAOT can allow us to write a profiler in C#, and how to expose a fake COM object to use the profiling API. <a href="/writing-a-net-profiler-in-c-part-2-8039da001e43">In part 2</a>, we refined the solution to use instance methods instead of static methods. <a href="/writing-a-net-profiler-in-c-part-3-7d2c59fc017f">In part 3</a>, we automated the process using a source generator. At this point, we have everything we need to expose an instance of <a href="https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilercallback-interface?WT.mc_id=DT-MVP-5003493"><code>ICorProfilerCallback</code></a>. However, to write a profiler we also need to be able to call methods from <a href="https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilerinfo-interface?WT.mc_id=DT-MVP-5003493"><code>ICorProfilerInfo</code></a>, this will be the subject of this part.</p>
 <p>As a reminder, we ended up with this implementation of <code>ICorProfilerCallback</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CorProfilerCallback2</span> : ICorProfilerCallback2
 </span></span><span style="display:flex;"><span>{
@@ -574,6 +607,30 @@
       </a>
     </li>
     
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
   
   
   <li class="post-action">
@@ -588,6 +645,52 @@
 
 
             
+
+<link href="https://fonts.googleapis.com/css?family=Cookie&amp;display=swap" rel="stylesheet">
+<div class="bmc-btn-container"><a class="bmc-btn" target="_blank" href="https://buymeacoffee.com/kevingosse">☕<span class="bmc-btn-text">Enjoyed the article? Buy me a coffee</span></a></div>
+
+<style>
+    .bmc-btn {
+        min-width: 210px;
+        color: #000000;
+        background-color: #FFFFFF !important;
+        height: 60px;
+        border-radius: 12px;
+        font-size: 28px;
+        font-weight: Normal;
+        border: none;
+        line-height: 27px;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Cookie', cursive !important;
+        -webkit-box-sizing: border-box !important;
+        box-sizing: border-box !important;
+    }
+
+    .bmc-btn:hover, .bmc-btn:active, .bmc-btn:focus {
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .bmc-btn-text {
+        margin-left: 8px;
+        display: inline-block;
+        line-height: 0;
+        width: 100%;
+        flex-shrink: 0;
+        font-family: [FONT] !important;
+    }
+
+    .logo-outline {
+        fill: #000000;
+    }
+
+    .logo-coffee {
+        fill: #ffffff;
+    }</style>
+
   
 <div id="utterances">
       <noscript>Please enable JavaScript to view the comments powered by Utterances.</noscript>
@@ -607,7 +710,7 @@
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2023 minidump.net. All Rights Reserved
+    &copy; 2023 Kevin Gosse. All Rights Reserved
   </span>
 </footer>
 
@@ -645,6 +748,30 @@
       </a>
     </li>
     
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/writing-a-net-profiler-in-c-part-4-c54df903b9ce/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
   
   
   <li class="post-action">
@@ -660,6 +787,38 @@
 
       </div>
       
+<div id="share-options-bar" class="share-options-bar" data-behavior="2">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fminidump.net%2Fwriting-a-net-profiler-in-c-part-4-c54df903b9ce%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https%3A%2F%2Fminidump.net%2Fwriting-a-net-profiler-in-c-part-4-c54df903b9ce%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=https%3A%2F%2Fminidump.net%2Fwriting-a-net-profiler-in-c-part-4-c54df903b9ce%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fminidump.net%2Fwriting-a-net-profiler-in-c-part-4-c54df903b9ce%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
 
     </div>
     
@@ -669,7 +828,11 @@
       <i class="fa fa-times"></i>
     </div>
     
-    <h4 id="about-card-name"></h4>
+      <img id="about-card-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Kevin Gosse</h4>
+    
+      <div id="about-card-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</div>
     
     
     
@@ -681,7 +844,7 @@
     
   
     
-      <div id="cover" style="background-image:url('https://kevingosse.github.io/images/code.png');"></div>
+      <div id="cover" style="background-image:url('https://minidump.net/images/code.png');"></div>
     
   
 
@@ -694,7 +857,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-<script src="https://kevingosse.github.io/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+<script src="https://minidump.net/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
 
 
 

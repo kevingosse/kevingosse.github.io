@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>nativeaot on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/nativeaot/</link>
+    <link>https://minidump.net/tags/nativeaot/</link>
     <description>Recent content in nativeaot on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 08 Feb 2022 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/nativeaot/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/nativeaot/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Writing native WinDbg extensions in C#</title>
-      <link>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</link>
+      <link>https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/</link>
       <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/writing-native-windbg-extensions-in-c-5390726f3cec/</guid>
+      <guid>https://minidump.net/writing-native-windbg-extensions-in-c-5390726f3cec/</guid>
       <description>Writing native WinDbg extensions in C# It has already been possible for a long time to write WinDbg extensions in C#, for instance using ClrMD as described by Christophe Nasarre in this article. However, it has a few serious drawbacks:&#xA;Dependencies are tricky to manage, unless you store all the extension files in the same folder as WinDbg&#xA;Because of the tricks used to manage dependencies, you can run into conflicts if you simultaneously load multiple extensions written in C#</description>
     </item>
   </channel>

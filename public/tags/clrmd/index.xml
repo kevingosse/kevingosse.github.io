@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>clrmd on minidump.net</title>
-    <link>https://kevingosse.github.io/tags/clrmd/</link>
+    <link>https://minidump.net/tags/clrmd/</link>
     <description>Recent content in clrmd on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 18 Dec 2019 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://kevingosse.github.io/tags/clrmd/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/tags/clrmd/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dumping stack objects with ClrMD</title>
-      <link>https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/</link>
+      <link>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</link>
       <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
-      <guid>https://kevingosse.github.io/dumping-stack-objects-with-clrmd-c002dab4651b/</guid>
+      <guid>https://minidump.net/dumping-stack-objects-with-clrmd-c002dab4651b/</guid>
       <description>The SOS extension for WinDbg defines a command, !DumpStackObjects (or !dso), that allows to list all the references on the stack for a given thread. It&amp;rsquo;s convenient to retrieve the value of arguments or local variables of methods in the callstack. Recently, for an investigation, I ran across the need to dump those values for a few thousand threads. Obviously this is not something you&amp;rsquo;d want to do by hand, so I checked what was possible to do with ClrMD.</description>
     </item>
   </channel>

@@ -2,10 +2,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on minidump.net</title>
-    <link>https://kevingosse.github.io/categories/</link>
+    <link>https://minidump.net/categories/</link>
     <description>Recent content in Categories on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://kevingosse.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://minidump.net/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>
