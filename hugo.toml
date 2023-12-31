@@ -20,6 +20,7 @@ defaultContentLanguage = "en-us"
   clientId = 'Iv1.8114b4896395b29e'
   clientSecret = '51d5de761d1fbcbfad430e94ebdecdf6765a20b5'
   owner = 'kevingosse'
+  admin = 'kevingosse'
   repo = 'kevingosse.github.io'
   # See all options: https://github.com/gitalk/gitalk#options
   [params.comment.gitalk.options]
