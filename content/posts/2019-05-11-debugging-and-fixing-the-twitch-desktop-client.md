@@ -21,7 +21,7 @@ Where am I going with all this? A few days ago, I ran into a bug with the Twitch
 
 So, what's the actual bug? When I tried to open the "Mods" tab of the application, the page refused to load, just displaying a loading animation that went on forever:
 
-{{<image classes="fancybox" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-1.webp" title="Where are my mods? >_<">}}
+{{<image classes="fancybox center" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-1.webp" title="Where are my mods? >_<">}}
 
 A quick search on forums revealed that the bug was widespread and had began with an application update in early April. Some users suggested workarounds that looked random, and none of those worked in my case. In the process, I discovered that at least part of the application is written in .NET (cue the `TwitchAgent.exe.config` file in the application folder). Unable to launch my game, I ended-up *de facto* with some free time that I decided to spend on debugging.
 
@@ -79,7 +79,7 @@ Path.Combine(Path.Combine(MinecraftLauncherManager.Instance.RuntimeFolder, "jre-
 
 Since it was unlikely that the `Environment.GetFolderPath` method would return null, it seemed reasonable to think that `MinecraftLauncherManager.Instance.RuntimeFolder` was the culprit. To confirm it, I tried attaching a debugger configured to break on first chance exceptions. After breaking into `FindJavas_Win`, I inspected the value of the property, and sure enough it was null:
 
-{{<image classes="fancybox" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-2.webp" >}}
+{{<image classes="fancybox center" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-2.webp" >}}
 
 How to fix that? The property had a getter but not setter, so no easy way to assign a value from the debugger:
 
@@ -107,7 +107,7 @@ Maybe the application wasn't loading the right assembly and instead was using so
 
 I then noticed that the module was marked as "Optimized" even though I compiled it in debug mode:
 
-{{<image classes="fancybox" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-3.webp" >}}
+{{<image classes="fancybox center" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-3.webp" >}}
 
 Maybe I actually forgot to copy the file? Checking the modification date, the file was a few weeks old… Silly me!
 
@@ -136,7 +136,7 @@ No connection retries remaining; performing safe shutdown.
 
 This seemed to match the logs I saw on TwitchUI! It seemed that the inter-process communication was failing for some reason. I suspected earlier that the application was using named pipes, so I started by confirming that in Process Explorer:
 
-![][image_ref_MSpUaHpqTXJXT1A5ZnVqeGdSZUtvbDNBLnBuZw==]
+{{<image classes="fancybox center" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-5.png" >}}
 
 Sure enough, there was a named pipe with the naming pattern seen in the logs. Maybe a permission issue? I tried launching the app with administrator rights, but it didn't change anything. I also cross-checked the logs of the two processes to make sure they were using the same name to connect to the pipe.
 
@@ -186,5 +186,3 @@ That confirmed the 3 seconds timeout I noticed in the logs. After changing the v
 # Wrapping it up
 
 I hope this article gave some clues on how to debug an issue when you only have a limited knowledge of the application code. The key is to experiment as much as you can: gather as much information as possible, make a theory about what's happening (no matter how crazy), and test it. You will very likely be wrong, but in the process you will gain more information, which in turn will help you building a new theory… Until you hopefully manage to understand the issue. Patience is key, and don't be afraid to fail.
-
-[image_ref_MSpUaHpqTXJXT1A5ZnVqeGdSZUtvbDNBLnBuZw==]: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAAPCAYAAACGPlZTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEnklEQVR4nO2asXLbSAyGP93kUSQXGT2B9AS+NFepdaeUdpPuynTXUKWvu1aVG8dP4DyB54qI78IrdjEEIeySkkg5k9t/h6MlSGKxwBILgJrR0FBQUFBQcITf3luAgoKCgp8VxUEWFBT8nKjjMZQ+AVoHWQMzc+zUtfV1BCqI2Dk0z0Yv1xQqIidbbWjXWDd6nCl05M33szPOLNLHwqn6e+HYBpeOP/V603rcGfoiHp8H0PV1zWeX4G8hczXoRpAroFHHJ4pjfE94i1Hb6AB8JW/4FC51XqkX5e4CnmPB09HY831UY6D6jz18RI4pNo8nYAs8j8hzCl0KRKfCfx9pNfCm6G+0UaNHF9TA3+b8Icp9iH1v81gTHK6DfIo9B16zdxRMhXvCYsxhDvxDWFin4hLbpmRbAUveJ6pNYQ58Z5r5nivPVO/UG8FBn7MehmAMXWrc0t1QNsAPgjNbKvqS1sl5dMEdYYPQWEV55/HagWO8QupTdd5BejuF0Ga0O2HBNNjQ72xk0ULaNjrt0qnw2nlOp1E5W6dk+4LvTCT902MIf0mzdqrfJ4Om56LWF8JLYiM3zVNwznwtbKpm+zLGHcFufTaAbhqakqGm6zwk4vLmmtNBDmPpMoU9cENwkh8V/WOkpegi29JcnytZJPq8HSBHB01sh05yHY4DDSv126jzxtBLm6Zp/ab0rW3k2WZLQxX7VTy3Nq3Uc9b2qbFTsm1p+JaRV/OWsWy/b72t4hhN/F3RlV+OleGpx9H6yI3lzVc3nPsOUS6MLrx3KmUD/bydp22Vuq+KR2quOR1YO02lS0/+lepX5lqVoTeZZ2VsvV5SzdqxocnXIC1qwq63IOwMi3heosjpMCRy+a5+Pdt8oU279vFcILa7j79zWtv32Tol2yPHUaSOKHS9R1Ig25dnPBlkTIkGbP1Ir+NXw9OO84m2lnXufC0k9XsCqvh7iM97SNlgEWX15ilRpXyo2AO/R9oDrb29uebolu/YurT8IWQOe85P23f4uq0JkfprPKR+6smQwIezBCp/Lb8e7gmOJZUa1IRFKsjZRl7EOcM3tRy/nGwb4C91vgC+xXtl4Q6FlWHKDfnc+Wr8QUj9pCa4JqR+N2MIGPFIW7+T9Fo7mDV+ve1UvpfA06XmD75zvCFsKoJ/CTolQf9KcMAPzngb0392ZMjgtP9BzgkvY/n7z3WRilzE0fxJv2028V6708rur5+TutkQW6dku6f7RRHaCGjoV9bUnERmGffUr7Y6MnwmOJeha3tIFHlLeFlF10uCE0g51pQNhjq4Z7q1N5HzCX+uZOin4hJdyldmGzkuaCNaYn+RoctHloYQsVeE9XdD94OV1DhPgs3VbQ3C1kukr2sSpU3fdM1HH7qukrONrRelbKp5DrW1V1NrOK4r6VpWal3lZLN1LeG3TTyrm13LmucQ/dn56ubUro5qpFKbs3VUOB7b1i2tfCn92/lqXeu55nTg6WwqXW45Xs+Vc22beMarm9oaZN/9PXacxQsFBf8P6LrUr47UXMfSwdS61CWhIfQJcF4NsqCgoGBqpBzgFRyjoESQBQUFBQn8Bw92vYCUQZi9AAAAAElFTkSuQmCC

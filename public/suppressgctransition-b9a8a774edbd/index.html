@@ -475,9 +475,61 @@
 <h1 id="effect-on-the-debugger">Effect on the debugger</h1>
 <p>The previous section should be enough to decide whether or not to use <code>SuppressGCTransition</code> in your code. But there&rsquo;s an additional effect that I think is worth mentioning. When calling a native method, the runtime emits a <code>Frame</code> (with a capital F). The name is confusing, because despite being stored on the stack, a <code>Frame</code> is not a stack frame at the traditional sense. You can think of it as a cookie stored by the runtime to help unwind the stack if needed. You can read more on the subject <a href="https://mattwarren.org/2019/01/21/Stackwalking-in-the-.NET-Runtime/#frames">in this excellent article written by Matt Warren</a>.</p>
 <p>It might impact various aspects of the runtime (I&rsquo;ll hide behind a cautious &ldquo;I don&rsquo;t know&rdquo;), but what we&rsquo;re interested in here is the impact on debuggers. Imagine you&rsquo;re using a .NET debugger and trying to display the callstack of a managed thread currently executing a native call. The .NET debugger likely only knows how to unwind .NET code, so it will get confused by all the native stuff on top of the stack. To get around that, the debugger will retrieve the <code>Frame</code> and it will indicate where on the stack the managed code begins and ends. This way, the debugger can completely ignore the native part.</p>
-<p>![The debugger is able to reconstruct the managed callstack, despite the p/invoke][image_ref_MSpERk5ENGlnNW92aWQ3MkRuZm9wTTBnLnBuZw==]</p>
+
+
+ 
+  
+  
+  
+  
+    
+  
+    
+      
+    
+  
+
+<div class="figure center" >
+  
+    <a class="fancybox" href="/images/suppressgctransition-b9a8a774edbd-4.webp" title="The debugger is able to reconstruct the managed callstack, despite the p/invoke" data-fancybox="">
+  
+    <img class="fig-img" src="/images/suppressgctransition-b9a8a774edbd-4.webp"  alt="The debugger is able to reconstruct the managed callstack, despite the p/invoke">
+  
+    </a>
+  
+   
+    <span class="caption">The debugger is able to reconstruct the managed callstack, despite the p/invoke</span>
+  
+</div>
+
 <p>I don&rsquo;t know if there is a technical reason, or if it&rsquo;s just an effort to shave a bit more overhead (I assume so), but no <code>Frame</code> will be emitted when using <code>SuppressGCTransition</code>. The consequence is that the debugger doesn&rsquo;t know where on the stack the managed code begins. It might get confused by the native stuff on top of the stack and fail to reconstruct the callstack.</p>
-<p>![With SuppressGCTransition, the debugger completely fails to reconstruct the managed callstack][image_ref_MSpGXzh1UmZKWWFLVkg2YXhjT1g4RWxBLnBuZw==]</p>
+
+
+ 
+  
+  
+  
+  
+    
+  
+    
+      
+    
+  
+
+<div class="figure center" >
+  
+    <a class="fancybox" href="/images/suppressgctransition-b9a8a774edbd-5.webp" title="With SuppressGCTransition, the debugger completely fails to reconstruct the managed callstack" data-fancybox="">
+  
+    <img class="fig-img" src="/images/suppressgctransition-b9a8a774edbd-5.webp"  alt="With SuppressGCTransition, the debugger completely fails to reconstruct the managed callstack">
+  
+    </a>
+  
+   
+    <span class="caption">With SuppressGCTransition, the debugger completely fails to reconstruct the managed callstack</span>
+  
+</div>
+
 <p>I believe that&rsquo;s a minor inconvenience: you should only use <code>SuppressGCTransition</code> on methods that are very fast, so the debugger is unlikely to stop on any of them. Still, that&rsquo;s something to keep in mind.</p>
 <p><a href="https://learn.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute?WT.mc_id=DT-MVP-5003493">The official documentation</a> also mentions that the attribute shouldn&rsquo;t be applied on native methods that may throw exceptions. I believe it has something to do with the absence of <code>Frame</code>, but I haven&rsquo;t been able to produce any undesirable side-effect in my testing. You should still play safe and avoid any method that could throw an exception.</p>
 <h1 id="reverse-pinvokes">Reverse P/Invokes</h1>
@@ -823,7 +875,7 @@ ret
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2023 Kevin Gosse. All Rights Reserved
+    &copy; 2024 Kevin Gosse. All Rights Reserved
   </span>
 </footer>
 

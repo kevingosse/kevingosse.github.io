@@ -293,8 +293,12 @@
   
     
   
+    
+      
+    
+  
 
-<div class="figure " >
+<div class="figure center" >
   
     <a class="fancybox" href="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-1.webp" title="Where are my mods? &gt;_&lt;" data-fancybox="">
   
@@ -354,8 +358,12 @@
   
     
   
+    
+      
+    
+  
 
-<div class="figure " >
+<div class="figure center" >
   
     <a class="fancybox" href="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-2.webp" data-fancybox="">
   
@@ -394,8 +402,12 @@
   
     
   
+    
+      
+    
+  
 
-<div class="figure " >
+<div class="figure center" >
   
     <a class="fancybox" href="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-3.webp" data-fancybox="">
   
@@ -423,7 +435,31 @@ Attempting Desktop Service connection.
 Service connection timed out!
 No connection retries remaining; performing safe shutdown.
 </code></pre><p>This seemed to match the logs I saw on TwitchUI! It seemed that the inter-process communication was failing for some reason. I suspected earlier that the application was using named pipes, so I started by confirming that in Process Explorer:</p>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAAPCAYAAACGPlZTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEnklEQVR4nO2asXLbSAyGP93kUSQXGT2B9AS+NFepdaeUdpPuynTXUKWvu1aVG8dP4DyB54qI78IrdjEEIeySkkg5k9t/h6MlSGKxwBILgJrR0FBQUFBQcITf3luAgoKCgp8VxUEWFBT8nKjjMZQ+AVoHWQMzc+zUtfV1BCqI2Dk0z0Yv1xQqIidbbWjXWDd6nCl05M33szPOLNLHwqn6e+HYBpeOP/V603rcGfoiHp8H0PV1zWeX4G8hczXoRpAroFHHJ4pjfE94i1Hb6AB8JW/4FC51XqkX5e4CnmPB09HY831UY6D6jz18RI4pNo8nYAs8j8hzCl0KRKfCfx9pNfCm6G+0UaNHF9TA3+b8Icp9iH1v81gTHK6DfIo9B16zdxRMhXvCYsxhDvxDWFin4hLbpmRbAUveJ6pNYQ58Z5r5nivPVO/UG8FBn7MehmAMXWrc0t1QNsAPgjNbKvqS1sl5dMEdYYPQWEV55/HagWO8QupTdd5BejuF0Ga0O2HBNNjQ72xk0ULaNjrt0qnw2nlOp1E5W6dk+4LvTCT902MIf0mzdqrfJ4Om56LWF8JLYiM3zVNwznwtbKpm+zLGHcFufTaAbhqakqGm6zwk4vLmmtNBDmPpMoU9cENwkh8V/WOkpegi29JcnytZJPq8HSBHB01sh05yHY4DDSv126jzxtBLm6Zp/ab0rW3k2WZLQxX7VTy3Nq3Uc9b2qbFTsm1p+JaRV/OWsWy/b72t4hhN/F3RlV+OleGpx9H6yI3lzVc3nPsOUS6MLrx3KmUD/bydp22Vuq+KR2quOR1YO02lS0/+lepX5lqVoTeZZ2VsvV5SzdqxocnXIC1qwq63IOwMi3heosjpMCRy+a5+Pdt8oU279vFcILa7j79zWtv32Tol2yPHUaSOKHS9R1Ig25dnPBlkTIkGbP1Ir+NXw9OO84m2lnXufC0k9XsCqvh7iM97SNlgEWX15ilRpXyo2AO/R9oDrb29uebolu/YurT8IWQOe85P23f4uq0JkfprPKR+6smQwIezBCp/Lb8e7gmOJZUa1IRFKsjZRl7EOcM3tRy/nGwb4C91vgC+xXtl4Q6FlWHKDfnc+Wr8QUj9pCa4JqR+N2MIGPFIW7+T9Fo7mDV+ve1UvpfA06XmD75zvCFsKoJ/CTolQf9KcMAPzngb0392ZMjgtP9BzgkvY/n7z3WRilzE0fxJv2028V6708rur5+TutkQW6dku6f7RRHaCGjoV9bUnERmGffUr7Y6MnwmOJeha3tIFHlLeFlF10uCE0g51pQNhjq4Z7q1N5HzCX+uZOin4hJdyldmGzkuaCNaYn+RoctHloYQsVeE9XdD94OV1DhPgs3VbQ3C1kukr2sSpU3fdM1HH7qukrONrRelbKp5DrW1V1NrOK4r6VpWal3lZLN1LeG3TTyrm13LmucQ/dn56ubUro5qpFKbs3VUOB7b1i2tfCn92/lqXeu55nTg6WwqXW45Xs+Vc22beMarm9oaZN/9PXacxQsFBf8P6LrUr47UXMfSwdS61CWhIfQJcF4NsqCgoGBqpBzgFRyjoESQBQUFBQn8Bw92vYCUQZi9AAAAAElFTkSuQmCC" alt=""></p>
+
+
+ 
+  
+  
+  
+  
+    
+  
+    
+      
+    
+  
+
+<div class="figure center" >
+  
+    <a class="fancybox" href="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-5.png" data-fancybox="">
+  
+    <img class="fig-img" src="/images/debugging-and-fixing-the-twitch-desktop-client-d1b38a349186-5.png" >
+  
+    </a>
+  
+  
+</div>
+
 <p>Sure enough, there was a named pipe with the naming pattern seen in the logs. Maybe a permission issue? I tried launching the app with administrator rights, but it didn&rsquo;t change anything. I also cross-checked the logs of the two processes to make sure they were using the same name to connect to the pipe.</p>
 <p>I decided to check the code in TwitchAgent responsible for connecting to the pipe to see if I could find an obvious mistake. Unfortunately, the inter-process communication was handled by a native library, TwitchIPC.dll, and decompiling native code is outside of my skill set. Instead, I tried to write two custom console applications that communicated using that library… and it worked perfectly. So the issue wasn&rsquo;t the library itself, but how the Twitch desktop app was using it. While writing my custom console application, I discovered that the TwitchIPC library had an integrated logger that could be activated by the caller. Seeing this, I decided to patch the TwitchAgent to enable those logs, the same way I did when fixing the exceptions. This allowed me to get the following logs:</p>
 <pre tabindex="0"><code>9:44:10 PM: Creating server for pipe Twitch-App-Pipe-16688
@@ -636,7 +672,7 @@ No connection retries remaining; performing safe shutdown.
         </article>
         <footer id="footer" class="main-content-wrap">
   <span class="copyrights">
-    &copy; 2023 Kevin Gosse. All Rights Reserved
+    &copy; 2024 Kevin Gosse. All Rights Reserved
   </span>
 </footer>
 

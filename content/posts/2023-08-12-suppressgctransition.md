@@ -196,11 +196,11 @@ The previous section should be enough to decide whether or not to use `SuppressG
 
 It might impact various aspects of the runtime (I'll hide behind a cautious "I don't know"), but what we're interested in here is the impact on debuggers. Imagine you're using a .NET debugger and trying to display the callstack of a managed thread currently executing a native call. The .NET debugger likely only knows how to unwind .NET code, so it will get confused by all the native stuff on top of the stack. To get around that, the debugger will retrieve the `Frame` and it will indicate where on the stack the managed code begins and ends. This way, the debugger can completely ignore the native part.
 
-![The debugger is able to reconstruct the managed callstack, despite the p/invoke][image_ref_MSpERk5ENGlnNW92aWQ3MkRuZm9wTTBnLnBuZw==]
+{{<image classes="fancybox center" src="/images/suppressgctransition-b9a8a774edbd-4.webp" title="The debugger is able to reconstruct the managed callstack, despite the p/invoke" >}}
 
 I don't know if there is a technical reason, or if it's just an effort to shave a bit more overhead (I assume so), but no `Frame` will be emitted when using `SuppressGCTransition`. The consequence is that the debugger doesn't know where on the stack the managed code begins. It might get confused by the native stuff on top of the stack and fail to reconstruct the callstack.
 
-![With SuppressGCTransition, the debugger completely fails to reconstruct the managed callstack][image_ref_MSpGXzh1UmZKWWFLVkg2YXhjT1g4RWxBLnBuZw==]
+{{<image classes="fancybox center" src="/images/suppressgctransition-b9a8a774edbd-5.webp" title="With SuppressGCTransition, the debugger completely fails to reconstruct the managed callstack" >}}
 
 I believe that's a minor inconvenience: you should only use `SuppressGCTransition` on methods that are very fast, so the debugger is unlikely to stop on any of them. Still, that's something to keep in mind.
 
