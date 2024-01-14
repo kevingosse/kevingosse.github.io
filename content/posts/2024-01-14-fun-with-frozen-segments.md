@@ -339,10 +339,13 @@ Remember how we retrieved a pointer to the method-table earlier? The information
 First, we declare a struct that mimics the layout of the method-table (only part of it, that thing is _a mess_):
 
 ```csharp
-[StructLayout(LayoutKind.Sequential)]
+[StructLayout(LayoutKind.Explicit)]
 public struct MethodTable
 {
-    public int Flags;
+    [FieldOffset(0)]
+    public ushort ComponentSize;
+
+    [FieldOffset(4)]
     public int BaseSize;
 ```
 
@@ -503,17 +506,15 @@ For the `string` there is one subtlety: the total size needs to be aligned on th
     }
 ```
 
-And finally, the array:
+And finally, the array. To properly size the array, we need to know the size of its element. We use the `ComponentSize` field of the method table for that:
 
 ```csharp
     public T[] AllocateArray<T>(int length)
     {
         var arrayMt = typeof(T[]).TypeHandle.Value;
         var arrayMethodTable = *(MethodTable*)arrayMt;
-        var elementMt = typeof(T).TypeHandle.Value;
-        var elementMethodTable = *(MethodTable*)elementMt;
 
-        var arraySize = arrayMethodTable.BaseSize + elementMethodTable.BaseSize * length;
+        var arraySize = arrayMethodTable.BaseSize + length * arrayMethodTable.ComponentSize;
 
         var ptr = ReserveMemory(arraySize);
 
