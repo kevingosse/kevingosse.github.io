@@ -506,7 +506,7 @@ For the `string` there is one subtlety: the total size needs to be aligned on th
     }
 ```
 
-And finally, the array. To properly size the array, we need to know the size of its element. We use the `ComponentSize` field of the method table for that:
+And finally, the array. To properly size the array, we need to know the size of its elements. We use the `ComponentSize` field of the method table for that:
 
 ```csharp
     public T[] AllocateArray<T>(int length)
