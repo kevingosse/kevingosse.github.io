@@ -285,9 +285,18 @@ CallConstructor(&obj);
 Console.WriteLine(obj.Value); // 42
 ```
 
-On the plus side, you avoid reflection (which forces you to box the constructor arguments, if any). On the minus side, you have to write a helper for each and every constructor (you can't write a generic version of this code). 
+On the plus side, you avoid reflection (which forces you to box the constructor arguments, if any). On the minus side, you have to write a helper for each and every constructor (you can't write a generic version of this code).
 
-There really isn't a great way to handle this, so the best solution is to only use objects that have a default constructor.
+A good middle-ground is to retrieve the address of the constructor then cast it to a function pointer. It's better than pure reflection because it avoids boxing the arguments, and it's much more practical than using raw IL:
+
+```csharp
+var obj = AllocateObject<MyObject>(address);
+var constructorInfo = typeof(T).GetConstructor(Type.EmptyTypes);
+// You should cache this if you need to call it multiple times
+var ctor = (delegate*<MyObject, void>)constructorInfo.MethodHandle.GetFunctionPointer();
+
+ctor(obj);
+```
 
 # Writing an allocator
 
