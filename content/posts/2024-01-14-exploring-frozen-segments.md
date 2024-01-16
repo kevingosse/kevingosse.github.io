@@ -449,7 +449,9 @@ public class MyObject
     public int data2;
 }
 
-Console.WriteLine(sizeof(MyObject)); // 32
+var mt = typeof(MyObject).TypeHandle.Value;
+var methodTable = *(MethodTable*)mt;        
+Console.WriteLine(methodTable.BaseSize); // 32
 ```
 
 Perfect: 8 bytes for the header, 8 bytes for the MT pointer, 12 bytes for the data, 4 bytes of padding.
