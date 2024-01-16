@@ -126,7 +126,7 @@ Let's take a second to explain that code: first we store the address of the stri
 We can wrap everything in a helper method:
 
 ```csharp
-static unsafe string AllocateString(void* address, Span<char> data)
+static unsafe string AllocateString(void* address, ReadOnlySpan<char> data)
 {
     var ptr = (byte*)address;
 
@@ -147,7 +147,7 @@ static unsafe string AllocateString(void* address, Span<char> data)
     var destination = new Span<char>(ptr, data.Length + 1);
 
     data.CopyTo(destination);
-    data[^1] = '\0';
+    destination[^1] = '\0';
         
     var strRef = (nint*)address + 1;
     return *(string*)&strRef;
@@ -269,18 +269,14 @@ Console.WriteLine(obj.Value); // 42
 Another option is to use IL, for instance with [InlineIL.Fody](https://github.com/ltrzesniewski/InlineIL.Fody):
 
 ```csharp
-static unsafe void CallConstructor(MyObject* obj)
+static unsafe void CallConstructor(MyObject obj)
 {
     IL.Emit.Ldarg_0();
-    IL.Emit.Ldind_Ref();
-    IL.Emit.Dup();
     IL.Emit.Call(new MethodRef(typeof(MyObject), ".ctor", []));
-    IL.Emit.Pop();
-    IL.Emit.Ret();
  }
 
 var obj = AllocateObject<MyObject>(address);
-CallConstructor(&obj);
+CallConstructor(obj);
 Console.WriteLine(obj.Value); // 42
 ```
 
@@ -555,7 +551,7 @@ Then `struct`:
 For the `string` there is one subtlety: the total size needs to be aligned on the pointer size.
 
 ```csharp
-    public string AllocateString(Span<char> data)
+    public string AllocateString(ReadOnlySpan<char> data)
     {
         var mt = typeof(string).TypeHandle.Value;
         var methodTable = *(MethodTable*)mt;
@@ -583,7 +579,7 @@ For the `string` there is one subtlety: the total size needs to be aligned on th
         var destination = new Span<char>(dataPtr + sizeof(int), data.Length + 1);
 
         data.CopyTo(destination);
-        data[^1] = '\0';
+        destination[^1] = '\0';
 
         return *(string*)&ptr;
     }
@@ -657,3 +653,101 @@ static void Main()
 We have seen how to use frozen segments to store managed objects in native memory. Keep in mind that this code is not production-ready, and you shouldn't consider using it in your applications without proper testing and benchmarking. Also, the frozen segments API is not widely used, so I wouldn't be surprised if there were some nasty bugs lurking around. Still, it is a good excuse to have some fun and dig into the .NET type system.
 
 If you're interested in seeing more, we could explore in future articles how to serialize and deserialize frozen segments into files, as is already done by the [FrozenObjects](https://github.com/microsoft/FrozenObjects) tool.
+
+# Addendum
+
+After publishing this article, Egor Bogatov pointed out an issue with my allocator: 
+
+{{< tweet user="EgorBo" id="1747228260256055413" >}}
+
+In some conditions, the GC actually scans the frozen segments, just marking all the objects and then unmarking them at the end of the collection. It only happens in some precise conditions: if regions are disabled, and if the frozen segment is allocated within the GC range (the GC range being the range of memory between the lowest and the highest address of the managed heap).
+If the GC decide to scan our frozen segment, it will fail because it's not filled with proper objects (since we're allocating them one by one). There are multiple solutions to this. One is to allocate a dummy array after the last object, and set its size to the remaining space in the segment. This way, the GC will scan the dummy array and ignore the rest of the segment:
+
+```csharp
+    private nint* ReserveMemory(int size)
+    {
+        ObjectDisposedException.ThrowIf(_address == 0, typeof(BumpPointerNativeAllocator));
+
+        if (_address + size > _limit)
+        {
+            throw new OutOfMemoryException();
+        }
+
+        var objectAddress = Interlocked.Add(ref _address, size);
+
+        if (objectAddress > _limit)
+        {
+            throw new OutOfMemoryException();
+        }
+
+        // Allocate a dummy array at the end
+        var ptr = (nint*)objectAddress;
+        
+        // Write the header
+        *ptr++ = 0;
+
+        // Write the MT
+        *ptr++ = typeof(byte[]).TypeHandle.Value;
+
+        // Write the length
+        *ptr = (nint)(_limit - objectAddress - sizeof(nint) * 2);
+
+        return (nint*)(objectAddress - size);
+    }
+```
+
+Another approach is to notify the GC of how much memory is allocated in the segment, but there is no managed API for that. We can however skip the middle-man and directly update the GC's internal structure. Remember the `IntPtr` returned by `_RegisterFrozenSegment`? We can map it to this structure:
+
+```csharp
+[StructLayout(LayoutKind.Sequential)]
+public unsafe struct Heap_segment
+{
+    public nint allocated;
+    public nint committed;
+    public nint reserved;
+    public nint used;
+    public nint mem;
+```
+
+During the initialization, we change its value to point to the beginning of the segment:
+
+```csharp
+    public BumpPointerNativeAllocator(nint size)
+    {
+        _address = (IntPtr)NativeMemory.AlignedAlloc((nuint)size, 8);
+        NativeMemory.Clear((void*)_address, (nuint)size);
+        _segment = RegisterFrozenSegment((IntPtr)_address, size);
+
+        var segment = (Heap_segment*)_segment;
+        segment->allocated = _address;
+
+        _limit = _address + size;
+    }
+```
+
+We can then just update the `allocated` field as needed (which points to the end of the allocated memory).
+
+```csharp
+    private nint* ReserveMemory(int size)
+    {
+        ObjectDisposedException.ThrowIf(_address == 0, typeof(BumpPointerNativeAllocator));
+
+        if (_address + size > _limit)
+        {
+            throw new OutOfMemoryException();
+        }
+
+        var objectAddress = Interlocked.Add(ref _address, size);
+
+        if (objectAddress > _limit)
+        {
+            throw new OutOfMemoryException();
+        }
+
+        // TODO: Should use Interlocked operations for thread safety
+        var segment = (Heap_segment*)_segment;
+        segment->allocated += size;
+
+        return (nint*)(objectAddress - size);
+    }
+```

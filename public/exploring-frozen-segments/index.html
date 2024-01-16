@@ -411,7 +411,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>Console.WriteLine(str); <span style="color:#75715e">// Hello</span>
 </span></span></code></pre></div><p>Let&rsquo;s take a second to explain that code: first we store the address of the string in <code>strRef</code>. Then we take the address of <code>strRef</code> and reinterpret it as a pointer to a <code>string</code>. Finally, we dereference it to retrieve our instance of <code>string</code>.</p>
 <p>We can wrap everything in a helper method:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">string</span> AllocateString(<span style="color:#66d9ef">void</span>* address, Span&lt;<span style="color:#66d9ef">char</span>&gt; data)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">string</span> AllocateString(<span style="color:#66d9ef">void</span>* address, ReadOnlySpan&lt;<span style="color:#66d9ef">char</span>&gt; data)
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> ptr = (<span style="color:#66d9ef">byte</span>*)address;
 </span></span><span style="display:flex;"><span>
@@ -432,7 +432,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> destination = <span style="color:#66d9ef">new</span> Span&lt;<span style="color:#66d9ef">char</span>&gt;(ptr, data.Length + <span style="color:#ae81ff">1</span>);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>    data.CopyTo(destination);
-</span></span><span style="display:flex;"><span>    data[^<span style="color:#ae81ff">1</span>] = <span style="color:#e6db74">&#39;\0&#39;</span>;
+</span></span><span style="display:flex;"><span>    destination[^<span style="color:#ae81ff">1</span>] = <span style="color:#e6db74">&#39;\0&#39;</span>;
 </span></span><span style="display:flex;"><span>        
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> strRef = (nint*)address + <span style="color:#ae81ff">1</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> *(<span style="color:#66d9ef">string</span>*)&amp;strRef;
@@ -514,18 +514,14 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>        
 </span></span><span style="display:flex;"><span>Console.WriteLine(obj.Value); <span style="color:#75715e">// 42</span>
 </span></span></code></pre></div><p>Another option is to use IL, for instance with <a href="https://github.com/ltrzesniewski/InlineIL.Fody">InlineIL.Fody</a>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">void</span> CallConstructor(MyObject* obj)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">void</span> CallConstructor(MyObject obj)
 </span></span><span style="display:flex;"><span>{
 </span></span><span style="display:flex;"><span>    IL.Emit.Ldarg_0();
-</span></span><span style="display:flex;"><span>    IL.Emit.Ldind_Ref();
-</span></span><span style="display:flex;"><span>    IL.Emit.Dup();
 </span></span><span style="display:flex;"><span>    IL.Emit.Call(<span style="color:#66d9ef">new</span> MethodRef(<span style="color:#66d9ef">typeof</span>(MyObject), <span style="color:#e6db74">&#34;.ctor&#34;</span>, []));
-</span></span><span style="display:flex;"><span>    IL.Emit.Pop();
-</span></span><span style="display:flex;"><span>    IL.Emit.Ret();
 </span></span><span style="display:flex;"><span> }
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> obj = AllocateObject&lt;MyObject&gt;(address);
-</span></span><span style="display:flex;"><span>CallConstructor(&amp;obj);
+</span></span><span style="display:flex;"><span>CallConstructor(obj);
 </span></span><span style="display:flex;"><span>Console.WriteLine(obj.Value); <span style="color:#75715e">// 42</span>
 </span></span></code></pre></div><p>On the plus side, you avoid reflection (which forces you to box the constructor arguments, if any). On the minus side, you have to write a helper for each and every constructor (you can&rsquo;t write a generic version of this code).</p>
 <p>A good middle-ground is to retrieve the address of the constructor then cast it to a function pointer. It&rsquo;s better than pure reflection because it avoids boxing the arguments, and it&rsquo;s much more practical than using raw IL:</p>
@@ -721,7 +717,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">ref</span> Unsafe.AsRef&lt;T&gt;(ptr);
 </span></span><span style="display:flex;"><span>	}
 </span></span></code></pre></div><p>For the <code>string</code> there is one subtlety: the total size needs to be aligned on the pointer size.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> AllocateString(Span&lt;<span style="color:#66d9ef">char</span>&gt; data)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> AllocateString(ReadOnlySpan&lt;<span style="color:#66d9ef">char</span>&gt; data)
 </span></span><span style="display:flex;"><span>    {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(<span style="color:#66d9ef">string</span>).TypeHandle.Value;
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> methodTable = *(MethodTable*)mt;
@@ -749,7 +745,7 @@ if (!doNotTrack) {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> destination = <span style="color:#66d9ef">new</span> Span&lt;<span style="color:#66d9ef">char</span>&gt;(dataPtr + <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>), data.Length + <span style="color:#ae81ff">1</span>);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        data.CopyTo(destination);
-</span></span><span style="display:flex;"><span>        data[^<span style="color:#ae81ff">1</span>] = <span style="color:#e6db74">&#39;\0&#39;</span>;
+</span></span><span style="display:flex;"><span>        destination[^<span style="color:#ae81ff">1</span>] = <span style="color:#e6db74">&#39;\0&#39;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> *(<span style="color:#66d9ef">string</span>*)&amp;ptr;
 </span></span><span style="display:flex;"><span>    }
@@ -834,7 +830,89 @@ if (!doNotTrack) {
 <h1 id="wrapping-up">Wrapping up</h1>
 <p>We have seen how to use frozen segments to store managed objects in native memory. Keep in mind that this code is not production-ready, and you shouldn&rsquo;t consider using it in your applications without proper testing and benchmarking. Also, the frozen segments API is not widely used, so I wouldn&rsquo;t be surprised if there were some nasty bugs lurking around. Still, it is a good excuse to have some fun and dig into the .NET type system.</p>
 <p>If you&rsquo;re interested in seeing more, we could explore in future articles how to serialize and deserialize frozen segments into files, as is already done by the <a href="https://github.com/microsoft/FrozenObjects">FrozenObjects</a> tool.</p>
+<h1 id="addendum">Addendum</h1>
+<p>After publishing this article, Egor Bogatov pointed out an issue with my allocator:</p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Nice! One note that _RegisterFrozenSegment isn&#39;t enough if you want an on-demand allocator - you need UpdateFrozenSegment to keep GC updated about boundaries, which is not exposed. (although, you may try to allocate a dummy object to fill the empty space in your segment) 🙂</p>&mdash; Egor Bogatov (@EgorBo) <a href="https://twitter.com/EgorBo/status/1747228260256055413?ref_src=twsrc%5Etfw">January 16, 2024</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+
+<p>In some conditions, the GC actually scans the frozen segments, just marking all the objects and then unmarking them at the end of the collection. It only happens in some precise conditions: if regions are disabled, and if the frozen segment is allocated within the GC range (the GC range being the range of memory between the lowest and the highest address of the managed heap).
+If the GC decide to scan our frozen segment, it will fail because it&rsquo;s not filled with proper objects (since we&rsquo;re allocating them one by one). There are multiple solutions to this. One is to allocate a dummy array after the last object, and set its size to the remaining space in the segment. This way, the GC will scan the dummy array and ignore the rest of the segment:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> nint* ReserveMemory(<span style="color:#66d9ef">int</span> size)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ObjectDisposedException.ThrowIf(_address == <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">typeof</span>(BumpPointerNativeAllocator));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (_address + size &gt; _limit)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> OutOfMemoryException();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> objectAddress = Interlocked.Add(<span style="color:#66d9ef">ref</span> _address, size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (objectAddress &gt; _limit)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> OutOfMemoryException();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Allocate a dummy array at the end</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> ptr = (nint*)objectAddress;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>        *ptr++ = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the MT</span>
+</span></span><span style="display:flex;"><span>        *ptr++ = <span style="color:#66d9ef">typeof</span>(<span style="color:#66d9ef">byte</span>[]).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the length</span>
+</span></span><span style="display:flex;"><span>        *ptr = (nint)(_limit - objectAddress - <span style="color:#66d9ef">sizeof</span>(nint) * <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (nint*)(objectAddress - size);
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>Another approach is to notify the GC of how much memory is allocated in the segment, but there is no managed API for that. We can however skip the middle-man and directly update the GC&rsquo;s internal structure. Remember the <code>IntPtr</code> returned by <code>_RegisterFrozenSegment</code>? We can map it to this structure:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#a6e22e">[StructLayout(LayoutKind.Sequential)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">Heap_segment</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> nint allocated;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> nint committed;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> nint reserved;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> nint used;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> nint mem;
+</span></span></code></pre></div><p>During the initialization, we change its value to point to the beginning of the segment:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> BumpPointerNativeAllocator(nint size)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _address = (IntPtr)NativeMemory.AlignedAlloc((nuint)size, <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span>        NativeMemory.Clear((<span style="color:#66d9ef">void</span>*)_address, (nuint)size);
+</span></span><span style="display:flex;"><span>        _segment = RegisterFrozenSegment((IntPtr)_address, size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> segment = (Heap_segment*)_segment;
+</span></span><span style="display:flex;"><span>        segment-&gt;allocated = _address;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        _limit = _address + size;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>We can then just update the <code>allocated</code> field as needed (which points to the end of the allocated memory).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> nint* ReserveMemory(<span style="color:#66d9ef">int</span> size)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ObjectDisposedException.ThrowIf(_address == <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">typeof</span>(BumpPointerNativeAllocator));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (_address + size &gt; _limit)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> OutOfMemoryException();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> objectAddress = Interlocked.Add(<span style="color:#66d9ef">ref</span> _address, size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (objectAddress &gt; _limit)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> OutOfMemoryException();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// TODO: Should use Interlocked operations for thread safety</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> segment = (Heap_segment*)_segment;
+</span></span><span style="display:flex;"><span>        segment-&gt;allocated += size;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (nint*)(objectAddress - size);
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div>
               
 
 
