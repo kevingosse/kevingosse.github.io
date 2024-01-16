@@ -1,15 +1,14 @@
 ---
-url: fun-with-frozen-segments
-title: Fun with frozen segments
+url: exploring-frozen-segments
+title: Exploring .NET frozen segments
 subtitle: Exploring frozen segments and how to use them in C#
-summary: Exploring frozen segments and how to use them in C#.
+summary: Exploring a little-known API allowing to allocate managed objects outside of the managed heap.
 date: 2024-01-14
 tags:
 - dotnet
 - garbage-collection
 author: Kevin Gosse
-thumbnailImage: /images/2024-01-14-fun-with-frozen-segments-1.png
-draft: true
+thumbnailImage: /images/2024-01-14-exploring-frozen-segments-1.png
 ---
 
 .NET 8 introduced the concept of [NonGC heap](https://github.com/dotnet/runtime/blob/main/docs/design/features/NonGC-Heap.md). It's a special heap that, as the name indicates, is ignored by the GC. The runtime uses it to allocate objects that are guaranteed to stay alive forever (typically, string literals) and this allows the JIT to perform some neat optimizations (thanks to the guarantee that the object will never be moved). All of this is done automatically, without any knowledge of the developer. The only sign that something special is happening is if you try to check the generation of the object:
@@ -24,7 +23,7 @@ The non-GC heap is built on top of frozen segments, a notion that has existed in
 
 By "hidden", I mean that this API is exposed by... private methods. As weird as it sounds, the `GC._RegisterFrozenSegment` and `GC._UnregisterFrozenSegment` methods are private and yet are intended for external usage, they're never called by the base class library.
 
-{{<image classes="fancybox center" src="/images/2024-01-14-fun-with-frozen-segments-1.png" >}}
+{{<image classes="fancybox center" src="/images/2024-01-14-exploring-frozen-segments-1.png" >}}
 
 At the time of writing, [`UnsafeAccessor` does not support static methods](https://github.com/dotnet/runtime/issues/90081), so the only way to call those methods is through reflection:
 
@@ -64,7 +63,7 @@ But how to allocate an object in the frozen segment? When calling the `new` allo
 
 Let's start "simple": how to allocate a `string` in the frozen segment? First let's have a look at the layout of a `string`:
 
-{{<image classes="fancybox center" src="/images/2024-01-14-fun-with-frozen-segments-2.png" >}}
+{{<image classes="fancybox center" src="/images/2024-01-14-exploring-frozen-segments-2.png" >}}
 
 Like every reference object, a `string` starts with a header, followed by a pointer to the method-table (MT). Then it contains the length, followed by every character and a null terminator (note that the length does not include the null terminator).
 
@@ -208,12 +207,12 @@ Console.WriteLine(string.Join(',', array)); // 0, 1, 2, 3, 4
 
 ## Allocating an object
 
-Surely, after allocatig a string an an array, allocating an object should be trivial? Well... sort of?
+Surely, after allocating a string an an array, allocating an object should be trivial? Well... sort of?
 
 Allocating the object itself is indeed simpler than the other examples:
 
 ```csharp
-static unsafe T AllocateObject<T>(void* address)
+static unsafe T AllocateObject<T>(void* address) where T : class
 {
     var ptr = (byte*)address;
 
@@ -297,6 +296,67 @@ var ctor = (delegate*<MyObject, void>)constructorInfo.MethodHandle.GetFunctionPo
 
 ctor(obj);
 ```
+
+## Allocating a struct
+
+Allocating a struct is very similar to allocating an object, except that we don't need to a header of the method-table pointer. We also want to return the struct by reference, otherwise we would end-up with a copy of the struct, defeating the purpose:
+
+```csharp
+public ref T AllocateStruct<T>(void* address) where T : struct
+{
+    var ptr = (byte*)address;
+    return ref Unsafe.AsRef<T>(ptr);
+}
+```
+
+We have the same problem as before if we want to call the constructor. If you decide to use the function pointer approach, keep in mind that you need to pass the struct by reference:
+
+```csharp
+ref var obj = ref AllocateStruct<MyStruct>(address);
+var constructorInfo = typeof(T).GetConstructor(Type.EmptyTypes);
+// You should cache this if you need to call it multiple times
+var ctor = (delegate*<ref MyStruct, void>)constructorInfo.MethodHandle.GetFunctionPointer();
+
+ctor(obj);
+```
+
+## There is no GC where we're going
+
+As mentioned in the introduction, frozen segments are never scanned by the GC. A consequence that may not be immediately obvious is that any reference from a frozen segment to the managed heap is effectively a weak reference.
+
+Consider the following example:
+
+```csharp
+public class ObjectWithReferences
+{
+    public object Reference;
+}
+
+[MethodImpl(MethodImplOptions.NoInlining)]
+static WeakReference SetReference(ObjectWithReferences obj)
+{
+    var target = new object();
+    obj.Reference = target;
+    return new WeakReference(target);
+}
+
+static unsafe AllocateInFrozenSegment(void* frozenSegmentAddress)
+{
+    var obj = AllocateObject<ObjectWithReferences>(frozenSegmentAddress);
+
+    var weakReference = SetReference(obj);
+
+    GC.Collect();
+
+    Console.WriteLine(weakReference.IsAlive); // False
+
+    // Not actually needed since objects in the frozen segments are never collected,
+    // but just demonstrating the point
+    GC.KeepAlive(obj); 
+}
+```
+
+As you can see, the outgoing reference from the instance of `ObjectWithReferences` does not keep the target object alive. 
 
 # Writing an allocator
 
@@ -398,7 +458,7 @@ Console.WriteLine(sizeof(MyObject)); // 32
 
 Perfect: 8 bytes for the header, 8 bytes for the MT pointer, 12 bytes for the data, 4 bytes of padding.
 
-Now we have everything we need to write an allocator! I'm too lazy to write a fully featured `malloc` with buckets and everything, so we will just write a simple bump-pointer allocator. Everytime we allocate an object, we just bump the value of the pointer by the size of the object.
+Now we have everything we need to write an allocator! I'm too lazy to write a fully featured `malloc` with buckets and everything, so we will just write a simple bump-pointer allocator. Every time we allocate an object, we just bump the value of the pointer by the size of the object.
 
 First, we layout the skeleton of our class:
 
@@ -460,7 +520,7 @@ Then we implement a private method to reserve a given amount of memory in a thre
 Finally, we add we add methods for each type of allocation, starting with `object`:
 
 ```csharp
-    public T AllocateObject<T>()
+    public T AllocateObject<T>() where T : class
     {
         var mt = typeof(T).TypeHandle.Value;
         var methodTable = *(MethodTable*)mt;
@@ -476,6 +536,20 @@ Finally, we add we add methods for each type of allocation, starting with `objec
 
         return *(T*)&ptr;
     }
+```
+
+Then `struct`:
+
+```csharp
+	public ref T AllocateStruct<T>() where T : struct
+	{
+		var mt = typeof(T).TypeHandle.Value;
+		var methodTable = *(MethodTable*)mt;
+
+		var ptr = ReserveMemory(methodTable.BaseSize);
+
+		return ref Unsafe.AsRef<T>(ptr);
+	}
 ```
 
 For the `string` there is one subtlety: the total size needs to be aligned on the pointer size.
@@ -576,4 +650,10 @@ static void Main()
 }
 ```
 
-{{<image classes="fancybox center" src="/images/2024-01-14-fun-with-frozen-segments-3.png" >}}
+{{<image classes="fancybox center" src="/images/2024-01-14-exploring-frozen-segments-3.png" >}}
+
+# Wrapping up
+
+We have seen how to use frozen segments to store managed objects in native memory. Keep in mind that this code is not production-ready, and you shouldn't consider using it in your applications without proper testing and benchmarking. Also, the frozen segments API is not widely used, so I wouldn't be surprised if there were some nasty bugs lurking around. Still, it is a good excuse to have some fun and dig into the .NET type system.
+
+If you're interested in seeing more, we could explore in future articles how to serialize and deserialize frozen segments into files, as is already done by the [FrozenObjects](https://github.com/microsoft/FrozenObjects) tool.

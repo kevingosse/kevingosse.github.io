@@ -6,8 +6,15 @@
     <description>Recent content in Posts on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 Sep 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jan 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exploring .NET frozen segments</title>
+      <link>https://minidump.net/exploring-frozen-segments/</link>
+      <pubDate>Sun, 14 Jan 2024 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/exploring-frozen-segments/</guid>
+      <description>Exploring a little-known API allowing to allocate managed objects outside of the managed heap.</description>
+    </item>
     <item>
       <title>Memory alignment of doubles in C#</title>
       <link>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</link>

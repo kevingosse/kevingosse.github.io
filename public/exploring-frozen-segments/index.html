@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    
+    <script type="application/ld+json">
+
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Exploring .NET frozen segments",
+  
+  "image": "https://minidump.net/images/2024-01-14-exploring-frozen-segments-1.png",
+  
+  "datePublished": "2024-01-14T00:00:00Z",
+  "dateModified": "2024-01-14T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Kevin Gosse",
+    
+    "image": "https://minidump.net/images/profile.png"
+    
+  },
+  "mainEntityOfPage": { 
+    "@type": "WebPage",
+    "@id": "https:\/\/minidump.net\/exploring-frozen-segments\/" 
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "minidump.net",
+    
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://minidump.net/images/profile.png"
+    }
+    
+  },
+  "description": "Exploring a little-known API allowing to allocate managed objects outside of the managed heap.",
+  "keywords": []
+}
+
+</script>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Hugo 0.121.1 with theme Tranquilpeak 0.5.3-BETA">
+<meta name="author" content="Kevin Gosse">
+<meta name="keywords" content="">
+<meta name="description" content="Exploring a little-known API allowing to allocate managed objects outside of the managed heap.">
+
+
+<meta property="og:description" content="Exploring a little-known API allowing to allocate managed objects outside of the managed heap.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Exploring .NET frozen segments">
+<meta name="twitter:title" content="Exploring .NET frozen segments">
+<meta property="og:url" content="https://minidump.net/exploring-frozen-segments/">
+<meta property="twitter:url" content="https://minidump.net/exploring-frozen-segments/">
+<meta property="og:site_name" content="minidump.net">
+<meta property="og:description" content="Exploring a little-known API allowing to allocate managed objects outside of the managed heap.">
+<meta name="twitter:description" content="Exploring a little-known API allowing to allocate managed objects outside of the managed heap.">
+<meta property="og:locale" content="en-us">
+
+  
+    <meta property="article:published_time" content="2024-01-14T00:00:00">
+  
+  
+    <meta property="article:modified_time" content="2024-01-14T00:00:00">
+  
+  
+  
+  
+    
+      <meta property="article:tag" content="dotnet">
+    
+      <meta property="article:tag" content="garbage-collection">
+    
+  
+
+
+<meta name="twitter:card" content="summary">
+
+  <meta name="twitter:site" content="@kookiz">
+
+
+  <meta name="twitter:creator" content="@kookiz">
+
+
+
+
+
+
+  <meta property="og:image" content="https://minidump.net/images/profile.png">
+  <meta property="twitter:image" content="https://minidump.net/images/profile.png">
+
+
+
+
+
+  <meta property="og:image" content="https://minidump.net/images/2024-01-14-exploring-frozen-segments-1.png">
+  <meta property="twitter:image" content="https://minidump.net/images/2024-01-14-exploring-frozen-segments-1.png">
+
+
+    <title>Exploring .NET frozen segments</title>
+
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    
+
+    
+
+    <link rel="canonical" href="https://minidump.net/exploring-frozen-segments/">
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha512-H9jrZiiopUdsLpg94A333EfumgUBpO9MdbxStdeITo+KEIMaNfHNvwyjjDJb+ERPaRS6DpyRlKbvPUasNItRyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    
+    
+    <link rel="stylesheet" href="https://minidump.net/css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" />
+    
+    
+
+    
+      
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MQCXFBVCCM"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-MQCXFBVCCM', { 'anonymize_ip': false });
+}
+</script>
+
+    
+    
+  </head>
+
+  <body>
+    <div id="blog">
+      <header id="header" data-behavior="2">
+  <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+  <div class="header-title">
+    <a class="header-title-link" href="/" aria-label="Go to homepage">minidump.net</a>
+  </div>
+  
+</header>
+
+      <nav id="sidebar" data-behavior="2">
+  <div class="sidebar-container">
+    
+      <div class="sidebar-profile">
+        <a href="/#about" aria-label="Read more about the author">
+          <img class="sidebar-profile-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+        </a>
+        <h4 class="sidebar-profile-name">Kevin Gosse</h4>
+        
+          <h5 class="sidebar-profile-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</h5>
+        
+      </div>
+    
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/" title="Home">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-home" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Home</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/tags" title="Tags">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-tags" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Tags</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/archives" title="Archives">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-archive" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Archives</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/#about" title="About">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-question" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">About</span>
+    </a>
+  </li>
+
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+
+    </ul>
+    <ul class="sidebar-buttons">
+      
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://twitter.com/kookiz" target="_blank" rel="noopener" title="Twitter">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-twitter" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Twitter</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://github.com/kevingosse" target="_blank" rel="noopener" title="GitHub">
+    
+      <i class="sidebar-button-icon fab fa-lg fa-github" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">GitHub</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="/index.xml" title="RSS">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-rss" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">RSS</span>
+    </a>
+  </li>
+
+  <li class="sidebar-button">
+    
+      <a class="sidebar-button-link " href="https://www.buymeacoffee.com/kevingosse" target="_blank" rel="noopener" title="Buy me a coffee">
+    
+      <i class="sidebar-button-icon fas fa-lg fa-coffee" aria-hidden="true"></i>
+      
+      <span class="sidebar-button-desc">Buy me a coffee</span>
+    </a>
+  </li>
+
+
+    </ul>
+  </div>
+</nav>
+
+      
+
+      <div id="main" data-behavior="2"
+        class="
+               hasCoverMetaIn
+               ">
+        <article class="post" id="top">
+          
+          
+            <div class="post-header main-content-wrap text-left">
+  
+    <h1 class="post-title">
+      Exploring .NET frozen segments
+    </h1>
+  
+  
+  <div class="postShorten-meta post-meta">
+    
+      <time datetime="2024-01-14T00:00:00Z">
+        
+  
+  
+  
+  
+    January 14 2024
+  
+
+      </time>
+    
+    
+  </div>
+
+</div>
+          
+          <div class="post-content markdown">
+            <div class="main-content-wrap">
+              <p>.NET 8 introduced the concept of <a href="https://github.com/dotnet/runtime/blob/main/docs/design/features/NonGC-Heap.md">NonGC heap</a>. It&rsquo;s a special heap that, as the name indicates, is ignored by the GC. The runtime uses it to allocate objects that are guaranteed to stay alive forever (typically, string literals) and this allows the JIT to perform some neat optimizations (thanks to the guarantee that the object will never be moved). All of this is done automatically, without any knowledge of the developer. The only sign that something special is happening is if you try to check the generation of the object:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>Console.WriteLine(GC.GetGeneration(<span style="color:#e6db74">&#34;Hello world!&#34;</span>)); <span style="color:#75715e">// 2147483647</span>
+</span></span></code></pre></div><p>The non-GC heap is built on top of frozen segments, a notion that has existed in the CLR for quite some time. There is a hidden, mostly experimental API that allows developers to create their own frozen segments and use them as they see fit. This will be the subject of this article.</p>
+<h1 id="hidden-for-a-good-reason">Hidden for a good reason</h1>
+<p>By &ldquo;hidden&rdquo;, I mean that this API is exposed by&hellip; private methods. As weird as it sounds, the <code>GC._RegisterFrozenSegment</code> and <code>GC._UnregisterFrozenSegment</code> methods are private and yet are intended for external usage, they&rsquo;re never called by the base class library.</p>
+
+
+ 
+  
+  
+  
+  
+    
+  
+    
+      
+    
+  
+
+<div class="figure center" >
+  
+    <a class="fancybox" href="/images/2024-01-14-exploring-frozen-segments-1.png" data-fancybox="">
+  
+    <img class="fig-img" src="/images/2024-01-14-exploring-frozen-segments-1.png" >
+  
+    </a>
+  
+  
+</div>
+
+<p>At the time of writing, <a href="https://github.com/dotnet/runtime/issues/90081"><code>UnsafeAccessor</code> does not support static methods</a>, so the only way to call those methods is through reflection:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">internal</span> <span style="color:#66d9ef">static</span> IntPtr RegisterFrozenSegment(IntPtr sectionAddress, nint sectionSize)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (IntPtr)<span style="color:#66d9ef">typeof</span>(GC).GetMethod(<span style="color:#e6db74">&#34;_RegisterFrozenSegment&#34;</span>, BindingFlags.NonPublic | BindingFlags.Static)!
+</span></span><span style="display:flex;"><span>        .Invoke(<span style="color:#66d9ef">null</span>, [sectionAddress, sectionSize])!;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">internal</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> UnregisterFrozenSegment(IntPtr segment)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">typeof</span>(GC).GetMethod(<span style="color:#e6db74">&#34;_UnregisterFrozenSegment&#34;</span>, BindingFlags.NonPublic | BindingFlags.Static)!
+</span></span><span style="display:flex;"><span>        .Invoke(<span style="color:#66d9ef">null</span>, [segment]);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>GC._RegisterFrozenSegment</code> takes a pointer to a chunk of memory and its size, and registers it as a frozen segment. It returns a pointer to the internal bookeeping structure used to represent the segment. You only need it if you want to later call <code>GC._UnregisterFrozenSegment</code>.</p>
+<p>Typically, you would first allocate a chunk of native memory with <code>NativeMemory</code>, then register it as frozen segment:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> size = <span style="color:#ae81ff">1024</span> * <span style="color:#ae81ff">1024</span> * <span style="color:#ae81ff">100</span>; <span style="color:#75715e">// 100 MB</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> address = NativeMemory.AlignedAlloc((nuint)size, (nuint)IntPtr.Size);
+</span></span><span style="display:flex;"><span>NativeMemory.Clear(address, (nuint)size);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> segment = RegisterFrozenSegment((IntPtr)address, size);
+</span></span></code></pre></div><p>Alright, we have our segment. What can we do with it? Frozen segments are the only supported way of storing managed reference objects into native memory. Why would you want to do that? Well, the only reason I can come up with is performance. The frozen segments are not scanned by the GC, so it can be a way to store large amounts of static data without impacting the application performance.</p>
+<p>But how to allocate an object in the frozen segment? When calling the <code>new</code> allocator, there is no way to indicate where you want the object to be stored. Instead, you have to do everything&hellip; by hand. That&rsquo;s right: partitioning the memory, writing the object header, calling the constructor&hellip; <em>Everything</em>. It will quickly become pretty obvious why the API is hidden, using it requires advanced knowledge of .NET data structures. Keeping the methods private is a way to make sure you know what you&rsquo;re doing, or at least that you&rsquo;re aware of the dangers. Think of the <code>unsafe</code> keyword, but <em>unsafer</em>.</p>
+<h1 id="using-the-frozen-segments">Using the frozen segments</h1>
+<h2 id="allocating-a-string">Allocating a string</h2>
+<p>Let&rsquo;s start &ldquo;simple&rdquo;: how to allocate a <code>string</code> in the frozen segment? First let&rsquo;s have a look at the layout of a <code>string</code>:</p>
+
+
+ 
+  
+  
+  
+  
+    
+  
+    
+      
+    
+  
+
+<div class="figure center" >
+  
+    <a class="fancybox" href="/images/2024-01-14-exploring-frozen-segments-2.png" data-fancybox="">
+  
+    <img class="fig-img" src="/images/2024-01-14-exploring-frozen-segments-2.png" >
+  
+    </a>
+  
+  
+</div>
+
+<p>Like every reference object, a <code>string</code> starts with a header, followed by a pointer to the method-table (MT). Then it contains the length, followed by every character and a null terminator (note that the length does not include the null terminator).</p>
+<p>For the header, it&rsquo;s easy, it&rsquo;s going to be 0. Since we zero&rsquo;d the native memory we don&rsquo;t even need to assign it, but we&rsquo;re still going to do it for clarity sake:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> size = <span style="color:#ae81ff">1024</span> * <span style="color:#ae81ff">1024</span> * <span style="color:#ae81ff">100</span>; <span style="color:#75715e">// 100 MB</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> address = NativeMemory.AlignedAlloc((nuint)size, (nuint)IntPtr.Size);
+</span></span><span style="display:flex;"><span>NativeMemory.Clear(address, (nuint)size);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> segment = RegisterFrozenSegment((IntPtr)address, size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> ptr = (<span style="color:#66d9ef">byte</span>*)address;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>*(nint*)ptr = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>ptr += <span style="color:#66d9ef">sizeof</span>(nint);
+</span></span></code></pre></div><p>Next is the pointer to the method-table. Fortunately there is an easy way to retrieve it in C#, even though it&rsquo;s not documented as-is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#75715e">// Retrieve the method-table pointer</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(<span style="color:#66d9ef">string</span>).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Write it</span>
+</span></span><span style="display:flex;"><span>*(nint*)ptr = mt;
+</span></span><span style="display:flex;"><span>ptr += <span style="color:#66d9ef">sizeof</span>(nint);
+</span></span></code></pre></div><p>Then comes the length:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>*(<span style="color:#66d9ef">int</span>*)ptr = <span style="color:#ae81ff">5</span>;
+</span></span><span style="display:flex;"><span>ptr += <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>);
+</span></span></code></pre></div><p>Finally, we write the characters and the null-terminator:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> dataPtr = (<span style="color:#66d9ef">char</span>*)ptr;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>*dataPtr++ = <span style="color:#e6db74">&#39;H&#39;</span>;
+</span></span><span style="display:flex;"><span>*dataPtr++ = <span style="color:#e6db74">&#39;e&#39;</span>;
+</span></span><span style="display:flex;"><span>*dataPtr++ = <span style="color:#e6db74">&#39;l&#39;</span>;
+</span></span><span style="display:flex;"><span>*dataPtr++ = <span style="color:#e6db74">&#39;l&#39;</span>;
+</span></span><span style="display:flex;"><span>*dataPtr++ = <span style="color:#e6db74">&#39;o&#39;</span>;
+</span></span><span style="display:flex;"><span>*dataPtr++ = <span style="color:#e6db74">&#39;\0&#39;</span>;
+</span></span></code></pre></div><p>And that&rsquo;s it! We have written our string in the frozen segment. To actually use it, we need to retrieve a reference to it. As a reminder, references in C# don&rsquo;t point to the header but to the method-table pointer. So we take back our original <code>address</code>, increase it by the size of the header, and convert that to a string:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> strRef = (nint*)address + <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> str = *(<span style="color:#66d9ef">string</span>*)&amp;strRef;        
+</span></span><span style="display:flex;"><span>Console.WriteLine(str); <span style="color:#75715e">// Hello</span>
+</span></span></code></pre></div><p>Let&rsquo;s take a second to explain that code: first we store the address of the string in <code>strRef</code>. Then we take the address of <code>strRef</code> and reinterpret it as a pointer to a <code>string</code>. Finally, we dereference it to retrieve our instance of <code>string</code>.</p>
+<p>We can wrap everything in a helper method:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">string</span> AllocateString(<span style="color:#66d9ef">void</span>* address, Span&lt;<span style="color:#66d9ef">char</span>&gt; data)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> ptr = (<span style="color:#66d9ef">byte</span>*)address;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>    *(nint*)ptr = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    ptr += <span style="color:#66d9ef">sizeof</span>(nint);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Retrieve the method-table pointer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(<span style="color:#66d9ef">string</span>).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write it</span>
+</span></span><span style="display:flex;"><span>    *(nint*)ptr = mt;
+</span></span><span style="display:flex;"><span>    ptr += <span style="color:#66d9ef">sizeof</span>(nint);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    *(<span style="color:#66d9ef">int</span>*)ptr = data.Length;
+</span></span><span style="display:flex;"><span>    ptr += <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> destination = <span style="color:#66d9ef">new</span> Span&lt;<span style="color:#66d9ef">char</span>&gt;(ptr, data.Length + <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    data.CopyTo(destination);
+</span></span><span style="display:flex;"><span>    data[^<span style="color:#ae81ff">1</span>] = <span style="color:#e6db74">&#39;\0&#39;</span>;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> strRef = (nint*)address + <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> *(<span style="color:#66d9ef">string</span>*)&amp;strRef;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>And we can call it like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> str = AllocateString(address, [<span style="color:#e6db74">&#39;H&#39;</span>, <span style="color:#e6db74">&#39;e&#39;</span>, <span style="color:#e6db74">&#39;l&#39;</span>, <span style="color:#e6db74">&#39;l&#39;</span>, <span style="color:#e6db74">&#39;o&#39;</span>]);        
+</span></span><span style="display:flex;"><span>Console.WriteLine(str); <span style="color:#75715e">// Hello</span>
+</span></span></code></pre></div><h2 id="allocating-an-array">Allocating an array</h2>
+<p>Allocating an array is very similar. In fact, the layout of <code>string</code> is almost identical to an array. There are some crucial differences but we don&rsquo;t care about them <em>yet</em> (<em>ominous sound</em>).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> T[] AllocateArray&lt;T&gt;(<span style="color:#66d9ef">void</span>* address, <span style="color:#66d9ef">int</span> length)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> ptr = (<span style="color:#66d9ef">byte</span>*)address;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>    *(nint*)ptr = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    ptr += <span style="color:#66d9ef">sizeof</span>(nint);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Retrieve the method-table pointer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(T[]).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write it</span>
+</span></span><span style="display:flex;"><span>    *(nint*)ptr = mt;
+</span></span><span style="display:flex;"><span>    ptr += <span style="color:#66d9ef">sizeof</span>(nint);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write the length</span>
+</span></span><span style="display:flex;"><span>    *(<span style="color:#66d9ef">int</span>*)ptr = length;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> arrayRef = (nint*)address + <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// T[]* is not legal, so we need to cast to Array* first</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (T[])*(Array*)&amp;arrayRef;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Then we can use it like an ordinary array:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> array = AllocateArray&lt;<span style="color:#66d9ef">int</span>&gt;(address, <span style="color:#ae81ff">5</span>);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i = <span style="color:#ae81ff">0</span>; i &lt; array.Length; i++)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    array[i] = i;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#66d9ef">string</span>.Join(<span style="color:#e6db74">&#39;,&#39;</span>, array)); <span style="color:#75715e">// 0, 1, 2, 3, 4</span>
+</span></span></code></pre></div><h2 id="allocating-an-object">Allocating an object</h2>
+<p>Surely, after allocating a string an an array, allocating an object should be trivial? Well&hellip; sort of?</p>
+<p>Allocating the object itself is indeed simpler than the other examples:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> T AllocateObject&lt;T&gt;(<span style="color:#66d9ef">void</span>* address) <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">class</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> ptr = (<span style="color:#66d9ef">byte</span>*)address;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>    *(nint*)ptr = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    ptr += <span style="color:#66d9ef">sizeof</span>(nint);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Retrieve the method-table pointer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(T).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Write it</span>
+</span></span><span style="display:flex;"><span>    *(nint*)ptr = mt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> objRef = (nint*)address + <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> *(T*)&amp;objRef;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Then we can use it like an ordinary object:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> obj = AllocateObject&lt;MyObject&gt;(address);
+</span></span><span style="display:flex;"><span>obj.Value = <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>Console.WriteLine(obj.Value); <span style="color:#75715e">// 1</span>
+</span></span></code></pre></div><p>However, what if the object has a non-default constructor?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyObject</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> Value { <span style="color:#66d9ef">get</span>; <span style="color:#66d9ef">set</span>; } = <span style="color:#ae81ff">42</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The constructor is never called since we don&rsquo;t use the <code>new</code> operator, and we end-up with an uninitialized object:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> obj = AllocateObject&lt;MyObject&gt;(address);
+</span></span><span style="display:flex;"><span>Console.WriteLine(obj.Value); <span style="color:#75715e">// 0 if the memory is properly zero&#39;d, otherwise... who knows</span>
+</span></span></code></pre></div><p>There are multiple ways to fix this problem. The easiest one is to use reflection to call the constructor:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> obj = AllocateObject&lt;MyObject&gt;(address);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> parameterlessConstructor = obj.GetType().GetConstructor([])!;
+</span></span><span style="display:flex;"><span>parameterlessConstructor.Invoke(obj, []);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>Console.WriteLine(obj.Value); <span style="color:#75715e">// 42</span>
+</span></span></code></pre></div><p>Another option is to use IL, for instance with <a href="https://github.com/ltrzesniewski/InlineIL.Fody">InlineIL.Fody</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">void</span> CallConstructor(MyObject* obj)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    IL.Emit.Ldarg_0();
+</span></span><span style="display:flex;"><span>    IL.Emit.Ldind_Ref();
+</span></span><span style="display:flex;"><span>    IL.Emit.Dup();
+</span></span><span style="display:flex;"><span>    IL.Emit.Call(<span style="color:#66d9ef">new</span> MethodRef(<span style="color:#66d9ef">typeof</span>(MyObject), <span style="color:#e6db74">&#34;.ctor&#34;</span>, []));
+</span></span><span style="display:flex;"><span>    IL.Emit.Pop();
+</span></span><span style="display:flex;"><span>    IL.Emit.Ret();
+</span></span><span style="display:flex;"><span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> obj = AllocateObject&lt;MyObject&gt;(address);
+</span></span><span style="display:flex;"><span>CallConstructor(&amp;obj);
+</span></span><span style="display:flex;"><span>Console.WriteLine(obj.Value); <span style="color:#75715e">// 42</span>
+</span></span></code></pre></div><p>On the plus side, you avoid reflection (which forces you to box the constructor arguments, if any). On the minus side, you have to write a helper for each and every constructor (you can&rsquo;t write a generic version of this code).</p>
+<p>A good middle-ground is to retrieve the address of the constructor then cast it to a function pointer. It&rsquo;s better than pure reflection because it avoids boxing the arguments, and it&rsquo;s much more practical than using raw IL:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> obj = AllocateObject&lt;MyObject&gt;(address);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> constructorInfo = <span style="color:#66d9ef">typeof</span>(T).GetConstructor(Type.EmptyTypes);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// You should cache this if you need to call it multiple times</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> ctor = (<span style="color:#66d9ef">delegate</span>*&lt;MyObject, <span style="color:#66d9ef">void</span>&gt;)constructorInfo.MethodHandle.GetFunctionPointer();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ctor(obj);
+</span></span></code></pre></div><h2 id="allocating-a-struct">Allocating a struct</h2>
+<p>Allocating a struct is very similar to allocating an object, except that we don&rsquo;t need to a header of the method-table pointer. We also want to return the struct by reference, otherwise we would end-up with a copy of the struct, defeating the purpose:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">ref</span> T AllocateStruct&lt;T&gt;(<span style="color:#66d9ef">void</span>* address) <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">struct</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> ptr = (<span style="color:#66d9ef">byte</span>*)address;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">ref</span> Unsafe.AsRef&lt;T&gt;(ptr);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>We have the same problem as before if we want to call the constructor. If you decide to use the function pointer approach, keep in mind that you need to pass the struct by reference:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">ref</span> <span style="color:#66d9ef">var</span> obj = <span style="color:#66d9ef">ref</span> AllocateStruct&lt;MyStruct&gt;(address);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> constructorInfo = <span style="color:#66d9ef">typeof</span>(T).GetConstructor(Type.EmptyTypes);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// You should cache this if you need to call it multiple times</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> ctor = (<span style="color:#66d9ef">delegate</span>*&lt;<span style="color:#66d9ef">ref</span> MyStruct, <span style="color:#66d9ef">void</span>&gt;)constructorInfo.MethodHandle.GetFunctionPointer();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ctor(obj);
+</span></span></code></pre></div><h2 id="there-is-no-gc-where-were-going">There is no GC where we&rsquo;re going</h2>
+<p>As mentioned in the introduction, frozen segments are never scanned by the GC. A consequence that may not be immediately obvious is that any reference from a frozen segment to the managed heap is effectively a weak reference.</p>
+<p>Consider the following example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ObjectWithReferences</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">object</span> Reference;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">[MethodImpl(MethodImplOptions.NoInlining)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> WeakReference SetReference(ObjectWithReferences obj)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> target = <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">object</span>();
+</span></span><span style="display:flex;"><span>    obj.Reference = target;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> WeakReference(target);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">unsafe</span> AllocateInFrozenSegment(<span style="color:#66d9ef">void</span>* frozenSegmentAddress)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> obj = AllocateObject&lt;ObjectWithReferences&gt;(frozenSegmentAddress);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> weakReference = SetReference(obj);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    GC.Collect();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    Console.WriteLine(weakReference.IsAlive); <span style="color:#75715e">// False</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Not actually needed since objects in the frozen segments are never collected,</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// but just demonstrating the point</span>
+</span></span><span style="display:flex;"><span>    GC.KeepAlive(obj); 
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>As you can see, the outgoing reference from the instance of <code>ObjectWithReferences</code> does not keep the target object alive.</p>
+<h1 id="writing-an-allocator">Writing an allocator</h1>
+<p>Some readers may have noticed that so far, I&rsquo;ve only ever allocated one object at a time. To allocate multiple objects, you have to know where the previous one ends so you can allocate the next one, and this is actually harder than it sounds. You might think &ldquo;just call <code>sizeof</code>&rdquo;, but unfortunately it&rsquo;s not that easy.</p>
+<p>Let&rsquo;s take a concrete example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyObject</span>
+</span></span><span style="display:flex;"><span>{        
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#66d9ef">sizeof</span>(MyObject)); <span style="color:#75715e">// 8</span>
+</span></span></code></pre></div><p>That actually sounds correct. Objects on the heap can&rsquo;t be smaller than 3 pointers (24 bytes on 64-bit). So if we count 8 bytes for the header and 8 bytes for the MT pointer, that leaves 8 bytes of data, which could be what the <code>sizeof</code> operator returns.</p>
+<p>Another example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyObject</span>
+</span></span><span style="display:flex;"><span>{        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">long</span> data;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#66d9ef">sizeof</span>(MyObject)); <span style="color:#75715e">// 8</span>
+</span></span></code></pre></div><p>We have 8 bytes of data, <code>sizeof(MyObject)</code> returns 8, that&rsquo;s still consistent.</p>
+<p>Yet another example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyObject</span>
+</span></span><span style="display:flex;"><span>{        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">long</span> data1;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">long</span> data2;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#66d9ef">sizeof</span>(MyObject)); <span style="color:#75715e">// 8</span>
+</span></span></code></pre></div><p>Ok now this is definitely wrong. It turns out that calling <code>sizeof</code> on a reference returns the size of the reference (so <code>IntPtr.Size</code>), not the size of the referenced object.</p>
+<p><code>sizeof</code> won&rsquo;t do the trick, we&rsquo;re going to need something else.</p>
+<p>Remember how we retrieved a pointer to the method-table earlier? The information we need is in that same table.</p>
+<p>First, we declare a struct that mimics the layout of the method-table (only part of it, that thing is <em>a mess</em>):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#a6e22e">[StructLayout(LayoutKind.Explicit)]</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">MethodTable</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [FieldOffset(0)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">ushort</span> ComponentSize;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">
+</span></span></span><span style="display:flex;"><span><span style="color:#a6e22e">    [FieldOffset(4)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> BaseSize;
+</span></span></code></pre></div><p><code>BaseSize</code> is what we need, it contains the effective size of an object when stored on the heap. Let&rsquo;s test it with our previous examples:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyObject</span>
+</span></span><span style="display:flex;"><span>{        
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(MyObject).TypeHandle.Value;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> methodTable = *(MethodTable*)mt;        
+</span></span><span style="display:flex;"><span>Console.WriteLine(methodTable.BaseSize); <span style="color:#75715e">// 24</span>
+</span></span></code></pre></div><p>So far, so good. Remember, I explained that the minimum size of an object on the heap is 3 pointers, so 24 bytes on 64-bit.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyObject</span>
+</span></span><span style="display:flex;"><span>{        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">long</span> data;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(MyObject).TypeHandle.Value;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> methodTable = *(MethodTable*)mt;        
+</span></span><span style="display:flex;"><span>Console.WriteLine(methodTable.BaseSize); <span style="color:#75715e">// 24</span>
+</span></span></code></pre></div><p>Still good: 8 bytes for the header, 8 bytes for the MT pointer, 8 bytes for the data.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyObject</span>
+</span></span><span style="display:flex;"><span>{        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">long</span> data1;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> data2;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Console.WriteLine(<span style="color:#66d9ef">sizeof</span>(MyObject)); <span style="color:#75715e">// 32</span>
+</span></span></code></pre></div><p>Perfect: 8 bytes for the header, 8 bytes for the MT pointer, 12 bytes for the data, 4 bytes of padding.</p>
+<p>Now we have everything we need to write an allocator! I&rsquo;m too lazy to write a fully featured <code>malloc</code> with buckets and everything, so we will just write a simple bump-pointer allocator. Every time we allocate an object, we just bump the value of the pointer by the size of the object.</p>
+<p>First, we layout the skeleton of our class:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">unsafe</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BumpPointerNativeAllocator</span> : IDisposable
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> IntPtr _segment;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#66d9ef">long</span> _limit;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">long</span> _address;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> BumpPointerNativeAllocator(nint size)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        _address = (IntPtr)NativeMemory.AlignedAlloc((nuint)size, <span style="color:#ae81ff">8</span>);
+</span></span><span style="display:flex;"><span>        NativeMemory.Clear((<span style="color:#66d9ef">void</span>*)_address, (nuint)size);
+</span></span><span style="display:flex;"><span>        _segment = RegisterFrozenSegment((IntPtr)_address, size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        _limit = _address + size;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ~BumpPointerNativeAllocator()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        Dispose();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> Dispose()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        GC.SuppressFinalize(<span style="color:#66d9ef">this</span>);
+</span></span><span style="display:flex;"><span>        UnregisterFrozenSegment(_segment);
+</span></span><span style="display:flex;"><span>        NativeMemory.AlignedFree((<span style="color:#66d9ef">void</span>*)_address);
+</span></span><span style="display:flex;"><span>        _address = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Then we implement a private method to reserve a given amount of memory in a thread-safe way:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> nint* ReserveMemory(<span style="color:#66d9ef">int</span> size)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        ObjectDisposedException.ThrowIf(_address == <span style="color:#ae81ff">0</span>, <span style="color:#66d9ef">typeof</span>(BumpPointerNativeAllocator));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (_address + size &gt; _limit)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> OutOfMemoryException();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> objectAddress = Interlocked.Add(<span style="color:#66d9ef">ref</span> _address, size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (objectAddress &gt; _limit)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> OutOfMemoryException();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (nint*)(objectAddress - size);
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>Finally, we add we add methods for each type of allocation, starting with <code>object</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> T AllocateObject&lt;T&gt;() <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">class</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(T).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> methodTable = *(MethodTable*)mt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> ptr = ReserveMemory(methodTable.BaseSize);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>        *ptr = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        ptr++;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the mt</span>
+</span></span><span style="display:flex;"><span>        *ptr = mt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> *(T*)&amp;ptr;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>Then <code>struct</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">ref</span> T AllocateStruct&lt;T&gt;() <span style="color:#66d9ef">where</span> T : <span style="color:#66d9ef">struct</span>
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(T).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">var</span> methodTable = *(MethodTable*)mt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">var</span> ptr = ReserveMemory(methodTable.BaseSize);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">ref</span> Unsafe.AsRef&lt;T&gt;(ptr);
+</span></span><span style="display:flex;"><span>	}
+</span></span></code></pre></div><p>For the <code>string</code> there is one subtlety: the total size needs to be aligned on the pointer size.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">string</span> AllocateString(Span&lt;<span style="color:#66d9ef">char</span>&gt; data)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> mt = <span style="color:#66d9ef">typeof</span>(<span style="color:#66d9ef">string</span>).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> methodTable = *(MethodTable*)mt;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> size = methodTable.BaseSize + (data.Length + <span style="color:#ae81ff">1</span>) * <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">char</span>);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Align up the size</span>
+</span></span><span style="display:flex;"><span>        size = (size + IntPtr.Size - <span style="color:#ae81ff">1</span>) &amp; ~(IntPtr.Size - <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> ptr = ReserveMemory(size);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>        *ptr = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        ptr++;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the MT</span>
+</span></span><span style="display:flex;"><span>        *ptr = mt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> dataPtr = (<span style="color:#66d9ef">byte</span>*)(ptr + <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the length</span>
+</span></span><span style="display:flex;"><span>        *(<span style="color:#66d9ef">int</span>*)dataPtr = data.Length;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the chars</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> destination = <span style="color:#66d9ef">new</span> Span&lt;<span style="color:#66d9ef">char</span>&gt;(dataPtr + <span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>), data.Length + <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        data.CopyTo(destination);
+</span></span><span style="display:flex;"><span>        data[^<span style="color:#ae81ff">1</span>] = <span style="color:#e6db74">&#39;\0&#39;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> *(<span style="color:#66d9ef">string</span>*)&amp;ptr;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>And finally, the array. To properly size the array, we need to know the size of its elements. We use the <code>ComponentSize</code> field of the method table for that:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> T[] AllocateArray&lt;T&gt;(<span style="color:#66d9ef">int</span> length)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> arrayMt = <span style="color:#66d9ef">typeof</span>(T[]).TypeHandle.Value;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> arrayMethodTable = *(MethodTable*)arrayMt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> arraySize = arrayMethodTable.BaseSize + length * arrayMethodTable.ComponentSize;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> ptr = ReserveMemory(arraySize);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the header</span>
+</span></span><span style="display:flex;"><span>        *ptr = <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        ptr++;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the MT</span>
+</span></span><span style="display:flex;"><span>        *ptr = arrayMt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Write the length</span>
+</span></span><span style="display:flex;"><span>        *(ptr + <span style="color:#ae81ff">1</span>) = length;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (T[])*(Array*)&amp;ptr;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>And our allocator is ready!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-csharp" data-lang="csharp"><span style="display:flex;"><span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> Main()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">using</span> var allocator = <span style="color:#66d9ef">new</span> BumpPointerNativeAllocator(<span style="color:#ae81ff">1024</span> * <span style="color:#ae81ff">1024</span> * <span style="color:#ae81ff">100</span>);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> array = allocator.AllocateArray&lt;<span style="color:#66d9ef">object</span>&gt;(<span style="color:#ae81ff">4</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    array[<span style="color:#ae81ff">0</span>] = allocator.AllocateString([<span style="color:#e6db74">&#39;H&#39;</span>, <span style="color:#e6db74">&#39;e&#39;</span>, <span style="color:#e6db74">&#39;l&#39;</span>, <span style="color:#e6db74">&#39;l&#39;</span>, <span style="color:#e6db74">&#39;o&#39;</span>]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> myObject1 = allocator.AllocateObject&lt;MyObject&gt;();
+</span></span><span style="display:flex;"><span>    myObject1.data = <span style="color:#ae81ff">42</span>;
+</span></span><span style="display:flex;"><span>    array[<span style="color:#ae81ff">1</span>] = myObject1;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> myObject2 = allocator.AllocateObject&lt;MyObject&gt;();
+</span></span><span style="display:flex;"><span>    myObject2.data = <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    array[<span style="color:#ae81ff">2</span>] = myObject2;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    array[<span style="color:#ae81ff">3</span>] = allocator.AllocateString([<span style="color:#e6db74">&#39;w&#39;</span>, <span style="color:#e6db74">&#39;o&#39;</span>, <span style="color:#e6db74">&#39;r&#39;</span>, <span style="color:#e6db74">&#39;l&#39;</span>, <span style="color:#e6db74">&#39;d&#39;</span>, <span style="color:#e6db74">&#39;!&#39;</span>]);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> item <span style="color:#66d9ef">in</span> array)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (item <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">string</span> str)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Console.WriteLine(str);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (item <span style="color:#66d9ef">is</span> MyObject obj)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            Console.WriteLine(obj.data);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
+
+ 
+  
+  
+  
+  
+    
+  
+    
+      
+    
+  
+
+<div class="figure center" >
+  
+    <a class="fancybox" href="/images/2024-01-14-exploring-frozen-segments-3.png" data-fancybox="">
+  
+    <img class="fig-img" src="/images/2024-01-14-exploring-frozen-segments-3.png" >
+  
+    </a>
+  
+  
+</div>
+
+<h1 id="wrapping-up">Wrapping up</h1>
+<p>We have seen how to use frozen segments to store managed objects in native memory. Keep in mind that this code is not production-ready, and you shouldn&rsquo;t consider using it in your applications without proper testing and benchmarking. Also, the frozen segments API is not widely used, so I wouldn&rsquo;t be surprised if there were some nasty bugs lurking around. Still, it is a good excuse to have some fun and dig into the .NET type system.</p>
+<p>If you&rsquo;re interested in seeing more, we could explore in future articles how to serialize and deserialize frozen segments into files, as is already done by the <a href="https://github.com/microsoft/FrozenObjects">FrozenObjects</a> tool.</p>
+
+              
+
+
+            </div>
+          </div>
+          <div id="post-footer" class="post-footer main-content-wrap">
+            
+              
+                
+                
+                  <div class="post-footer-tags">
+                    <span class="text-color-light text-small">TAGGED IN</span><br/>
+                    
+  <a class="tag tag--primary tag--small" href="/tags/dotnet/">dotnet</a>
+
+  <a class="tag tag--primary tag--small" href="/tags/garbage-collection/">garbage-collection</a>
+
+                  </div>
+                
+              
+            
+            
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/memory-alignment-of-doubles-in-c-1d13e3ce741/" data-tooltip="Memory alignment of doubles in C#" aria-label="PREVIOUS: Memory alignment of doubles in C#">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/exploring-frozen-segments/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/exploring-frozen-segments/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/exploring-frozen-segments/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/exploring-frozen-segments/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+            
+
+<link href="https://fonts.googleapis.com/css?family=Cookie&amp;display=swap" rel="stylesheet">
+<div class="bmc-btn-container"><a class="bmc-btn" target="_blank" href="https://buymeacoffee.com/kevingosse">☕<span class="bmc-btn-text">Enjoyed the article? Buy me a coffee</span></a></div>
+
+<style>
+    .bmc-btn {
+        min-width: 210px;
+        color: #000000;
+        background-color: #FFFFFF !important;
+        height: 60px;
+        border-radius: 12px;
+        font-size: 28px;
+        font-weight: Normal;
+        border: none;
+        line-height: 27px;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Cookie', cursive !important;
+        -webkit-box-sizing: border-box !important;
+        box-sizing: border-box !important;
+    }
+
+    .bmc-btn:hover, .bmc-btn:active, .bmc-btn:focus {
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .bmc-btn-text {
+        margin-left: 8px;
+        display: inline-block;
+        line-height: 0;
+        width: 100%;
+        flex-shrink: 0;
+        font-family: [FONT] !important;
+    }
+
+    .logo-outline {
+        fill: #000000;
+    }
+
+    .logo-coffee {
+        fill: #ffffff;
+    }</style>
+
+  
+<div id="utterances">
+      <noscript>Please enable JavaScript to view the comments powered by Utterances.</noscript>
+    </div>
+<script src="https://utteranc.es/client.js"
+        repo="kevingosse/kevingosse.github.io"
+        issue-term="title"
+        label="comments"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+  
+
+
+          </div>
+        </article>
+        <footer id="footer" class="main-content-wrap">
+  <span class="copyrights">
+    &copy; 2024 Kevin Gosse. All Rights Reserved
+  </span>
+</footer>
+
+      </div>
+      <div id="bottom-bar" class="post-bottom-bar" data-behavior="2">
+        
+<div class="post-actions-wrap">
+  <nav >
+    <ul class="post-actions post-action-nav">
+      
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--disabled">
+          
+              <i class="fa fa-angle-left"></i>
+              <span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+            </a>
+        </li>
+        <li class="post-action">
+          
+            <a class="post-action-btn btn btn--default tooltip--top" href="/memory-alignment-of-doubles-in-c-1d13e3ce741/" data-tooltip="Memory alignment of doubles in C#" aria-label="PREVIOUS: Memory alignment of doubles in C#">
+          
+              <span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+              <i class="fa fa-angle-right"></i>
+            </a>
+        </li>
+      
+    </ul>
+  </nav>
+<ul class="post-actions post-action-share" >
+  
+    <li class="post-action hide-lg hide-md hide-sm">
+      <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </a>
+    </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=https://minidump.net/exploring-frozen-segments/" title="Share on Twitter" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https://minidump.net/exploring-frozen-segments/" title="Share on Linkedin" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://www.reddit.com/submit?url=https://minidump.net/exploring-frozen-segments/" title="Share on Reddit" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+      <li class="post-action hide-xs">
+        <a class="post-action-btn btn btn--default" target="new" href="https://news.ycombinator.com/submitlink?u=https://minidump.net/exploring-frozen-segments/" title="Share on Hacker News" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i>
+        </a>
+      </li>
+    
+  
+  
+  <li class="post-action">
+    
+      <a class="post-action-btn btn btn--default" href="#top" aria-label="Back to top">
+      <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    
+    </a>
+  </li>
+</ul>
+</div>
+
+
+      </div>
+      
+<div id="share-options-bar" class="share-options-bar" data-behavior="2">
+  <i id="btn-close-shareoptions" class="fa fa-times"></i>
+  <ul class="share-options">
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fminidump.net%2Fexploring-frozen-segments%2F" aria-label="Share on Twitter">
+          <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.linkedin.com/feed/?shareActive=true&amp;text=https%3A%2F%2Fminidump.net%2Fexploring-frozen-segments%2F" aria-label="Share on Linkedin">
+          <i class="fab fa-linkedin" aria-hidden="true"></i><span>Share on Linkedin</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://www.reddit.com/submit?url=https%3A%2F%2Fminidump.net%2Fexploring-frozen-segments%2F" aria-label="Share on Reddit">
+          <i class="fab fa-reddit" aria-hidden="true"></i><span>Share on Reddit</span>
+        </a>
+      </li>
+    
+      <li class="share-option">
+        <a class="share-option-btn" target="new" href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fminidump.net%2Fexploring-frozen-segments%2F" aria-label="Share on Hacker News">
+          <i class="fab fa-hacker-news" aria-hidden="true"></i><span>Share on Hacker News</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+
+    </div>
+    
+    <div id="about">
+  <div id="about-card">
+    <div id="about-btn-close">
+      <i class="fa fa-times"></i>
+    </div>
+    
+      <img id="about-card-picture" src="https://minidump.net/images/profile.png" alt="Author&#39;s picture" />
+    
+    <h4 id="about-card-name">Kevin Gosse</h4>
+    
+      <div id="about-card-bio">Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM.</div>
+    
+    
+    
+  </div>
+</div>
+
+    
+
+    
+  
+    
+      <div id="cover" style="background-image:url('https://minidump.net/images/code.png');"></div>
+    
+  
+
+
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js" integrity="sha512-z+/WWfyD5tccCukM4VvONpEtLmbAm5LDu7eKiyMQJ9m7OfPEDL7gENyDRL3Yfe8XAuGsS2fS4xSMnl6d30kqGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha512-uURl+ZXMBrF4AwGaWmEetzrd+J5/8NRkWAvJx5sbPSSuOb0bZLqf+tOzniObO00BjHa/dD7gub9oCGMLPQHtQA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script src="https://minidump.net/js/script-yqzy9wdlzix4lbbwdnzvwx3egsne77earqmn73v9uno8aupuph8wfguccut.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+  hljs.configure({ classPrefix: '', useBR: false });
+  $('pre.code-highlight > code, pre > code').each(function(i, block) {
+    if (!$(this).hasClass('codeblock')) {
+      $(this).addClass('codeblock');
+    }
+    hljs.highlightBlock(block);
+  });
+});
+</script>
+
+
+
+
+    
+  </body>
+</html>
+

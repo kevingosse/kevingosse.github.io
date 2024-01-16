@@ -6,27 +6,27 @@
     <description>Recent content in Tags on minidump.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 Sep 2023 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jan 2024 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://minidump.net/tags/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>cpp</title>
-      <link>https://minidump.net/tags/cpp/</link>
-      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
-      <guid>https://minidump.net/tags/cpp/</guid>
-      <description></description>
-    </item>
     <item>
       <title>dotnet</title>
       <link>https://minidump.net/tags/dotnet/</link>
-      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 14 Jan 2024 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/dotnet/</guid>
       <description></description>
     </item>
     <item>
       <title>garbage-collection</title>
       <link>https://minidump.net/tags/garbage-collection/</link>
-      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 14 Jan 2024 00:00:00 +0000</pubDate>
       <guid>https://minidump.net/tags/garbage-collection/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>cpp</title>
+      <link>https://minidump.net/tags/cpp/</link>
+      <pubDate>Sat, 30 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://minidump.net/tags/cpp/</guid>
       <description></description>
     </item>
     <item>

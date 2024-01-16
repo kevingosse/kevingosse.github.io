@@ -2,28 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://minidump.net/tags/cpp/</loc>
-    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://minidump.net/tags/dotnet/</loc>
-    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
+    <lastmod>2024-01-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/exploring-frozen-segments/</loc>
+    <lastmod>2024-01-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/garbage-collection/</loc>
+    <lastmod>2024-01-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/</loc>
+    <lastmod>2024-01-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/posts/</loc>
+    <lastmod>2024-01-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/tags/</loc>
+    <lastmod>2024-01-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://minidump.net/tags/cpp/</loc>
     <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/memory-alignment-of-doubles-in-c-1d13e3ce741/</loc>
     <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://minidump.net/</loc>
-    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://minidump.net/tags/performance/</loc>
-    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/posts/</loc>
-    <lastmod>2023-09-30T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://minidump.net/tags/</loc>
     <lastmod>2023-09-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://minidump.net/tags/assembly/</loc>
