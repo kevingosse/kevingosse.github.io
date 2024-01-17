@@ -138,7 +138,28 @@ if (!doNotTrack) {
 </script>
 
     
-    
+    <script>
+    (function(h,o,u,n,d) {
+      h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
+      d=o.createElement(u);d.async=1;d.src=n
+      n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
+    })(window,document,'script','https://www.datadoghq-browser-agent.com/us1/v5/datadog-rum.js','DD_RUM')
+    window.DD_RUM.onReady(function() {
+      window.DD_RUM.init({
+        clientToken: 'pubabeb7320d5ecb81f3b14a17c35c1a3de',
+        applicationId: '78b5d24e-77d4-4bba-ae37-5a46f7386b95',
+        site: 'datadoghq.com',
+        service: 'minidump.net',
+        env: 'kevin',
+        sessionSampleRate: 100,
+        sessionReplaySampleRate: 20,
+        trackUserInteractions: true,
+        trackResources: true,
+        trackLongTasks: true,
+        defaultPrivacyLevel: 'mask-user-input',
+      });
+    })
+</script>
   </head>
 
   <body>
