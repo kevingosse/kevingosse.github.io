@@ -3,7 +3,6 @@ languageCode = 'en-us'
 title = 'minidump.net'
 theme = 'tranquilpeak'
 defaultContentLanguage = "en-us"
-googleAnalytics = "G-MQCXFBVCCM"
 
 [params]
   sidebarBehavior = 2
@@ -15,9 +14,6 @@ googleAnalytics = "G-MQCXFBVCCM"
   hierarchicalCategories = true
   syntaxHighlighter = 'highlight.js'
   dateFormat = "January 02 2006"
-
-[params.googleAnalytics]
-  async = true
 
 [params.comment.utterances]
   enable = true
