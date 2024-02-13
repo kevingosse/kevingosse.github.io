@@ -9,7 +9,6 @@ tags:
 - garbage-collection
 author: Kevin Gosse
 thumbnailImage: /images/2024-02-13-dumping-the-managed-heap-in-csharp-6.png
-draft: true
 ---
 
 A variety of tools exist to check the content of the memory of a .NET process: dotnet-dump, dotnet-gcdump, ClrMD, Visual Studio, and the list goes on. But what if we could do it from within the application itself? If nothing else, this is a great excuse to learn about the layout of the managed heap.
