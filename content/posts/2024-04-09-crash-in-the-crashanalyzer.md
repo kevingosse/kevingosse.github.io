@@ -160,7 +160,7 @@ tracepoint:syscalls:sys_enter_munmap
   $ sudo bpftrace trace_mmap.bt
   ```
 
-The output was quite verbose, so I wrote a small C# program to parse it and find if the range of any `unmap` call covered the address that was allocated by the DAC.
+The output was quite verbose, so I wrote a small C# program to parse it and find if the range of any `munmap` call covered the address that was allocated by the DAC.
 
 ```csharp
 static void Main(string[] args)
@@ -188,7 +188,7 @@ static void Main(string[] args)
 }
 ```
 
-This gave me the line of the `munmap` call in the eBPF output that was causing the issue. With this information, combined with the `printf` statements that I added earlier in the DAC, confirmed my suspicions.
+This gave me the line of the `munmap` call in the eBPF output that was causing the issue. This information, combined with the `printf` statements that I added earlier in the DAC, confirmed my suspicions.
 
 Program output:
 ```
@@ -209,7 +209,7 @@ munmap - addr=0x7f184812d000 -> 0x7f18481ba400, length=578560 // The range is fr
 ```
 
 First we see a call to `mmap` with a null address and a length of `578560`. The returned address is `0x7f184812d000`, thus mapping the range `0x7f184812d000 -> 0x7f18481ba400`. Then a call to `munmap` unmaps that range. We have another `mmap` call with a length of 4096 that is unrelated, then a call to `mmap` with a length of 262144 that returns the address `0x7f184817b000`. This is the call that is made from the DAC. Finally, the range `0x7f184812d000 -> 0x7f18481ba400` is unmapped a second time.
-The address `0x7f184817b000` mapped by the DAC, is within the `0x7f184812d000 -> 0x7f18481ba400` range, and so it becomes invalid when the range is unmapped.
+The address `0x7f184817b000` mapped by the DAC is within the `0x7f184812d000 -> 0x7f18481ba400` range, and so it becomes invalid when that range is unmapped.
 This is undoubtedly a case of double-free. Whoever mapped the `0x7f184812d000 -> 0x7f18481ba400` range unmapped it twice. Now I had to figure out who did that.
 
 `bpftrace` supports displaying stacktraces by calling `ustack()` in the script. Unfortunately, the stacktraces were broken and therefore didn't provide any useful information. Apparently it can happen if the caller is compiled with frame pointers disabled. I had to find another way.
@@ -220,7 +220,7 @@ At this point, it's important to understand that `bpftrace` is a separate tool, 
 
 {{<image classes="fancybox center" src="/images/2024-04-09-crash-in-the-crashanalyzer-3.png" title="bpftrace and the console output are in separate consoles, there is no easy way to tell which event came before which.">}}
 
-Since `bpftrace` traces syscalls, maybe there was a syscall I could abuse? After some back and forth with ChatGPT, I decided on the `prctl(PR_GET_DUMPABLE, unsigned long arg2)` syscall. I don't really understand what it does, and I don't really care. What's important is that it has an argument in which I can pass an arbitrary value, and it doesn't affect the behavior of my program. I updated the `bpftrace` script to trace this syscall and log the value of the argument:
+Since `bpftrace` traces syscalls, maybe there was one that I could abuse? After some back and forth with ChatGPT, I decided on the `prctl(PR_GET_DUMPABLE, unsigned long arg2)` syscall. I don't really understand what it does, and I don't really care. What's important is that it has an argument in which I can pass an arbitrary value, and it doesn't affect the behavior of my program. I updated the `bpftrace` script to trace this syscall and log the value of the argument:
 
 ```c
 tracepoint:syscalls:sys_enter_prctl
@@ -306,4 +306,4 @@ From there, identifying and understanding the issue was fairly straightforward, 
 
 # Conclusion
 
-This was a very interesting debugging journey. Because of the atypical and complex setup, none of my usual tools were usable and I had to go back to the dark arts of `printf` debugging. There is an age-old debate going on about whether you should prefer a debugger or `printf` statements. Ultimately, I believe that being familiar with debuggers will save you a ton of time in the long run, but there will always be cases where simple `printf` statements are the best tool for the job.
+This was a very interesting debugging journey. Because of the atypical and complex setup, none of my usual tools were usable and I had to go back to the dark arts of printf-debugging. There is an age-old debate going on about whether you should prefer a debugger or `printf` statements. Ultimately, I believe that being familiar with debuggers will save you a ton of time in the long run, but there will always be cases where simple `printf` statements are the best tool for the job.
