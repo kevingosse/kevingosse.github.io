@@ -165,7 +165,7 @@ Scroll until you find the `HEAP_SIGNATURE` string, and take the only non-zero va
 
 {{<image classes="fancybox center" src="/images/2024-09-03-windows-error-reporting-4.png" >}}
 
-If we inspect the memory at that address, we can see almost immediately the string `C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscordacwks.dll`, and our own crash handler a bit later (`C:\crash\wer.dll`). .NET Framework registers its own crash handler, and it claims the crash before we have a chance to!
+If we inspect the memory at that address, we can see almost immediately the string `C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscordacwks.dll`, and our own crash handler a bit later (`C:\crash\wer.dll`). It turns out that .NET Framework registers its own crash handler, and they're invoked in the same order they were registered. Because of that, it's able to claim the crash before we have a chance to!
 
 # Changing the order of the crash handlers
 
@@ -256,7 +256,7 @@ Last but not least, we're going to see what kind of logic we can put in the cras
 
 Let's say that we want to store two things in the crash report: a version number, and a status message. It's pretty obvious that all this information is not going to fit into the pointer-sized `context` argument, so instead we will give the address to that information.
 
-First we declare the struct that will store the information. I put the status message in a fixed-size string because it makes things easier, but that's not mandatory.
+First we declare the struct that will store the information. I put the status message in an inline fixed-size string because it makes things easier, but that's not mandatory.
 
 ```csharp
 [StructLayout(LayoutKind.Sequential)]
@@ -351,10 +351,8 @@ private static unsafe int OutOfProcessExceptionEventSignatureCallback(nint conte
     }
     else if (index == 1)
     {
-        var payload = CrashPayload;
-
         signatureKey = "Status";
-        signatureValue = new string(payload.Status);
+        signatureValue = new string(CrashPayload.Status);
     }
     else
     {
