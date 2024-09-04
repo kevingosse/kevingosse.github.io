@@ -157,7 +157,7 @@ In the output, you should see `PEB at 000000e62f578000` with the address underli
 [...]   
 ```
 
-Open the "Memory" panel in Windbg, and in the ribbon you can change "Size" to "Long" (or "Integer" if it's a 32-bit process). 
+Open that address in the "Memory" panel in Windbg. In the ribbon, change "Size" to "Long" (or "Integer" if it's a 32-bit process). 
 
 {{<image classes="fancybox center" src="/images/2024-09-03-windows-error-reporting-3.png" >}}
 
@@ -372,3 +372,7 @@ private static unsafe int OutOfProcessExceptionEventSignatureCallback(nint conte
 If everything worked, the crash report with the custom metadata will be visible in the event log:
 
 {{<image classes="fancybox center" src="/images/2024-09-03-windows-error-reporting-6.png" >}}
+
+# Wrapping it up
+
+This article barely scratches the surface of what is possible to do with WER. This is a great way to automatically collect crash telemetry for your application, WER removes a lot of the complexity by detecting the crash and running your handler in a separate process. Of course, this is only useful for applications deployed to customers. If running in your own environment, you'll probably want to collect a full memory dump instead, to be sure to have all the required information to diagnose the issue.
