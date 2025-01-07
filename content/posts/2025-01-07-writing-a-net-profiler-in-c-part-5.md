@@ -9,7 +9,6 @@ tags:
 - nativeaot
 author: Kevin Gosse
 thumbnailImage: /images/2025-01-07-writing-a-net-profiler-in-c-part-5-1.png
-draft: true
 ---
 
 In the previous parts of the series, we built the foundation we needed to write a .NET profiler in C#. If you missed them, you can find them here:
