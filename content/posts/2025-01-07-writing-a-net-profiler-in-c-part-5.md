@@ -39,7 +39,7 @@ Then, we need to add a reference to Silhouette:
 </ItemGroup>
 ```
 
-To bootstrap the profiler, we need to write a class that inherits from `Silhouette.CorProfilerCallbackXxBase` (replace xx by the maximum version of [`ICorProfilerCallback`](https://learn.microsoft.com/en-us/dotnet/core/unmanaged-api/profiling/?WT.mc_id=DT-MVP-5003493) you want to target. We then override the `Initialize` method, which will automatically be called with the highest version of `ICorProfilerInfo` supported by the runtime.
+To bootstrap the profiler, we need to write a class that inherits from `Silhouette.CorProfilerCallbackXxBase` (replace xx by the maximum version of [`ICorProfilerCallback`](https://learn.microsoft.com/en-us/dotnet/core/unmanaged-api/profiling/?WT.mc_id=DT-MVP-5003493) you want to target). We then override the `Initialize` method, which will automatically be called with the highest version of `ICorProfilerInfo` supported by the runtime.
 
 ```csharp
 internal class CorProfiler : CorProfilerCallback11Base
@@ -81,7 +81,7 @@ Now we can go back to our `CorProfiler.Initialize` method. We need to do three t
 - Use `ICorProfilerInfo.SetEventMask` to enable the profiling features that we will need.
 - Do any other initialization that we need.
 
-To call `ICorProfilerInfo` methods, we can use the relevant `ICorProfilerInfoXx` property. It's the responsibility of the developer to not call a method that is not supported by the runtime (for instance, if `iCorProfilerInfoVersion` is 10, don't try to use `ICorProfilerInfo11` or bad things will happen).
+To call `ICorProfilerInfo` methods, we can use the relevant `ICorProfilerInfoXx` property. It's the responsibility of the developer to not call a method that is not supported by the runtime (for instance, if `iCorProfilerInfoVersion` is 10, don't try to use the `ICorProfilerInfo11` property or bad things will happen).
 
 For our profiler, we're going to enable `COR_PRF_ENABLE_STACK_SNAPSHOT` to be able to use the `ICorProfilerInfo2::DoStackSnapshot` method, and `COR_PRF_MONITOR_THREADS` to be notified of the creation of new threads. We also create a timer that will be used to periodically print the stack traces of all the threads.
 
@@ -111,7 +111,7 @@ internal class CorProfiler : CorProfilerCallback11Base
 
 ## Listing the threads
 
-To collect the stacktraces of all threads, we're going to need what threads are running. One way to do that is to use [`ICorProfilerInfo4::EnumThreads`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilerinfo4-enumthreads-method?WT.mc_id=DT-MVP-5003493) to enumerate all threads. However, I have yet to write the proper helpers in Silhouette to use native enumerators, so we're going to use a different approach. We're going to listen to the [`ICorProfilerCallback::ThreadAssignedToOSThread`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilercallback-threadassignedtoosthread-method?WT.mc_id=DT-MVP-5003493) and [`ICorProfilerCallback::ThreadDestroyed`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilercallback-threaddestroyed-method) events to keep track of the threads.
+To collect the stacktraces of all threads, we need to know what threads are running. One way to do that is to use [`ICorProfilerInfo4::EnumThreads`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilerinfo4-enumthreads-method?WT.mc_id=DT-MVP-5003493) to enumerate all threads. However, I have yet to write the proper helpers in Silhouette to use native enumerators, so we're going to use a different approach. We're going to listen to the [`ICorProfilerCallback::ThreadAssignedToOSThread`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilercallback-threadassignedtoosthread-method?WT.mc_id=DT-MVP-5003493) and [`ICorProfilerCallback::ThreadDestroyed`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/profiling/icorprofilercallback-threaddestroyed-method) events to keep track of the threads.
 
 To listen to a `ICorProfilerCallback` event, we simply need to override the corresponding method on our `CorProfiler` class. We then add or remove the `ThreadId` from a `ConcurrentDictionary` that will be used to keep track of the threads.
 
@@ -133,8 +133,8 @@ To listen to a `ICorProfilerCallback` event, we simply need to override the corr
 
 ## Walking the stack
 
-To walk the stack of a thread, we're going to use the `ICorProfilerInfo2::DoStackSnapshot` method. The target thread needs to be suspended first. Normally, to minimize the impact of the profiler, we should suspend the threads one by one, walking their stack and resuming them as quickly as possible. However, this is much more challenging than it sounds. If we were to call [` SuspendThread`](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-suspendthread?WT.mc_id=DT-MVP-5003493), the thread would be suspended at an arbitrary location, which could lead to deadlocks if for instance it holds an allocator lock.
-Instead, we're going to use the [`ICorProfilerInfo10::SuspendRuntime`](https://learn.microsoft.com/en-us/dotnet/core/unmanaged-api/profiling/icorprofilerinfo10-suspendruntime-method?WT.mc_id=DT-MVP-5003493) method to suspend all the managed threads. It uses the same mechanism as the GC to suspend the threads at a safe location so it prevents deadlocks. It has major downsides: it's much slower (we're suspending all threads even though we'll only walk one at a time), and it skews the results (since the threads are only suspended at safe points). However, those drawbacks are acceptable for our simple profiler.
+To walk the stack of a thread, we're going to use the `ICorProfilerInfo2::DoStackSnapshot` method. The target thread needs to be suspended first. Normally, to minimize the impact of the profiler, we would suspend the threads one by one, walking their stack and resuming them as quickly as possible. However, this is much more challenging than it sounds. If we were to call [` SuspendThread`](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-suspendthread?WT.mc_id=DT-MVP-5003493), the thread would be suspended at an arbitrary location, which could lead to deadlocks if for instance it holds an allocator lock.
+Instead, we're going to use the [`ICorProfilerInfo10::SuspendRuntime`](https://learn.microsoft.com/en-us/dotnet/core/unmanaged-api/profiling/icorprofilerinfo10-suspendruntime-method?WT.mc_id=DT-MVP-5003493) method to suspend all the managed threads. It uses the same mechanism as the GC to suspend the threads at a safe location so it prevents deadlocks. This approach has major downsides: it's much slower (we're suspending all threads even though we'll only walk one at a time), and it skews the results (because the threads are only suspended at safe points). However, those drawbacks are acceptable for our simple profiler.
 
 ```csharp
     private unsafe void OnTick(object? _)
@@ -237,7 +237,7 @@ The stacktrace we collected is a list of instruction pointers. To make it useful
  - Call [`IMetaDataImport::GetMethodProps`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/metadata/imetadataimport-getmethodprops-method?WT.mc_id=DT-MVP-5003493) to get the name of the method and the owner type metadata token (mdTypeDef) from the function's metadata token.
  - Finally, call [`IMetaDataImport::GetTypeDefProps`](https://learn.microsoft.com/en-us/dotnet/framework/unmanaged-api/metadata/imetadataimport-gettypedefprops-method?WT.mc_id=DT-MVP-5003493) to get the name of the type from the owner type metadata token.
 
-In C++, this gets very verbose very quickly because each method returns the value as `out` parameters, and you have to check the return code at each step. Silhouette makes it much simpler by wrapping everything into a single `HResult<T>` return value. It can be deconstructed into a `(HResult error, T result)` if you want to manually check the error code, or you can use the `ThrowIfFailed()` method to throw an exception if the error code is not `S_OK`. For `ICorProfilerInfo::GetModuleMetadata`, Silhouette also wraps the result into a `ComPtr<T>` wrapper that implements `IDisposable` and takes care of the proper `AddRef`/`Release` calls.
+In C++, this gets very verbose very quickly because each method returns the value as `out` parameters, and you have to check the return code at each step. Silhouette makes it much simpler by wrapping all the return values into a single `HResult<T>`. It can be deconstructed into a `(HResult error, T result)` if you want to manually check the error code, or you can use the `ThrowIfFailed()` method to throw an exception if the error code is not `S_OK`. For `ICorProfilerInfo::GetModuleMetadata`, Silhouette also wraps the result into a `ComPtr<T>` wrapper that implements `IDisposable` and takes care of the proper `AddRef`/`Release` calls.
 So for instance this C++ code:
 ```cpp
 ClassID classId;
@@ -252,7 +252,7 @@ if (FAILED(hr))
 }
 ```
 
-Becomes simply:
+Becomes either:
 ```csharp
 var (hr, functionInfo) = ICorProfilerInfo.GetFunctionFromIP(ip);
 
@@ -262,7 +262,20 @@ if (!hr)
 }
 ```
 
-We can now put all together and write a `ResolveMethodName` method that will resolve the name of a method from an instruction pointer:
+Or:
+
+```csharp
+try
+{
+    var functionInfo = ICorProfilerInfo.GetFunctionFromIP(ip).ThrowIfFailed();
+}
+catch (Win32Exception)
+{
+    // ...
+}
+```
+
+We can now put everything together and write a `ResolveMethodName` method that will resolve the name of a method from an instruction pointer:
 
 ```csharp
     private string ResolveMethodName(nint ip)
@@ -284,7 +297,7 @@ We can now put all together and write a `ResolveMethodName` method that will res
     }
 ```
 
-And we can call it in our `OnTick` method:
+And then call it from our `OnTick` method:
 
 ```csharp
     private unsafe void OnTick(object? _)
@@ -324,7 +337,7 @@ And we can call it in our `OnTick` method:
     }
 ```
 
-Of course, in a real-world scenario, you wouldn't display the results directly in the console, and would probably aggregate the results over a period of time into a file.
+Of course, in a real-world scenario, you wouldn't display the results directly in the console. You would probably aggregate them over a period of time into a file, and use a separate application to read them.
 
 ## Testing the profiler
 
@@ -397,6 +410,6 @@ And we can see the stacktraces of all the managed threads:
 
 ## Conclusion
 
-We've seen how to use Silhouette to write a simple CPU profiler in C#. Of course, an actual profiler would be much more complex, but I hope to lower the barrier to entry for anyone interested in writing one. While you would probably want to use C++ for any profiler that is performance-critical, C# can be an interesting alternative for a profiler that doesn't need to be as fast as possible (for instance, to collect code-coverage from unit tests).
+We've seen how to use Silhouette to write a simple CPU profiler in C#. Of course, an actual profiler would be much more complex, but I hope to lower the barrier to entry for anyone interested in writing one. While you would probably want to use C++ for a performance-critical profiler, C# can be an interesting alternative for a profiler that doesn't require the lowest possible footprint (for instance, to collect code-coverage from unit tests).
 
 The code used in this article is available [on GitHub](https://github.com/kevingosse/SimpleCpuProfiler).
