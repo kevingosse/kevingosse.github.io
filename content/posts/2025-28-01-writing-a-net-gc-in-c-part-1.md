@@ -12,7 +12,7 @@ author: Kevin Gosse
 thumbnailImage: /images/2025-28-01-writing-a-net-gc-in-c-part-1-3.png
 ---
 
-If you read my articles, you probably know that I like playing with NativeAOT a lot, especially to use C# in places where it wasn't possible before. We already [wrote a simple profiler](https://minidump.net/writing-a-net-profiler-in-c-part-5/), this time we will go a step further and try to write a Garbage Collector in C#.
+If you read my articles, you probably know that I like playing with NativeAOT a lot, especially to use C# in places where it wasn't possible before. I already [wrote a simple profiler](https://minidump.net/writing-a-net-profiler-in-c-part-5/), this time we will go a step further and try to write a Garbage Collector in C#.
 
 Of course, this won't result in anything usable in production. Building a performant and fully-featured GC would take hundreds of hours of work, and using a managed language for that is a poor choice (can you imagine your GC being randomly interrupted by its own internal garbage collection?). Still, this is a good excuse to learn more about the internals of the .NET Garbage Collector.
 
@@ -31,22 +31,20 @@ The first step is to create a new .NET 9 library project, and set `<PublishAot>t
 ```csharp
 public class DllMain
 {
-    [UnmanagedCallersOnly]
+    [UnmanagedCallersOnly(EntryPoint = "GC_Initialize")]
     public static unsafe uint GC_Initialize(IntPtr clrToGC, IntPtr* gcHeap, IntPtr* gcHandleManager, GcDacVars* gcDacVars)
     {
         Console.WriteLine("GC_Initialize");
-        return 0x80004005 /* E_FAIL */;
+        return 0x80004005; /* E_FAIL */
     }
 
-    [UnmanagedCallersOnly]
-    public static unsafe uint GC_VersionInfo(VersionInfo* versionInfo)
+    [UnmanagedCallersOnly(EntryPoint = "GC_VersionInfo")]
+    public static unsafe void GC_VersionInfo(VersionInfo* versionInfo)
     {
         Console.WriteLine($"GC_VersionInfo {versionInfo->MajorVersion}.{versionInfo->MinorVersion}.{versionInfo->BuildVersion}");
 
         versionInfo->MajorVersion = 5;
         versionInfo->MinorVersion = 3;
-
-        return 0;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -69,7 +67,7 @@ public class DllMain
 }
 ```
 
-For now we don't do much, just writing a message to the console to confirm that the functions are properly called. In `GC_VersionInfo`, we also properly set the version of the API we support. Note that the `versionInfo` argument initially contains the version of the Execution Engine API provided by the CLR. This is useful if you want to write a GC that supports multiple versions of .NET.
+For now we don't do much, just writing a message to the console to confirm that the functions are properly called. In `GC_VersionInfo`, we also properly set the version of the API we support. The GC API isn't documented as far as I can tell, so you have to pry [into the source code of the CLR](https://github.com/dotnet/runtime) to find the right version number. Note that the `versionInfo` argument initially contains the version of the Execution Engine API provided by the CLR. This is useful if you want to write a GC that supports multiple versions of .NET.
 
 The DLL can be published with NativeAOT by simply running:
 
@@ -77,7 +75,7 @@ The DLL can be published with NativeAOT by simply running:
 dotnet publish -r win-x64
 ```
 
-To load the custom GC into a .NET application, we need to copy it to the same folder as the application, and set the `DOTNET_GCName` environment variable to the name of the DLL. Alternatively, you can use `DOTNET_GCPath` that accepts a full path and therefore allows you to load the GC from another folder.
+To load the custom GC into a .NET application, we need to copy it into the same folder as the application, and set the `DOTNET_GCName` environment variable to the name of the DLL. Alternatively, you can use `DOTNET_GCPath` that accepts a full path and therefore allows you to load the GC from another folder.
 
 ```bash
 set DOTNET_GCName=ManagedDotnetGC.dll
@@ -135,11 +133,11 @@ kernel32.dll!BaseThreadInitThunk()
 ntdll.dll!RtlUserThreadStart()
 ```
 
-Starting from the bottom, we can see a bunch of frames related to the initialization of the test application, then a call to `ManagedDotnetGC.dll!ManagedDotnetGC_ManagedDotnetGC_DllMain__GC_VersionInfo()`. So the runtime is calling `GC_VersionInfo`... but we're crashing in `GC_Initialize`? Looking more closely, we can see that `GC_VersionInfo` triggers the initialization of the NativeAOT runtime (`ManagedDotnetGC.dll!InitializeRuntime()`) which in turns initializes its own GC (`ManagedDotnetGC.dll!InitializeDefaultGC()`). But somehow, this ends up calling **our** `GC_Initialize` function, which is not supposed to be called at this point. Why would the initialization of the NativeAOT runtime trigger a call to our GC?
+Starting from the bottom, we can see a bunch of frames related to the initialization of the test application, then a call to `ManagedDotnetGC.dll!ManagedDotnetGC_ManagedDotnetGC_DllMain__GC_VersionInfo()`. So the runtime is calling `GC_VersionInfo`... but we're crashing in `GC_Initialize`? Looking more closely, we can see that `GC_VersionInfo` triggers the initialization of the NativeAOT runtime (`ManagedDotnetGC.dll!InitializeRuntime`) which in turns initializes its own GC (`ManagedDotnetGC.dll!InitializeDefaultGC`). But somehow, this ends up calling **our** `GC_Initialize` function, which is not supposed to be called at this point. Why would the initialization of the NativeAOT runtime trigger a call to our GC?
 
-My initial theory was that the NativeAOT runtime was picking up our `DOTNET_GCName` environment variable and trying to use our custom GC instead of its own. After further research, while NativeAOT [has experimental support for standalone GC](https://github.com/dotnet/runtime/pull/91038), it is currently disabled by default (and needs to be enabled with a special flag). So, it can't be the cause of our crash.
+My initial theory was that the NativeAOT runtime was picking up our `DOTNET_GCName` environment variable and trying to use our custom GC instead of its own. However, while NativeAOT [has experimental support for standalone GC](https://github.com/dotnet/runtime/pull/91038), it is currently disabled by default (and needs to be enabled with a special flag). So, that can't be the cause of our crash.
 
-After further investigation, the problem seems to have something to do with linking. In the NativeAOT runtime, [the `GC_Initialize` function is defined as an external symbol](https://github.com/dotnet/runtime/blob/main/src/coreclr/nativeaot/Runtime/gcheaputilities.cpp#L39-L46):
+After further investigation, the problem seems to have something to do with linking at compilation time. In the NativeAOT runtime, [the `GC_Initialize` function is defined as an external symbol](https://github.com/dotnet/runtime/blob/main/src/coreclr/nativeaot/Runtime/gcheaputilities.cpp#L39-L46):
 
 ```cpp
 // GC entrypoints for the linked-in GC. These symbols are invoked
@@ -176,7 +174,7 @@ Unfortunately I couldn't find a workaround at the NativeAOT compilation level, s
 
 # Fixing the initialization - the sane way
 
-During my first attempts, I use a simple workaround around the `GC_Initialize` issue. Since NativeAOT crashes when you export a function with that name, the fix is simply to rename it to something else. I renamed it to `Custom_GC_Initialize`, then wrote a small C++ wrapper that calls the renamed function:
+During my first attempts, I used a simple workaround around the `GC_Initialize` issue. Since NativeAOT crashes when you export a function with that name, the fix is simply to rename it to something else. I renamed it to `Custom_GC_Initialize`, then wrote a small C++ wrapper that calls the renamed function:
 
 ```cpp
 #include "pch.h"
@@ -227,13 +225,13 @@ extern "C" __declspec(dllexport) void GC_VersionInfo(void* result)
 }
 ```
 
-This code is a simple DLL that loads the original `ManagedDotnetGC.dll`, retrieves the `Custom_GC_Initialize` and `Custom_GC_VersionInfo` functions, then exposes them as `GC_Initialize` and `GC_VersionInfo`. It means that the .NET application has to use the loader as custom GC, and the loader will forward the calls to the actual custom GC.
+This code is a simple DLL that loads the original `ManagedDotnetGC.dll`, locates the `Custom_GC_Initialize` and `Custom_GC_VersionInfo` functions, then exposes them as `GC_Initialize` and `GC_VersionInfo`. It means that the .NET application has to use the loader as the standalone GC, and the loader will forward the calls to the actual custom GC.
 
 It works, and it's honestly quite clean, but it bothered me because the goal was to write a custom GC **entirely** in C#. So I carefully reviewed the standalone GC loading code and found a flaw I could exploit.
 
-# Fixing the initialization - the devious way
+# Fixing the initialization - the horrible way
 
-To fix the problem, we need to stop NativeAOT from calling our `GC_Initialize` function. The only way I found is to enable the aforementioned standalone GC support in NativeAOT by adding a property in the csproj:
+To fix the problem, we need to stop NativeAOT from calling our `GC_Initialize` function. The only way I found is to enable the aforementioned standalone GC support in NativeAOT by adding a property to the csproj:
 
 ```xml
 <PropertyGroup>
@@ -241,7 +239,9 @@ To fix the problem, we need to stop NativeAOT from calling our `GC_Initialize` f
 </PropertyGroup>
 ```
 
-From there, we can set the `DOTNET_GCName` environment variable and point to the original .NET GC (`clrgc.dll`). This way, NativeAOT will call `GC_Initialize` on that GC instead of ours. However, environment variables are set at the process level, so this causes the test application to also load the original GC instead of the custom one. So we need a way to somehow tell the NativeAOT runtime to use the original GC, and the .NET runtime to use our custom GC.
+This will cause NativeAOT to read the `DOTNET_GCName`/`DOTNET_GCPath` environment variables and load the designated GC. Fortunately, the standard .NET GC is itself compatible with the standalone GC API, so we can set the environment variables to point to the original GC (`DOTNET_GCName=clrgc.dll`).
+
+This way, NativeAOT will call `GC_Initialize` on that GC instead of ours, fixing the crash. However, environment variables are set at the process level, so this causes the test application to also load the original GC instead of the custom one. So we need a way to somehow tell the NativeAOT runtime to load the original GC, and the .NET runtime to load our custom GC.
 
 I got closer to the goal when I realized an interesting quirk: .NET supports environment variables prefixed by either `DOTNET_` or `COMPlus_`, whereas NativeAOT only supports `COMPlus_`. So if we set `COMPlus_GCName=ManagedDotnetGC.dll`, only the .NET runtime will pick it up, and the NativeAOT runtime will ignore it. Therefore, I considered doing this:
 ```bash
@@ -258,16 +258,16 @@ set DOTNET_GCPath=gc1.dll
 set DOTNET_GCName=gc2.dll
 ```
 
-Then .NET will load `gc1.dll`. Putting everything together, I ended up with this:
+Then .NET will load `gc1.dll` and ignore `gc2.dll`. Putting everything together, I ended up with this:
 
 ```bash
 set DOTNET_GCName=clrgc.dll
 set COMPlus_GCPath=ManagedDotnetGC.dll
 ```
 
-The .NET runtime will ignore `DOTNET_GCName` because `GCPath` (and therefore `COMPlus_GCPath`) has a higher priority. And the NativeAOT runtime will ignore `COMPlus_GCPath` because it only supports the `DOTNET_` prefix. We end up with the result that we wanted: the .NET runtime uses our custom GC, and the NativeAOT runtime uses the original GC.
+The .NET runtime will ignore `DOTNET_GCName` because `GCPath` (and therefore `COMPlus_GCPath`) has a higher priority. And the NativeAOT runtime will ignore `COMPlus_GCPath` because it only supports the `DOTNET_` prefix. We end up with the result that we wanted: the .NET runtime uses our custom GC, and the NativeAOT runtime uses the standard GC.
 
-For this to work, keep in mind that we need to include `clrgc.dll` along with our custom GC. The file can be found in the .NET installation folder, in `shared\Microsoft.NETCore.App\9.x.x`.
+For this to work, keep in mind that we need to ship `clrgc.dll` along with our custom GC. The file can be found in the .NET installation folder, in `shared\Microsoft.NETCore.App\9.x.x`.
 
 # Wrapping it up
 
@@ -275,7 +275,7 @@ After using either workaround, we can see that the GC is properly loaded when ru
 
 {{<image classes="fancybox center" src="/images/2025-28-01-writing-a-net-gc-in-c-part-1-4.png" >}}
 
-The application does not actually start because we haven't actually implemented the initialization of our custom GC, but that's something we will deal with next time.
+The application still doesn't start because we haven't actually implemented the initialization of our custom GC, but that's something we will deal with next time.
 
 The code of this article is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/tree/Part1).
 
