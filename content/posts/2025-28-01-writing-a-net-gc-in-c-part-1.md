@@ -243,7 +243,7 @@ This will cause NativeAOT to read the `DOTNET_GCName`/`DOTNET_GCPath` environmen
 
 This way, NativeAOT will call `GC_Initialize` on that GC instead of ours, fixing the crash. However, environment variables are set at the process level, so this causes the test application to also load the original GC instead of the custom one. So we need a way to somehow tell the NativeAOT runtime to load the original GC, and the .NET runtime to load our custom GC.
 
-I got closer to the goal when I realized an interesting quirk: .NET supports environment variables prefixed by either `DOTNET_` or `COMPlus_`, whereas NativeAOT only supports `COMPlus_`. So if we set `COMPlus_GCName=ManagedDotnetGC.dll`, only the .NET runtime will pick it up, and the NativeAOT runtime will ignore it. Therefore, I considered doing this:
+I got closer to the goal when I realized an interesting quirk: .NET supports environment variables prefixed by either `DOTNET_` or `COMPlus_`, whereas NativeAOT only supports `DOTNET_`. So if we set `COMPlus_GCName=ManagedDotnetGC.dll`, only the .NET runtime will pick it up, and the NativeAOT runtime will ignore it. Therefore, I considered doing this:
 ```bash
 set COMPlus_GCName=ManagedDotnetGC.dll
 set DOTNET_GCName=clrgc.dll
