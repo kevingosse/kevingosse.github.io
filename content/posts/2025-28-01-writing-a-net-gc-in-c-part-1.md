@@ -269,6 +269,61 @@ The .NET runtime will ignore `DOTNET_GCName` because `GCPath` (and therefore `CO
 
 For this to work, keep in mind that we need to ship `clrgc.dll` along with our custom GC. The file can be found in the .NET installation folder, in `shared\Microsoft.NETCore.App\9.x.x`.
 
+# Fixing the initialization - the right way
+
+Soon after I published the first version of this article, [Michal Strehovský](https://bsky.app/profile/migeel.sk) reached me on Bluesky and pointed out that there is a much better way to fix this problem.
+
+The idea is to export the functions with a different name, like the C++ wrapper solution:
+
+```csharp
+    [UnmanagedCallersOnly(EntryPoint = "_GC_Initialize")]
+    public static unsafe uint GC_Initialize(IntPtr clrToGC, IntPtr* gcHeap, IntPtr* gcHandleManager, GcDacVars* gcDacVars)
+    {
+        Console.WriteLine("GC_Initialize");
+        return 0x80004005; /* E_FAIL */
+    }
+
+    [UnmanagedCallersOnly(EntryPoint = "_GC_VersionInfo")]
+    public static unsafe void GC_VersionInfo(VersionInfo* versionInfo)
+    {
+        Console.WriteLine($"GC_VersionInfo {versionInfo->MajorVersion}.{versionInfo->MinorVersion}.{versionInfo->BuildVersion}");
+
+        versionInfo->MajorVersion = 5;
+        versionInfo->MinorVersion = 3;
+    }
+```
+
+Here I prefixed them with an underscore. Then, it's just a matter of adding a msbuild target (in the csproj file) that will edit the definitions file right before linking to change the name of the exports:
+
+```xml
+  <UsingTask TaskName="RegexReplaceFile" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <FilePath ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        var lines = File.ReadAllLines(FilePath);
+        for (int i = 0; i < lines.Length; i++)
+        {
+            lines[i] = Regex.Replace(lines[i], @"_GC_(\w+)", "GC_$1=_GC_$1");
+        }
+        File.WriteAllLines(FilePath, lines);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="TransformExportsFile" BeforeTargets="LinkNative">
+    <Message Importance="high" Text="Transforming exports file: $(ExportsFile)" />
+    <RegexReplaceFile FilePath="$(ExportsFile)" />
+  </Target>
+```
+
+This works great, so I will be using this solution in the future. Thanks Michal!
+
 # Wrapping it up
 
 After using either workaround, we can see that the GC is properly loaded when running the test application:
