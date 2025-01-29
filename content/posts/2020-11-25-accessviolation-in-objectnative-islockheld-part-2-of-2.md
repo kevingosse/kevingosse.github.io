@@ -9,7 +9,6 @@ date: 2020-11-25
 description: ""
 tags:
 - dotnet
-- csharp
 - debugging
 - windbg
 - cpp

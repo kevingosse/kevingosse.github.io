@@ -9,7 +9,6 @@ date: 2023-01-11
 description: ""
 tags:
 - dotnet
-- csharp
 - nativeaot
 - profiler
 author: Kevin Gosse

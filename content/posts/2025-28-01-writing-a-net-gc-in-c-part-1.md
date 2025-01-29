@@ -7,7 +7,7 @@ date: 2025-01-28
 tags:
 - dotnet
 - nativeaot
-- gc
+- garbage-collection
 author: Kevin Gosse
 thumbnailImage: /images/2025-28-01-writing-a-net-gc-in-c-part-1-3.png
 ---

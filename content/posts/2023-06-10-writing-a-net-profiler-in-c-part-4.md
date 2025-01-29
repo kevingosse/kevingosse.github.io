@@ -9,7 +9,6 @@ date: 2023-06-10
 description: ""
 tags:
 - dotnet
-- csharp
 - nativeaot
 - profiler
 - source-generator

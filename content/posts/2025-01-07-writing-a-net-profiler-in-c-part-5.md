@@ -7,6 +7,7 @@ date: 2025-01-07
 tags:
 - dotnet
 - nativeaot
+- profiler
 author: Kevin Gosse
 thumbnailImage: /images/2025-01-07-writing-a-net-profiler-in-c-part-5-1.png
 ---
