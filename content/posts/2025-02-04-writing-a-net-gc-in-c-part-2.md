@@ -358,15 +358,15 @@ public unsafe struct gc_alloc_context
 For now, we will keep our allocation strategy simple: when `Alloc` is called, we first check if there is room left in the allocation context, in which case we simply bump `alloc_ptr`. If the allocation context is not big enough, we allocate a chunk of 32KB and use it as the new allocation context. We must also handle the special case when an object bigger than 32KB is allocated, in which case we return an allocation context of the exact size needed.
 
 ```csharp
-    public GCObject* Alloc(gc_alloc_context* acontext, nint size, GC_ALLOC_FLAGS flags)
+    public GCObject* Alloc(ref gc_alloc_context acontext, nint size, GC_ALLOC_FLAGS flags)
     {
-        var result = acontext->alloc_ptr;
+        var result = acontext.alloc_ptr;
         var advance = result + size;
 
-        if (advance <= acontext->alloc_limit)
+        if (advance <= acontext.alloc_limit)
         {
             // The allocation context is big enough for this allocation
-            acontext->alloc_ptr = advance;
+            acontext.alloc_ptr = advance;
             return (GCObject*)result;
         }
 
@@ -375,8 +375,8 @@ For now, we will keep our allocation strategy simple: when `Alloc` is called, we
         var newPages = (IntPtr)NativeMemory.AllocZeroed((nuint)growthSize);
 
         var allocationStart = newPages + IntPtr.Size;
-        acontext->alloc_ptr = allocationStart + size;
-        acontext->alloc_limit = newPages + growthSize;
+        acontext.alloc_ptr = allocationStart + size;
+        acontext.alloc_limit = newPages + growthSize;
 
         return (GCObject*)allocationStart;
     }
