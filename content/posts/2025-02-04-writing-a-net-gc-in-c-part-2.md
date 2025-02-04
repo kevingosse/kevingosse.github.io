@@ -11,7 +11,7 @@ author: Kevin Gosse
 thumbnailImage: /images/2025-02-04-writing-a-net-gc-in-c-part-2-1.png
 ---
 
-[In the first part](/posts/writing-a-net-gc-in-c-part-1), we prepared the project and fixed an initialization issue caused by the NativeAOT toolchain. In this second part, we're going to start the implementation of our GC. The target for now is to build the simplest possible GC that can run basic .NET applications. This GC will only allocate memory and never free it, similar to [Konrad Kokosa's bump-pointer GC](https://github.com/kkokosa/UpsilonGC/tree/master/src/ZeroGC.BumpPointer).
+[In the first part](/2025-28-01-writing-a-net-gc-in-c-part-1), we prepared the project and fixed an initialization issue caused by the NativeAOT toolchain. In this second part, we're going to start the implementation of our GC. The target for now is to build the simplest possible GC that can run basic .NET applications. This GC will only allocate memory and never free it, similar to [Konrad Kokosa's bump-pointer GC](https://github.com/kkokosa/UpsilonGC/tree/master/src/ZeroGC.BumpPointer).
 
 The first step is to write the native interfaces we're going to need. For now there are four of them:
  - `IGCToCLR`: exposes execution engine APIs that can be called by the GC (for instance to suspend the threads)
