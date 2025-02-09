@@ -601,3 +601,14 @@ If we run the test application again, we can see the types of the objects stored
 We took a small detour from implementing the GC, but it was a nice excuse to explore the GC modes and to learn how to use the DAC. Next time, we will finally start looking into how to implement the mark phase of our custom GC.
 
 The code of this article is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/tree/Part3).
+
+{{<rawhtml>}}
+<a href="https://amzn.to/42tg58c" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+  <div style="display: flex; align-items: center; border: 2px solid #ccc; border-radius: 8px; padding: 10px; background-color: #f9f9f9; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-top: 50px;">
+    <span style="margin-right: 15px; font-size: 1.1em;">
+      Liked this article? Don't hesitate to check the 2nd edition of <strong><u>Pro .NET Memory Management</u></strong> for more insights on the .NET Garbage Collector internals!
+    </span>
+    <img src="/images/progc.png" alt="Pro .NET Memory Management" style="width: 100px; height: auto; border-radius: 4px;" />
+  </div>
+</a>
+{{</rawhtml>}}
