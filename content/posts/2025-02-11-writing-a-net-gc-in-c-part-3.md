@@ -2,6 +2,7 @@
 url: writing-a-net-gc-in-c-part-3
 title: Writing a .NET Garbage Collector in C#  -  Part 3
 subtitle: Using NativeAOT to write a .NET GC in C#. The third part adds some tooling to inspect the objects stored on the heap.
+summary: Using NativeAOT to write a .NET GC in C#. The third part adds some tooling to inspect the objects stored on the heap.
 date: 2025-02-11
 tags:
 - dotnet
@@ -125,19 +126,17 @@ Fatal error. Internal CLR error. (0x80131506)
 
 The problem here is that our GC is compiled with NativeAOT, which comes with its own runtime. This runtime is separate from the .NET runtime that the test application is using. The type systems are distinct and not interoperable, so we can't directly manipulate a .NET type in the NativeAOT runtime.
 
-So... how can we get that type information? The GC has no API to get that information, because it's not something it would normally need. In theory we could manually parse the method-table and the module metadata, and use that to find the name of the type. While that would make for an interesting article, we're going to look for easier solutions for now.
+So... how can we get that type information? The GC has no API to get that information, because it's not something it would normally need. In theory we could manually parse the method table and the module metadata, and use that to find the name of the type. While that would make for an interesting article, we're going to look for easier solutions for now.
 
 # The cooperative way
 
-One way to get the type information is simply to ask the test application to provide it. It strongly couples the application to the GC, but it might be acceptable since we only need that information for debugging purposes.
+One way to get the type information is simply to ask the test application to provide it. The idea is to add a method to the test application that fetches the type of an object given its address, and the GC will call it when needed. It strongly couples the application to the GC, but it might be acceptable since we only need that information for debugging purposes.
 
-The idea is to add a method to the test application that fetches the type of an object given its address, and the GC will call it when needed.
-
-The method will be called from NativeAOT so we decorate it with the `[UnmanagedCallersOnly]` attribute. The method receives a buffer to write the type name to, and an out parameter to return the length of the string.
+The method will be called from NativeAOT so we decorate it with the `[UnmanagedCallersOnly]` attribute. It receives a buffer to write the type name to, and it returns the length of the string.
 
 ```csharp
     [UnmanagedCallersOnly]
-    public static unsafe void GetType(IntPtr address, char* buffer, int capacity, int* size)
+    public static unsafe int GetType(IntPtr address, char* buffer, int capacity)
     {
         var destination = new Span<char>(buffer, capacity);
 
@@ -145,7 +144,8 @@ The method will be called from NativeAOT so we decorate it with the `[UnmanagedC
         var type = obj.GetType().ToString();
         var length = Math.Min(type.Length, capacity);
         type[..length].CopyTo(destination);
-        *size = length;
+
+        return length;
     }
 ```
 
@@ -158,7 +158,7 @@ We also need to tell the GC the address of that method, so we add a p/invoke and
     }
 
     [DllImport("ManagedDotnetGC.dll")]
-    private static extern void SetGetTypeCallback(delegate* unmanaged<IntPtr, char*, int, int*, void> callback);
+    private static extern void SetGetTypeCallback(delegate* unmanaged<IntPtr, char*, int, int> callback);
 
 ```
 
@@ -168,10 +168,10 @@ On the GC side, we export the `SetGetTypeCallback` method and store the argument
     [UnmanagedCallersOnly(EntryPoint = "SetGetTypeCallback")]
     public static unsafe void SetGetTypeCallback(IntPtr callback)
     {
-        GetTypeCallback = (delegate* unmanaged<IntPtr, char*, int, int*, void>)callback;
+        GetTypeCallback = (delegate* unmanaged<IntPtr, char*, int, int>)callback;
     }
 
-    internal static unsafe delegate* unmanaged<IntPtr, char*, int, int*, void> GetTypeCallback;
+    internal static unsafe delegate* unmanaged<IntPtr, char*, int, int> GetTypeCallback;
 ```
 
 Finally, we update `DumpHandles` to call that method:
@@ -194,8 +194,7 @@ Finally, we update `DumpHandles` to call that method:
                 {
                     if (GetTypeCallback != null)
                     {
-                        int size = 0;
-                        GetTypeCallback(handle.Object, p, buffer.Length, &size);
+                        var size = GetTypeCallback(handle.Object, p, buffer.Length);
                         output += $" - Object type: {new string(buffer[..size])}";
                     }
                 }
@@ -208,7 +207,7 @@ Finally, we update `DumpHandles` to call that method:
 
 Unfortunately, it crashes when running it:
 
-```
+```a
 [GC] GCHandleStore DumpHandles
 [GC] Handle 0 - HNDTYPE_WEAK_SHORT - 00 - 00
 [GC] Handle 1 - HNDTYPE_STRONG - 00 - 00
@@ -217,7 +216,7 @@ Fatal error. Invalid Program: attempted to call a UnmanagedCallersOnly method fr
    at Program.<Main>$(System.String[])
 ```
 
-As the message indicates, we're not allowed call an `[UnmanagedCallersOnly]` method from managed code (same with `Marshal.GetDelegateForFunctionPointer`). However we're calling it from the GC, which is unmanaged code, so what's going on?
+As the message indicates, we're not allowed to call an `[UnmanagedCallersOnly]` method from managed code (same with `Marshal.GetDelegateForFunctionPointer`). However we're calling it from the GC, which is unmanaged code, so what's going on?
 
 If we look for the error message in the .NET runtime source code, we find that it's thrown [from the method `ReversePInvokeBadTransition`](https://github.com/dotnet/runtime/blob/826d9313afff3c406df6f8c13a8d70bcbe4e34e8/src/coreclr/vm/dllimportcallback.cpp#L184-L196) (a "reverse p/invoke" is when native code calls into managed code). That method is called [from the entry-point of the reverse p/invoke](https://github.com/dotnet/runtime/blob/826d9313afff3c406df6f8c13a8d70bcbe4e34e8/src/coreclr/vm/dllimportcallback.cpp#L210-L212), when "preemptive mode" is disabled for the current thread:
 
@@ -227,7 +226,9 @@ If we look for the error message in the .NET runtime source code, we find that i
         ReversePInvokeBadTransition();
 ```
 
-I already explained what is preemptive mode [in my SuppressGCTransition article](https://minidump.net/suppressgctransition-b9a8a774edbd/), but here is a quick reminder: in .NET, threads run in one of two modes, preemptive or cooperative. When the GC triggers a collection, it needs to make sure that no managed code is running. For that, it suspends all the threads that are in cooperative mode (or rather, it "cooperates" with them to suspend them at a safe spot). Threads in preemptive mode are trusted to not run any managed code, so they are not suspended. Managed code always runs in cooperative mode. Native code usually runs in preemptive mode, but it can sometimes run in cooperative mode (when executing CLR functions that require accessing managed objects, or when a p/invoke is decorated with the `[SuppressGCTransition]` attribute).
+I already explained what preemptive mode is [in my SuppressGCTransition article](https://minidump.net/suppressgctransition-b9a8a774edbd/), but here is a quick reminder: in .NET, threads run in either preemptive or cooperative mode. When the GC triggers a collection, it needs to make sure that no managed code is running. For that, it suspends all the threads that are in cooperative mode (or rather, it "cooperates" with them to suspend them at a safe spot). Threads in preemptive mode are not suspended, they're trusted to not run any managed code. So to summarize:
+ - Managed code always runs in cooperative mode.
+ - Native code usually runs in preemptive mode, but it can sometimes run in cooperative mode (when executing CLR functions that require accessing managed objects, or when a p/invoke is decorated with the `[SuppressGCTransition]` attribute).
 
 The error message is telling us that the thread is in cooperative mode when calling the reverse p/invoke, which is not allowed.
 
@@ -246,7 +247,7 @@ But why is our thread in cooperative mode? The managed code is calling `GC.Colle
 
 > QCall also switch to preemptive GC mode like a normal P/Invoke.
 
-So our thread should definitely be in preemptive mode. Unless...
+So our thread should really be in preemptive mode. Unless...
 
 The answer lies [in the `GCInterface_Collect` method itself](https://github.com/dotnet/runtime/blob/826d9313afff3c406df6f8c13a8d70bcbe4e34e8/src/coreclr/vm/comutilnative.cpp#L858-L879):
 
@@ -269,9 +270,9 @@ extern "C" void QCALLTYPE GCInterface_Collect(INT32 generation, INT32 mode)
 }
 ```
 
-The `GCX_COOP` macro is used to switch the thread to cooperative mode, right before the call to our `IGCHeap::GarbageCollect` method. Since we're calling `DumpHandles` from the `GarbageCollect` method, this is why our reverse p/invoke is failing.
+The `GCX_COOP` macro is used to switch the thread to cooperative mode, right before the call to  `IGCHeap::GarbageCollect`. Since we're calling `DumpHandles` from the `GarbageCollect` method, this is why our reverse p/invoke is failing.
 
-Is it a dead end? Not quite. The `IGCToClr` interface (that we receive in the `GC_Initialize` method, if you forgot about the previous parts) has dedicated methods to control the thread mode. We can use them to switch the thread to preemptive mode before calling the reverse p/invoke, and back to cooperative mode afterwards.
+Is it a dead end? Not quite. The `IGCToClr` interface (that we receive from the `GC_Initialize` method, if you forgot about the previous parts) has dedicated methods to control the thread mode. We can use them to switch the thread to preemptive mode before calling the reverse p/invoke, and back to cooperative mode afterwards.
 
 ```csharp
     public void DumpHandles()
@@ -298,8 +299,7 @@ Is it a dead end? Not quite. The `IGCToClr` interface (that we receive in the `G
                 {
                     if (GetTypeCallback != null)
                     {
-                        int size = 0;
-                        GetTypeCallback(handle.Object, p, buffer.Length, &size);
+                        var size = GetTypeCallback(handle.Object, p, buffer.Length);
                         output += $" - Object type: {new string(buffer[..size])}";
                     }
                 }
@@ -371,7 +371,7 @@ Now if we run the test app again, we can finally see the type of the objects:
 [GC] Handle 49 - HNDTYPE_WEAK_LONG - 21235b99470 - 00 - Object type: System.RuntimeType+RuntimeTypeCache
 ```
 
-So exposing a method from the test application and callig it from the GC works, however it has one major shortcoming. When we finally implement an actual garbage collection, we will want to inspect objects while the heap is in an inconsistent state, which could lead to some unpredictable behavior. This was a fun exploration but we need to find a better way.
+So we can expose a method from the test application and call it from the GC. However, it has one major shortcoming: when we finally implement an actual garbage collection, we will want to inspect objects while the heap is in an inconsistent state, which could lead to some unpredictable behavior. This was a fun exploration but we need to find a better way.
 
 # The better way
 
@@ -379,7 +379,7 @@ To summarize, we need a way to inspect the managed objects without running any m
 
 Those APIs are exposed in a standalone component bundled with the runtime, called the DAC. It encapsulates all the logic needed to interact with the data structures of the runtime.
 
-The DAC is designed to be used with a variety of targets: a live process, a remote process, a crash dump... To make that possible, it abstracts basic operations like reading and writing memory into an `ICLRDataTarget` interface that must be implemented by the debugger. 
+The DAC is designed to be used with a variety of targets: live process, remote process, crash dump... To make that possible it abstracts basic operations, like reading and writing memory, into an `ICLRDataTarget` interface that must be implemented by the debugger. 
 As usual, I converted the original C++ interface to C#, and used my [`NativeObjects` library](https://github.com/kevingosse/NativeObjects) to wrap it. For our simple use-case we only need to implement a few of the methods of the interface:
  - `ReadVirtual`: reads memory from the target
  - `GetMachineType`: gets the architecture of the target
@@ -458,7 +458,7 @@ As usual, I converted the original C++ interface to C#, and used my [`NativeObje
 
  For all the other methods we simply return `E_NOTIMPL`. We also have to implement `IUnknown` but there's nothing special about it so I won't show it here.
 
- The `ReadVirtual` and `GetImageBase` methods use the `CLRDATA_ADDRESS` struct to represent addresses. Apparently this is a signed type [which causes conversion issues when accessing the top 2 GB on a 32-bit process](https://github.com/dotnet/runtime/blob/main/src/coreclr/debug/daccess/dacimpl.h#L31-L36). This is very confusing so I decided to just [steal the C# implementation that Lee Culver wrote for ClrMD](https://github.com/microsoft/clrmd/blob/fb8c39b99ed792d650640823ee022f9f16996fe2/src/Microsoft.Diagnostics.Runtime/DacInterface/ClrDataAddress.cs).
+ The `ReadVirtual` and `GetImageBase` methods use the `CLRDATA_ADDRESS` struct to represent addresses. Apparently this is a signed type [which causes conversion issues when accessing the top 2 GB of a 32-bit process](https://github.com/dotnet/runtime/blob/main/src/coreclr/debug/daccess/dacimpl.h#L31-L36). This is very confusing so I decided to just [steal the C# implementation that Lee Culver wrote for ClrMD](https://github.com/microsoft/clrmd/blob/fb8c39b99ed792d650640823ee022f9f16996fe2/src/Microsoft.Diagnostics.Runtime/DacInterface/ClrDataAddress.cs).
 
 The next step is to load the DAC into the process. The DAC is stored in a shared library, stored in the same directory as the runtime. To locate the runtime, we look for the `coreclr.dll` module in the current process and extract the directory from its path. Because the name of the shared library depends on the platform, I added a short helper method to convert it.
 
@@ -518,7 +518,7 @@ public class DacManager : IDisposable
 }
 ```
 
-Once the DAC is loaded into the process, we need to call the `CLRDataCreateInstance` function and give it our `ICLRDataTarget` object. In return, it will give us an instance of `IUnknown`, on which we can call `QueryInterface` to retrieve an `ISOSDacInterface`, which exposes the features of the DAC.
+Once the DAC is loaded into the process, we need to call the `CLRDataCreateInstance` function and give it our `ICLRDataTarget` object. In return, it gives us an instance of `IUnknown`, on which we can call `QueryInterface` to retrieve an `ISOSDacInterface`, which exposes the features of the DAC.
 
 ```csharp
         var library = NativeLibrary.Load(dacPath);
@@ -544,7 +544,7 @@ Once the DAC is loaded into the process, we need to call the `CLRDataCreateInsta
         }
 ```
 
-Our `DacManager` class now has a reference to the `ISOSDacInterface` object, stored in the `Dac` property. We can use it to implement a method that extracts the type of a managed object, given its address:
+Our `DacManager` class stores the reference to the `ISOSDacInterface` object in the `Dac` property. We can use it to implement a method that extracts the type of a managed object, given its address:
 
 ```csharp
     public unsafe string? GetObjectName(CLRDATA_ADDRESS address)
