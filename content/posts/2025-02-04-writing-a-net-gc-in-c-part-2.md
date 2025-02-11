@@ -2,6 +2,7 @@
 url: writing-a-net-gc-in-c-part-2
 title: Writing a .NET Garbage Collector in C#  -  Part 2
 subtitle: Using NativeAOT to write a .NET GC in C#. The second part builds the simplest possible GC that can run basic .NET applications.
+summary: Using NativeAOT to write a .NET GC in C#. The second part builds the simplest possible GC that can run basic .NET applications.
 date: 2025-02-04
 tags:
 - dotnet
