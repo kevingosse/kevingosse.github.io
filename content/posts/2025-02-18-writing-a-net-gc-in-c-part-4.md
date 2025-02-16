@@ -332,7 +332,6 @@ We implement the `FixAllocContext` method to allocate the dummy object, which wi
         }
 
         AllocateFreeObject(acontext.alloc_ptr, (uint)(acontext.alloc_limit - acontext.alloc_ptr));
-        acontext = new();
     }
 
     private void AllocateFreeObject(nint address, uint length)
