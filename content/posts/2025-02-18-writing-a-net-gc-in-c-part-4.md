@@ -31,7 +31,7 @@ This is already the fourth part of our journey to write a .NET garbage collector
 
 # Walking the heap
 
-So what is it about? We are implementing [a tracing garbage collector](https://en.wikipedia.org/wiki/Tracing_garbage_collection), which means that we will be following the chains of references to determine the reachability of the objects (as opposed to other forms of automatic memory management, like reference counting). Traversing the reference tree will tell us which objects are still in use, and by exclusion which ones are not. Those are the objects that we can safely collect. But to "exclude" objects, we need to know about all of them, and that's why we need to be able to walk the heap.
+So what is it about? We are implementing [a tracing garbage collector](https://en.wikipedia.org/wiki/Tracing_garbage_collection), which means that we will follow the chains of references to determine the reachability of the objects (as opposed to other forms of automatic memory management, like reference counting). Traversing the reference tree will tell us which objects are still in use, and by exclusion which ones are not. Those are the objects that we can safely collect. But to "exclude" objects, we need to know about all of them, and that's why we need to be able to walk the heap.
 
 This is not the first time I walk the managed heap, and I warmly recommend you to read [this article](https://minidump.net/dumping-the-managed-heap-in-csharp/) as a complement to this one. 
 
@@ -39,7 +39,7 @@ The trick to walking the heap is to realize that the objects are forming a kind 
 
 From a size perspective, there are two kind of objects: fixed-size objects and variable-size objects. The vast majority of objects are fixed-size, we can get their size simply by reading the `BaseSize` field of their method table. Arrays and strings have a variable length, so computing their size is a bit more complex. We must read their length, located right after the method table pointer, and multiply it by the size of each element, stored in the `ComponentSize` field of the method table. The result must be added to the base size to get the total size of the object.
 
-With that information, we can already write a `ComputeSize` method, that takes a pointer to a managed object and returns its size. We will that method later in the article:
+With that information, we can already write a `ComputeSize` method, that takes a pointer to a managed object and returns its size. We will use that method later in the article:
 
 ```csharp
     private static unsafe uint ComputeSize(GCObject* obj)
@@ -130,7 +130,7 @@ In the `Alloc` method, we add the new allocation context to the list:
     }
 ```
 
-We can now write a method to traverse the whole heap. It simply enumerates all the allocation contexts, and call the `TraverseHeap(nint start, nit end)` method that we wrote earlier:
+We can now write a method to traverse the whole heap. It enumerates all the allocation contexts, and calls the `TraverseHeap(nint start, nint end)` method that we wrote earlier:
 
 ```csharp
     private void TraverseHeap()
@@ -142,7 +142,7 @@ We can now write a method to traverse the whole heap. It simply enumerates all t
     }
 ```
 
-We also need to make a small addition to the `TraverseHeap(nint start, nit end)` method: because the allocation context might not be full, we need to break the loop when we find a null method table pointer:
+We also need to make a small addition to the `TraverseHeap(nint start, nit end)` method: because the allocation context might not be full, we need to break the loop when we find a null method table pointer, which indicates the end of the used part of the allocation context:
 
 ```csharp
 private void TraverseHeap(nint start, nint end)
@@ -169,7 +169,7 @@ private void TraverseHeap(nint start, nint end)
 }
 ```
 
-The last step is to plug the heap traversal logic into the `GarbageCollect` method. We suspend the managed threads before walking the heap and resume them afterwards. This is not strictly necessary because we're not moving or free objects, but we definitely will at some point at the future:
+The last step is to plug the heap traversal logic into the `GarbageCollect` method. We suspend the managed threads before walking the heap and resume them afterwards. This is not strictly necessary because we're not moving or freeing objects, but we definitely will at some point in the future:
 
 ```csharp
     public HResult GarbageCollect(int generation, bool low_memory_p, int mode)
@@ -191,7 +191,7 @@ If we try it in our test application, we can see the content of the heap as expe
 
 {{<image classes="fancybox center" src="/images/2025-02-18-writing-a-net-gc-in-c-part-4-1.png" >}}
 
-This allocation strategy could certainly work in simple applications, and it would be interesting to benchmark it in the future and see how it compares to other solutions. Ultimately, the garbage collector has to compromise between multiple factors, and we've already introduced a few of them. The first one is the size of the allocation contexts. Each thread is given its own allocation context, if we give a bigger allocation context then it means that the thread is able to perform more allocations on its own, which reduces the CPU overhead. On the other hand, with smaller allocation contexts we reduce the memory usage of the application, by having a working set that more accurately represents how much memory is actually used.
+This allocation strategy could certainly work in simple applications, and it would be interesting to benchmark it to see how it compares to other solutions. Ultimately, the garbage collector has to compromise between multiple factors, and we've already introduced a few of them. The first one is the size of the allocation contexts. Each thread is given its own allocation context, if we give a bigger one then it means that the thread is able to perform more allocations on its own, which reduces the CPU overhead. On the other hand, with smaller allocation contexts we reduce the memory usage of the application, by having a working set that more accurately represents how much memory is actually needed.
 
 The .NET GC has a strategy to balance both concerns: having small allocation contexts (8KB), while keeping the cost of allocating new contexts low. This is done by preallocating a bigger chunk of memory and assigning parts of it into allocation contexts as needed. Those chunks of memory are referred to as "segments".
 
@@ -237,17 +237,17 @@ One of the advantages of segments is that they eliminate the need to keep track 
 
 {{<image classes="fancybox center" src="/images/2025-02-18-writing-a-net-gc-in-c-part-4-2.png" >}}
 
-One solution could be to update our heap walking logic to scan the gap byte by byte until we find the next object. That would be very inefficient. Instead, we're going to add a step at the beginning of the garbage collection to set the segment back to a walkable state. To do so, we will allocate a dummy variable-size object at the end of the used part of each allocation context, indicating the size of the gap. Our `TraverseHeap` method will see it as an ordinary object and simply jump over it.
+One solution could be to update our heap walking logic to scan the gap byte by byte until we find the next object. It would work (as long as we keep the free space filled with zeros) but it would also be very inefficient. Instead, we're going to add a step at the beginning of the garbage collection to restore the segment back to a walkable state. To do so, we will allocate a dummy variable-size object at the end of the used part of each allocation context, indicating the size of the gap. Our `TraverseHeap` method will see it as an ordinary object and simply jump over it.
 
 {{<image classes="fancybox center" src="/images/2025-02-18-writing-a-net-gc-in-c-part-4-3.png" >}}
 
-Now that we have a strategy, we need to update the `Alloc` method to use segments. The logic is going to get quite a bit more complex. There are 4 cases to consider:
+Now that we have a strategy, we can update the `Alloc` method to use segments. The logic is going to get much more complex than before. There are 4 cases to consider:
 - There is still enough room in the allocation context: here, nothing changes, we allocate the object as before and bump `alloc_ptr`.
-- There is not enough room in the allocation context, but there is enough room in the current segment: we assign a new allocation context to the thread. If there is enough room left then we assign a fully-sized allocation context, otherwise we assign whatever space is left.
+- There is not enough room in the allocation context, but there is enough room in the current segment: we assign a new allocation context to the thread. If possible then we assign a fully-sized allocation context, otherwise we assign whatever space is left.
 - There is not enough room in the allocation context, and there is not enough room in the current segment: we allocate a new segment then process with the previous case.
-- The object is too big to fit in a segment: we allocate a new segment specifically for this object, and we give an empty allocation context to the thread (so that it asks for a new one next time).
+- The object is too big to fit in a segment: we allocate a new segment with a non-standard size, just big enough to store that object, and we give an empty allocation context to the thread (so that it asks for a new one next time).
 
-On top of that, we must ensure that the allocation contexts have enough room to store the dummy object. The minimum size of an object in .NET, is 3 pointers, so 24 bytes in 64-bit mode. This is the same for the dummy object. Imagine we allocate a 128 bytes allocation context, and store a 120 bytes object in it: we would have no room left for the dummy object and we would end up with an 8 bytes gap that we can't fill. So instead, we make sure that the allocation context is at least 3 pointers bigger than the object we're trying to allocate, we reduce the `alloc_limit` to prevent the thread from using that extra space.
+On top of that, we must ensure that the allocation contexts have enough room to store the dummy object. The minimum size of an object in .NET is 3 pointers, so 24 bytes in 64-bit mode, and this is the same for the dummy object. Imagine we allocate a 128 bytes allocation context, and store a 120 bytes object in it: we would have no room left for the dummy object and we would end up with an 8 bytes gap that we can't fill. So instead, we make sure that the allocation context is at least 3 pointers bigger than the object we're trying to allocate, and we reduce the `alloc_limit` to prevent the thread from using that extra space.
 
 Factoring all this into the `Alloc` method, we get:
 
@@ -316,6 +316,24 @@ Leaving room for the dummy object is nice, but we still have to actually allocat
 - In the `Alloc` method, when we assign a new allocation context to the thread.
 - When a thread dies, in which case it will call the `IGCHeap.FixAllocContext` method to give us a chance to clean up.
 
+The method table of the dummy object is given to us by the execution engine. We retrieve it using `IGCToCLR.GetFreeObjectMethodTable` in the constructor:
+
+```csharp
+
+    private MethodTable* _freeObjectMethodTable;
+
+    public GCHeap(IGCToCLRInvoker gcToClr)
+    {
+        _freeObjectMethodTable = (MethodTable*)gcToClr.GetFreeObjectMethodTable();
+        
+        // ...
+    }
+```
+
+{{< alert >}}
+The "official" name of the dummy object is "Free object", hence the name of the method.
+{{< /alert >}}
+
 We implement the `FixAllocContext` method to allocate the dummy object, which will fill the unused space of the allocation context:
 
 ```csharp
@@ -341,22 +359,6 @@ We implement the `FixAllocContext` method to allocate the dummy object, which wi
         freeObject->Length = length;
     }
 ```
-
-The method table of the dummy object is given to us by the execution engine. We retrieve it using `IGCToCLR.GetFreeObjectMethodTable` in the constructor:
-
-```csharp
-
-    private MethodTable* _freeObjectMethodTable;
-
-    public GCHeap(IGCToCLRInvoker gcToClr)
-    {
-        _freeObjectMethodTable = (MethodTable*)gcToClr.GetFreeObjectMethodTable();
-        
-        // ...
-    }
-```
-
-
 
 And we don't forget to call it from `Alloc`:
 
@@ -384,7 +386,7 @@ And we don't forget to call it from `Alloc`:
     }
 ```
 
-We're almost there. You might have notice a problem: we use `FixAllocContext` to allocate the dummy object in the discarded allocation contexts, but what about those that are still in use at the time of the garbage collection? The trick is to use `IGCToCLR.GcEnumAllocContexts` to enumerate all the allocation contexts, and call `FixAllocContext` on each of them:
+We're almost there. You might have noticed a problem: we use `FixAllocContext` to allocate the dummy object in the discarded allocation contexts, but what about those that are still in use at the time of the garbage collection? The trick is to use `IGCToCLR.GcEnumAllocContexts` to enumerate all the allocation contexts, and call `FixAllocContext` on each of them:
 
 ```csharp
     public HResult GarbageCollect(int generation, bool low_memory_p, int mode)
@@ -427,7 +429,7 @@ We're almost there. You might have notice a problem: we use `FixAllocContext` to
     }
 ```
 
-Last but not least, we update the `TraverseHeap` methods: `TraverseHeap()` now needs to enumerate the segments instead of the allocation contexts, and `TraverseHeap(nint start, nint end)` doesn't need to check for null anymore. In our debug code, we display "Free" when we encounter a dummy object (like you could see in WinDbg).
+Last but not least, we update the `TraverseHeap` methods: `TraverseHeap()` now needs to enumerate the segments instead of the allocation contexts, and `TraverseHeap(nint start, nint end)` doesn't need to check for null anymore (since the whole segment is filled thanks to the dummy objects). In our debug code, we display "Free" when we encounter a dummy object (like you could see in WinDbg).
 
 ```csharp
     private void TraverseHeap()
