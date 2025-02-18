@@ -215,7 +215,8 @@ public unsafe class Segment
 }
 ```
 
-We add a few fields to keep track of the segments, and we allocate the first one during initialization:
+The .NET GC doesn't actually allocate all the memory at once like we do. It reserves the chunk of memory, then gradually commits it as needed. But we're not going to bother for our simple implementation.
+We then add a few fields to keep track of the segments, and we allocate the first one during initialization:
 
 ```csharp
     private const int AllocationContextSize = 32 * 1024;
@@ -465,7 +466,7 @@ If we run the application, we can see that the heap is now correctly traversed, 
 
 # Conclusion
 
-We now have a working garbage collector that uses segments to manage the allocation contexts. We know how to walk the heap and list all the objects, the next step will be to find which ones are still reachable.
+We now have a working garbage collector that uses segments to manage the allocation contexts. We mimic the way the .NET GC uses dummy "free" objects to keep the segment in a walkable state. Now that we are able to list all the objects, the next step will be to find which ones are still reachable.
 
 The code of this article is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/tree/Part4).
 
