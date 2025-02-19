@@ -142,7 +142,7 @@ We can now write a method to traverse the whole heap. It enumerates all the allo
     }
 ```
 
-We also need to make a small addition to the `TraverseHeap(nint start, nit end)` method: because the allocation context might not be full, we need to break the loop when we find a null method table pointer, which indicates the end of the used part of the allocation context:
+We also need to make a small addition to the `TraverseHeap(nint start, nint end)` method: because the allocation context might not be full, we need to break the loop when we find a null method table pointer, which indicates the end of the used part of the allocation context:
 
 ```csharp
 private void TraverseHeap(nint start, nint end)
