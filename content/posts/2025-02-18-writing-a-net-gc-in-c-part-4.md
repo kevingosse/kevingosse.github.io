@@ -276,9 +276,9 @@ Factoring all this into the `Alloc` method, we get:
             var segment = new Segment(size);
             segment.Current = segment.End;
 
-            lock (_largeSegments)
+            lock (_segments)
             {
-                _largeSegments.Add(segment);
+                _segments.Add(segment);
             }
 
             acontext.alloc_ptr = 0;
