@@ -1,8 +1,8 @@
 ﻿---
 url: pro-net-memory-management
 title: Pro .NET Memory Management 2nd Edition
-subtitle: 
-summary: 
+subtitle: Pro .NET Memory Management 2nd Edition is available! What should you expect from it? Should you buy it if you already own the 1st edition? 
+summary: Pro .NET Memory Management 2nd Edition is available! What should you expect from it? Should you buy it if you already own the 1st edition? 
 date: 2025-03-04
 tags:
 - dotnet
