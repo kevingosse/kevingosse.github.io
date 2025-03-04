@@ -19,9 +19,9 @@ Pro .NET Memory Management 2nd Edition is available, [on Amazon](https://amzn.to
 
 [![Pro .NET Memory Management 2nd Edition](/images/progc.png)](https://amzn.to/42tg58c)
 
-If you've never heard about this book, it is a very extensive source of information about memory management in .NET. Ranging from general concepts (heap, stack, allocations) to advanced topics such as a very detailled description of the inner mechanisms of the .NET garbage collector. Documentation about the .NET GC is sparse, and the 1st edition quickly became the de-facto reference on the subject.
+If you've never heard of this book, it is a very extensive source of information about memory management in .NET. Ranging from general concepts (heap, stack, allocations) to advanced topics such as a very detailled description of the inner mechanisms of the .NET garbage collector. Documentation about the .NET GC is sparse, and the 1st edition quickly became the de-facto reference on the subject.
 
-The 2nd edition is mostly a polished version of the 1st edition: better writing with fewer grammatical mistakes, some complex explanations rewritten for clarity, and plenty of mistakes fixed. Of course, there is also new content, focused around new the .NET features that became available since the 1st edition: regions, pinned object heap, NonGC heap, SuppressGCTransition, large pages, GCConserveMemory, DATAS, provisional mode, memory limits, and more.
+The 2nd edition is mostly a polished version of the 1st edition: better writing with fewer grammatical mistakes, some complex explanations rewritten for clarity, and plenty of mistakes fixed. Of course, there is also new content, focused around the new .NET features that became available since the 1st edition: regions, pinned object heap, NonGC heap, SuppressGCTransition, large pages, GCConserveMemory, DATAS, provisional mode, memory limits, and more.
 
 If you're hesitant about whether to buy the book, I prepared a simple flowchart for you:
 
