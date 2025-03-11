@@ -27,7 +27,7 @@ This is the fifth part of our journey to write a .NET garbage collector in C#. I
 
 To walk the reference graph, we need two things:
 - The list of roots, which are the references that are not collectible (local variables, static fields, GC handles, ...). They are the starting points of the graph traversal.
-- The list of references from an object to another object. This what this article will focus on.
+- The list of references from an object to another object. This is what this article will focus on.
 
 If you missed the previous parts, you can find them here:
 - [Part 1:](https://minidump.net/2025-28-01-writing-a-net-gc-in-c-part-1/) Introduction and setting up the project
@@ -39,9 +39,9 @@ If you missed the previous parts, you can find them here:
 
 In order to traverse the reference graph, the GC needs to be able to find the references from an object to another object. In other words, it must know what fields might contain a reference and where to find them in memory. This information is stored in a structure known as `GCDesc`.
 
-Every type has its own `GCDesc`. For efficiency, it doesn't describe the full layout of the object, but only the parts that contain references. Furthermore, it indicates the ranges of memory where the references are located, rather than the exact offsets of each individual field. To give a practical example, consider the following object layout:
+Each type has its own `GCDesc`. For efficiency, it doesn't describe the full layout of the object, but only the parts that contain references. Furthermore, it indicates the ranges of memory where the references are located, rather than the exact offsets of each individual field. To give a practical example, consider the following object layout:
 
-```
+```b
 +-----------------+
 |  Field1 (ref)   |
 +-----------------+
@@ -53,10 +53,10 @@ Every type has its own `GCDesc`. For efficiency, it doesn't describe the full la
 +-----------------+
 ```
 
-Let's assume that all fields are 8 bytes long, and they all store references except for Field3. The information stored in the `GCDesc` would be the ranges of memory where the references are located, so something like: `[0, 16] [24, 32]`. Because the size of the fields storing references is always the same, this is enough information to deduce how many references are stored in the object and where they are located.
+Let's assume that all fields are 8 bytes long, and they all store references except `Field3`. The information stored in the `GCDesc` would be the ranges of memory where the references are located, so something like: `[0, 16] [24, 32]`. Because the size of the fields storing references is always the same (the size of a pointer), this is enough information to deduce how many references are stored in the object and where they are located.
 
 {{< alert >}}
-As we're going to see soon, the `GCDesc` does not actually start the start and end of the ranges, but the start and the size.
+As we're going to see soon, the `GCDesc` does not actually store the start and end of the ranges, but the start and the size.
 {{< /alert >}}
 
 The `GCDesc` is stored next to the method table of the type. Or more precisely, right before it.
@@ -81,7 +81,7 @@ Object ref ---> | MethodTable*    | ---> |  MethodTable    |
 
 # The GCDesc encoding
 
-The encoding of the `GCDesc` [is a bit convoluted](https://github.com/dotnet/runtime/blob/main/src/coreclr/gc/gcdesc.h). The first field is the count of `GCDescSeries` (note: the `GCDesc` is growing backwards in memory, so this is the first field when starting from the method table and going backwards). The count is positive in most cases, but will be negative for arrays of value types, which indicates a different encoding.
+The encoding of the `GCDesc` [is a bit convoluted](https://github.com/dotnet/runtime/blob/main/src/coreclr/gc/gcdesc.h). The first field is the number of `GCDescSeries` (note: the `GCDesc` is growing backwards in memory, so this is the first field when starting from the method table and going backwards). The count is positive in most cases, but will be negative for arrays of value types, which indicates a different encoding.
 
 ## GCDescSeries count > 0
 
@@ -123,7 +123,7 @@ Therefore, with a count of 2, the `GCDesc` would look like this:
 +-----------------+
 ```
 
-The offset of the `GCDescSeries` is relative to the start of the object (remember, the start of the object is considered to be the method table pointer, not the header). The size of the `GCDescSeries` is really weird because the size of the object has been substracted from it so we have to add it back. To take a practical example:
+The offset of the `GCDescSeries` is relative to the start of the object (remember, the start of the object is considered to be the method table pointer, not the header). The size of the `GCDescSeries` is really weird because the base size of the object has been substracted from it so we have to add it back. To take a practical example, consider this object:
 
 ```
 +-----------------+
@@ -131,11 +131,11 @@ The offset of the `GCDescSeries` is relative to the start of the object (remembe
 +-----------------+
 | MethodTable*    |
 +-----------------+
-|  Field1         |
+|  Field1 (ref)   |
 +-----------------+
 ```
 
-For a 64-bit process, assuming `Field1` is a reference, the `GCDesc` will contain a single `GCDescSeries` with an offset of 8 and a size of -16 (the actual size of the range is 8, but the size of the object is 24). The size is given in bytes, so we have to divide it by the size of a pointer to get the number of references.
+For a 64-bit process, assuming `Field1` is a reference, the `GCDesc` will contain a single `GCDescSeries` with an offset of 8 and a size of -16 (the actual size of the range is 8, but the base size of the object is 24, so the value is encoded as `8 - 24 = -16`). The size is given in bytes, so we have to divide it by the size of a pointer to get the number of references.
 
 Putting all of this together, we can start writing a method that finds the references in an object, handling only the positive case for now:
 
@@ -165,11 +165,13 @@ Putting all of this together, we can start writing a method that finds the refer
 
                 Console.WriteLine($"Series {i}: size={seriesSize}, offset={seriesOffset}");
 
-                var ptr = (nint*)((nint)obj + seriesOffset);
+                var rangeStart = (nint*)((nint)obj + seriesOffset);
+                var nbRefsInRange = seriesSize / IntPtr.Size;
 
-                for (int j = 0; j < seriesSize / IntPtr.Size; j++)
+                for (int j = 0; j < nbRefsInRange; j++)
                 {
-                    callback(ptr[j]);
+                    // Found a reference
+                    callback(rangeStart[j]);
                 }
             }
         }
@@ -180,7 +182,7 @@ Putting all of this together, we can start writing a method that finds the refer
     }
 ```
 
-(see [part 4](https://minidump.net/writing-a-net-gc-in-c-part-4/) for definition of `GCObject` and `MethodTable`, and the implementation of `ComputeSize`)
+(see [part 4](https://minidump.net/writing-a-net-gc-in-c-part-4/) for the definition of `GCObject` and `MethodTable`, and the implementation of `ComputeSize`)
 
 ## Testing
 
@@ -192,7 +194,8 @@ internal static unsafe class Utils
 }
 ```
 
-And we can now test the `EnumerateObjectReferences` method:
+We can now test the `EnumerateObjectReferences` method:
+
 ```csharp
 
 class Program
@@ -215,7 +218,7 @@ internal class ObjectWithReferences
 }
 ```
 
-This should display something like:
+Of course, this is very unsafe, and it will break if the GC decides to move objects in the middle of the execution, but that's enough for our simple test. This should display something like:
 
 ```
 Found 1 series
@@ -235,7 +238,7 @@ internal class ObjectWithMultipleSeries
 }
 ```
 
-But the output still indicates a single series:
+But the output would still indicate a single series:
 
 ```
 Found 1 series
@@ -301,7 +304,7 @@ Found reference to 259b6c0b4e8
 Found reference to 259b6c0b500
 ```
 
-But what about the `[StructLayout(LayoutKind.Sequential)]` we added earlier? Well it turns out that the JIT ignores the `StructLayout` when the struct contains references and automatically switches back to `LayoutKind.Auto`. So how is it possible to have multiple series then? There is at least two cases where it could happen. The first one is nested structs (the JIT doesn't reorder fields across structs).
+What about the `[StructLayout(LayoutKind.Sequential)]` we added earlier? Well it turns out that the JIT ignores the `StructLayout` when the struct contains references, and automatically switches back to `LayoutKind.Auto`. How is it possible to have multiple series then? There is at least two cases where it could happen. The first one is nested structs (the JIT doesn't reorder fields across structs).
 
 ```csharp
 internal struct NestedStruct()
@@ -342,7 +345,7 @@ Series 2: size=8, offset=24
 Found reference to 18201c0b548
 ```
 
-The second case is inheritance (the layout of the base class can't be changed in the child class).
+The second case is inheritance (the layout of the base class can't be changed by the child class).
 
 ```csharp
 internal class BaseClass
@@ -420,7 +423,7 @@ Note that we will find a single series no matter how many series the underlying 
 
 ## GCDescSeries count < 0
 
-There is still one case left to handle: when the `GCDescSeries` count is negative, which indicates an array of value types. This case is special because this is the only time when the number of series will depend on the number of elements in the array (this doesn't happen with arrays of reference types because, as mentioned before, they only contain the references to the objects and therefore are made of a single series).
+There is still one case left to handle: when the `GCDescSeries` count is negative, which indicates an array of value types. This case is special because this is the only time the number of series will depend on the number of elements in the array (this doesn't happen with arrays of reference types because, as mentioned before, they only contain the reference to the objects and therefore are made of a single series).
 
 For instance, if we make an array of the `NestedStruct` type defined earlier, the layout will be:
 
@@ -440,7 +443,7 @@ For instance, if we make an array of the `NestedStruct` type defined earlier, th
 +----------------------+
 ```
 
-In that case, the `GCDesc` switches to a different encoding. When the count is negative, the absolute value of the count indicate the number of `ValSerieItem` that follow, preceded by a single offset (again, remember we're growing backwards, so "preceded" actually means it's higher in memory). `ValSerieItem` contains two fields: the number of pointers in the range, and the number of bytes to skip to find the next range. The size of each field is half the size of a pointer.
+In that case, the `GCDesc` switches to a different encoding. When the count is negative, the absolute value of the count indicates the number of `ValSerieItem` that follow, preceded by a single offset (again, remember we're growing backwards, so "preceded" actually means it's higher in memory). `ValSerieItem` contains two fields: the number of pointers in the range, and the number of bytes to skip to find the next range. The size of each field is half the size of a pointer (the whole `ValSerieItem` fits in a single pointer).
 
 With a count of -2, the `GCDesc` would look like this:
 ```
@@ -461,7 +464,7 @@ With a count of -2, the `GCDesc` would look like this:
 +-----------------+
 ```
 
-`ValSerieItem` is annoying to represent in C# because there is no built-in type to store half a pointer. Instead, we use a single `nint` as underlying storage, then bit masks to extract the values:
+`ValSerieItem` is annoying to represent in C# because there is no built-in type to store half a pointer. Instead, we can use a single `nint` as underlying storage, then bit masks to extract the values:
 
 ```csharp
 internal struct ValSerieItem(nint value)
@@ -546,7 +549,7 @@ Found reference to 1de5c80b560
 
 # Conclusion
 
-We've implemented another missing piece of our GC: the ability to find the references in an object, essential to walk the reference graph. In the process, we've uncovered some of the subtleties of the object layout in .NET. In the next article, we should finally be able to build a graph of reachable objects, with a few limitations.
+We've implemented another missing piece of our GC: the ability to find the references in an object, essential to walk the reference graph. In the process, we've uncovered some of the subtleties of the objects layout in .NET. In the next article, we should finally be able to build a graph of reachable objects, with a few limitations.
 
 As usual, the full code is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/tree/Part5).
 
