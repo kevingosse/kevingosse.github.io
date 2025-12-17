@@ -2,7 +2,7 @@
 url: investigating-a-deadlock-in-visual-studio
 title: Investigating a deadlock in Visual Studio
 subtitle: Writing profilers is hard, even for Microsoft.
-summary: A short investigation that showcase one of the most common problem faced when writing a profiler.
+summary: A short investigation that showcases one of the most common problem faced when writing a profiler.
 date: 2025-12-17
 tags:
 - debugging
@@ -11,7 +11,7 @@ author: Kevin Gosse
 thumbnailImage: /images/2025-12-18-investigating-a-deadlock-in-visual-studio-1.jpg
 ---
 
-This is the retelling of fairly short debugging investigation. While it's not as intricate as most of the investigations that I post on my blog, I thought this one is interesting because it showcases one of the most difficult and unexpected challenges you may face when writing a profiler.
+This is the retelling of a fairly short debugging investigation. While it's not as intricate as most of the investigations that I post on my blog, I thought this one is interesting because it showcases one of the most difficult and unexpected challenges you may face when writing a profiler.
 
 It started as I opened Visual Studio 2026 to prototype some code, and the window seemingly froze.
 
@@ -43,7 +43,7 @@ To understand what exactly the main thread was blocked on, I checked the disasse
 
 That was very unexpected. The thread was not waiting on a lock, or stuck in a syscall. It was just executing... `test rax, rax`. In other words, a simple null check. I double-checked in the other memory dump and yes: the thread was stuck on the exact same instruction.
 
-I know only one situation where this could happen: if the thread was suspended. This struck a bell because it looked a lot like a problem we had to deal with back at Datadog when writing profilers (_foreshadowing_). I tried to think of a way to verify this, and it's surprisingly difficult. If you attach a debugger, you can't run any command until you pause the execution. And when you do, of course that the thread is going to be suspended, since you paused the execution! Eventually, after a completely unproductive discussion with ChatGPT, I checked Process Explorer and thankfully the "threads" tab gives the suspend count:
+I know only one situation where this could happen: if the thread was suspended. This struck a bell because it looked a lot like a problem we had to deal with back at Datadog when writing profilers (_foreshadowing_). I tried to think of a way to verify this, and it's surprisingly difficult. If you attach a debugger, you can't run any command until you pause the execution. And when you do, of course the thread is going to be suspended, since you paused the execution! Eventually, after a completely unproductive discussion with ChatGPT, I checked Process Explorer and thankfully the "threads" tab gives the suspend count:
 
 {{<image classes="fancybox center" src="/images/2025-12-18-investigating-a-deadlock-in-visual-studio-6.jpg" >}}
 
@@ -141,4 +141,4 @@ So, what happened? For some reason, the "responsiveness monitor" built into Visu
  - On Windows, it uses an additional "deadlock monitor" thread. Its responsibility is to make sure that the profiler thread is making some progress. If the profiler thread takes too long, it assumes that a deadlock occured and forcefully resumes the suspended thread, thus resolving the deadlock. It generally works but it has a few drawbacks: because the approach is based on a timeout, it takes some time to detect the deadlock, which negatively impacts the performance of the profiled application. Also, the deadlock monitor cannot use any Windows API that requires a lock, lest it itself becomes deadlocked.
  - On Linux, it detours libc functions that may cause deadlocks (`dlopen`, `pthread_create`, to name a few), so that the profiler knows not to suspend a thread that is currently executing them. The drawbacks here are that it's hard to build an exhaustive list of calls to detour (you have to discover them the hard way), and it skews the profiling (since a thread is never profiled while calling these functions, it might appear as if it's doing less work than it actually is).
 
-It was really interesting for me to see the Visual Studio team, with all their experience, fall into the same pitfalls as we did back when I worked at Datadog (to be clear, I'm not shaming. This is a very, **_very_** tough problem to solve). Nowadays, when [writing a profiler with Silhouette](https://minidump.net/writing-a-net-profiler-in-c-part-5/), I usually rely on [`ICorProfilerInfo10::SuspendRuntime`](https://learn.microsoft.com/en-us/dotnet/core/unmanaged-api/profiling/icorprofilerinfo10-suspendruntime-method), which leaves to the .NET runtime the responsibility of finding a good place to stop the threads. Under the hood it uses the same APIs as the garbage collector, so it's battle-tested. The major drawback is that suspends _all_ threads instead of just one, so this is not a great approach when performance is a concern.
+It was really interesting for me to see the Visual Studio team, with all their experience, fall into the same pitfalls as we did back when I worked at Datadog (to be clear, I'm not shaming. This is a very, **_very_** tough problem to solve). Nowadays, when [writing a profiler with Silhouette](https://minidump.net/writing-a-net-profiler-in-c-part-5/), I usually rely on [`ICorProfilerInfo10::SuspendRuntime`](https://learn.microsoft.com/en-us/dotnet/core/unmanaged-api/profiling/icorprofilerinfo10-suspendruntime-method), which delegates to the .NET runtime the responsibility of finding a good place to stop the threads. Under the hood it uses the same APIs as the garbage collector, so it's battle-tested. The major drawback is that suspends _all_ threads instead of just one, so this is not a great approach when performance is a concern.
