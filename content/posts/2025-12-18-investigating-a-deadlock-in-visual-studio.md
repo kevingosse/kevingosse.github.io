@@ -3,7 +3,7 @@ url: investigating-a-deadlock-in-visual-studio
 title: Investigating a deadlock in Visual Studio
 subtitle: Writing profilers is hard, even for Microsoft.
 summary: A short investigation that showcase one of the most common problem faced when writing a profiler.
-date: 2025-12-18
+date: 2025-12-17
 tags:
 - debugging
 - profiler
