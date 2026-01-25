@@ -57,7 +57,7 @@ public struct ScanContext
 
 Likewise, most of the fields in `ScanContext` are only useful for server GC (where threads are affinitized to a given heap). We're only going to use two of them:
  - `promotion` tells the execution engine whether we're scanning for the promotion (where we're going to mark objects that are going to be promoted to an upper generation) or for the relocation (where we're going to update pointers after moving objects in memory). As far as I can tell, it mostly impacts what roots are reported when _conservative mode_ is enabled, so it shouldn't impact us for now. Still, we're going to set it to `true`.
- - `_unused1` is a pointer-sized field that the GC can fill to its own discretion. We're going to use it to store a pointer to our instance of  `GCHeap`. We need it because the callback given to `GcScanRoots` must be decorated with `UnmanagedCallersOnly` because it will be called from native code, and methods decorated with this attribute must be static.
+ - `_unused1` is a pointer-sized field that the GC can fill to its own discretion. We're going to use it to store a pointer to our instance of `GCHeap`. We need it because the callback given to `GcScanRoots` must be decorated with `UnmanagedCallersOnly` because it will be called from native code, and methods decorated with this attribute must be static.
 
  ```csharp
 private void MarkPhase()
