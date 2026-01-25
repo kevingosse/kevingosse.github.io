@@ -9,7 +9,7 @@ defaultContentLanguage = "en-us"
   thumbnailImage = true
   thumbnailImagePosition = "bottom"
   autoThumbnailImage = true
-  coverImage = "images/code.png"
+  coverImage = "images/code.jpg"
   imageGallery = true
   hierarchicalCategories = true
   syntaxHighlighter = 'highlight.js'
@@ -33,8 +33,8 @@ defaultContentLanguage = "en-us"
 [author]
   name = "Kevin Gosse"
   twitter = "kookiz"
-  picture = "images/profile.png"
-  bio = "Kevin Gosse has been using Microsoft .NET technologies for more than 15 years, across client, server, and mobile applications. Passionate about debugging and performance. He is Microsoft MVP and is currently employed at Datadog, where he works on the performance of the .NET APM. He is co-author [of the book Pro .NET Memory Management 2nd edition (Apress)](https://amzn.to/42tg58c)."
+  picture = "images/profile.jpg"
+  bio = "Kevin Gosse has been using Microsoft .NET technologies for 20 years, across client, server, and mobile applications. Passionate about debugging and performance. He is Microsoft MVP and is currently employed at JetBrains,where he works on improving the performance of ReSharper. He is co-author [of the book Pro .NET Memory Management 2nd edition (Apress)](https://amzn.to/42tg58c)."
 
 [[menu.main]]
   weight = 1
