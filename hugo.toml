@@ -34,7 +34,7 @@ defaultContentLanguage = "en-us"
   name = "Kevin Gosse"
   twitter = "kookiz"
   picture = "images/profile.jpg"
-  bio = "Kevin Gosse has been using Microsoft .NET technologies for 20 years, across client, server, and mobile applications. Passionate about debugging and performance. He is Microsoft MVP and is currently employed at JetBrains,where he works on improving the performance of ReSharper. He is co-author [of the book Pro .NET Memory Management 2nd edition (Apress)](https://amzn.to/42tg58c)."
+  bio = "Kevin Gosse has been using Microsoft .NET technologies for 20 years, across client, server, and mobile applications. Passionate about debugging and performance. He is Microsoft MVP and is currently employed at JetBrains, where he works on improving the performance of ReSharper. He is co-author [of the book Pro .NET Memory Management 2nd edition (Apress)](https://amzn.to/42tg58c)."
 
 [[menu.main]]
   weight = 1
