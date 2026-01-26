@@ -31,6 +31,8 @@ After a long (way too long) break, it's time to resume our journey towards build
 - [Part 4:](https://minidump.net/writing-a-net-gc-in-c-part-4/) Walking the managed heap
 - [Part 5:](https://minidump.net/writing-a-net-gc-in-c-part-5/) Decoding the GCDesc to find the references of a managed object
 
+If you don't have time to read everything, I would recommend focusing on part 4 which explains the layout of the heap.
+
 Now we have all the pieces of the puzzle to start implementing the mark phase of our garbage collection. The goal of the mark phase is to find all the objects that are currently reachable by user code, to deduce which ones aren't reachable anymore and can be freed.
 
 # Marking
