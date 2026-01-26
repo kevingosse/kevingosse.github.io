@@ -1,6 +1,6 @@
 ---
 url: writing-a-net-gc-in-c-part-6
-title: Writing a .NET Garbage Collector in C#  -  Part 6
+title: 'Writing a .NET Garbage Collector in C#  -  Part 6: Mark and Sweep'
 subtitle: Using NativeAOT to write a .NET GC in C#. In the sixth part, we start implementing the mark phase of the garbage collection.
 summary: Using NativeAOT to write a .NET GC in C#. In the sixth part, we start implementing the mark phase of the garbage collection.
 date: 2026-01-27
