@@ -34,7 +34,7 @@ If you need a refresher, don’t hesitate to jump back to those past articles:
 - [Part 5:](https://minidump.net/writing-a-net-gc-in-c-part-5/) Decoding the GCDesc to find the references of a managed object
 - [Part 6:](https://minidump.net/writing-a-net-gc-in-c-part-6/) Implementing the mark and sweep phases
 
-Back in part 2, we used a simple fixed-size array to store the handles, noting that we would need to revist this at some point. For our marking, we're going to need to retrieve the handles by time, so this is a good time to implement a proper storage.
+Back in part 2, we used a simple fixed-size array to store the handles, noting that we would need to revisit this at some point. For our marking, we're going to need to retrieve the handles by type, so this is a good time to implement a proper storage.
 
 # Revamping the handles store
 
@@ -44,7 +44,7 @@ Our handle store must meet a few requirements:
  3. We need to be able to store an arbitrarily large number of handles
  4. The allocation of new handles must be thread-safe
 
-The first requirement can be easily satisfied by creating one distinct store per handle type. For the next two requirements, we don't have much choice: since we can't reallocate our store (as this would force the handles to move in memory), we're going to use a segment-based approach, where we allocate new segments as needed to accomodate the new allocations.
+The first requirement can be easily satisfied by creating one distinct store per handle type. For the next two requirements, we don't have much choice: since we can't reallocate our store (as this would force the handles to move in memory), we're going to use a segment-based approach, where we allocate new segments as needed to accommodate the new allocations.
 
 ```csharp
 public unsafe class GCHandleStore
@@ -86,7 +86,7 @@ public unsafe ref struct ObjectHandle
 }
 ```
 
-That gives us plenty of space to work with. We add a dummy type of handle (`HandleType.HNDTYPE_FREE`), and we consider that whever a handle is of type Free then the `ExtraInfo` field stores the index of the next free slot in the segment, if any.
+That gives us plenty of space to work with. We add a dummy type of handle (`HandleType.HNDTYPE_FREE`), and we consider that whenever a handle is of type Free then the `ExtraInfo` field stores the index of the next free slot in the segment, if any.
 
 ```csharp
 public unsafe class HandleSegment
@@ -243,7 +243,7 @@ If we didn't manage to find a free segment, then we need to allocate a new one. 
                 // Still the same tail, append a new segment
                 var newSegment = new HandleSegment(SegmentCapacity);
 
-                // Allocate the handle *before* publicating the segment
+                // Allocate the handle *before* publishing the segment
                 // Otherwise there is a small risk that the segment gets full before we allocate
                 var handle = newSegment.TryAllocate()!;
 
@@ -352,7 +352,7 @@ The `Free` method is fortunately much easier. We never remove segments from the 
     }
 ```
 
-Last but not least, we implement an `EnumerateHandlesOfType` method on `GCHandleStore` which looks into the relevatn store to enumerate all the allocated handles. I'm omitting the code of the enumerator for brevity, but you can check it directly on [the GitHub repository](https://github.com/kevingosse/ManagedDotnetGC/blob/6b9bbe09ea923b4fe18ce926afee7b04f0538c82/ManagedDotnetGC/GCHandleStore.cs#L130).
+Last but not least, we implement an `EnumerateHandlesOfType` method on `GCHandleStore` which looks into the relevant store to enumerate all the allocated handles. I'm omitting the code of the enumerator for brevity, but you can check it directly on [the GitHub repository](https://github.com/kevingosse/ManagedDotnetGC/blob/6b9bbe09ea923b4fe18ce926afee7b04f0538c82/ManagedDotnetGC/GCHandleStore.cs#L130).
 
 ```csharp
     public HandlesEnumerable EnumerateHandlesOfType(ReadOnlySpan<HandleType> handleTypes) => new(this, handleTypes);
@@ -518,7 +518,7 @@ There is one more thing to do. After marking the heap, we must invalidate all th
 
 For now, we don't differentiate short weak references and long weak references. The difference is that long weak references stay alive while an object is pending finalization, in case it gets resurrected. As we don't support finalization yet, we don't have to worry about it.
 
-This is all for this part. At this point, our GC correctly manages weak references (assuming no finalization) and dependent handles, as demonstrated [in those simple tests](https://github.com/kevingosse/ManagedDotnetGC/blob/master/TestApp/Tests/WeakReferenceTest.cs). Next time, we will have a look at interior pointer, last step before starting to look at finalization.
+This is all for this part. At this point, our GC correctly manages weak references (assuming no finalization) and dependent handles, as demonstrated [in those simple tests](https://github.com/kevingosse/ManagedDotnetGC/blob/master/TestApp/Tests/WeakReferenceTest.cs). Next time, we will have a look at interior pointers, last step before starting to look at finalization.
 
 As usual, the full code is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/).
 
