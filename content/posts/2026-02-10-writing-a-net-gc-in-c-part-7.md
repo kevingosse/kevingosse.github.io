@@ -93,7 +93,7 @@ public unsafe class HandleSegment
 {
     private readonly ObjectHandle* _buffer;
     private readonly int _capacity;
-    private int _freeHead; // index of the first free slot, or -1
+    private long _freeHead; // index of the first free slot, or -1
 
     public HandleSegment? Next;
 
@@ -149,6 +149,42 @@ Then we implement a `TryAllocate` method, that tries to find a free slot in the 
 
 Basically, we continuously try to replace the freelist head using atomic CAS (compare-and-swap) operations, until we either succeed or `_freeHead` becomes -1 (which would mean that somebody allocated the last free slot).
 
+However, there's a subtle race condition in this code, if we consider this scenario:
+- Thread T1 reads `_freeHead = 5`, and reads `slot5->ExtraInfo = 6`
+- Thread T2 pops 5 (head is now 6), pops 6 (head is now 7), then pushes 5 back (head is now 5 again, but with `slot5->ExtraInfo = 7`)
+- T1's CAS succeeds (head is 5 again) and sets `_freeHead` to 6 (stale), losing node 7 and corrupting the chain
+
+This is a scenario known as [the ABA problem](https://en.wikipedia.org/wiki/ABA_problem). The common fix is to pack a tag alonside the index, which allows to detect the case when the head has the same index but was actually popped and put back:
+
+```csharp
+    private static long Pack(int index, int tag) => ((long)tag << 32) | (uint)index;
+    private static (int Index, int Tag) Unpack(long packed) => ((int)(uint)packed, (int)(packed >> 32));
+
+    public ObjectHandle* TryAllocate()
+    {
+        while (true)
+        {
+            var packed = Volatile.Read(ref _freeHead);
+            var (head, tag) = Unpack(packed);
+
+            if (head == -1)
+            {
+                return null;
+            }
+
+            var slot = _buffer + head;
+            var next = (int)slot->ExtraInfo;
+            var newPacked = Pack(next, tag + 1);
+
+            if (Interlocked.CompareExchange(ref _freeHead, newPacked, packed) == packed)
+            {
+                slot->Clear();
+                return slot;
+            }
+        }
+    }
+```
+
 The `Free` method is similar, we try to replace the freelist head with our handle until we succeed:
 
 ```csharp
@@ -163,10 +199,12 @@ The `Free` method is similar, we try to replace the freelist head with our handl
 
         while (true)
         {
-            var head = Volatile.Read(ref _freeHead);
+            var packed = Volatile.Read(ref _freeHead);
+            var (head, tag) = Unpack(packed);
             handle->ExtraInfo = head;
+            var newPacked = Pack(index, tag + 1);
 
-            if (Interlocked.CompareExchange(ref _freeHead, index, head) == head)
+            if (Interlocked.CompareExchange(ref _freeHead, newPacked, packed) == packed)
             {
                 return;
             }
