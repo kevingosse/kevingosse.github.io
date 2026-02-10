@@ -338,7 +338,7 @@ The whole thing is wrapped in a `while` loop, for the case when we lose the race
                 // Still the same tail, append a new segment
                 var newSegment = new HandleSegment(SegmentCapacity);
 
-                // Allocate the handle *before* publicating the segment
+                // Allocate the handle *before* publishing the segment
                 // Otherwise there is a small risk that the segment gets full before we allocate
                 var handle = newSegment.TryAllocate()!;
 
