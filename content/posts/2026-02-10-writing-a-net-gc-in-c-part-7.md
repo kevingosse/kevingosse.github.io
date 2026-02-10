@@ -532,7 +532,11 @@ So to properly scan the dependent handles, we must loop over the handles until w
     }
 ```
 
-This part is actually a significant bottleneck in the .NET GC, so use dependent handles sparingly.
+This part is actually [a significant bottleneck in the .NET GC](https://github.com/dotnet/runtime/issues/44683), so use dependent handles sparingly. To take a concrete example, I've observed in Visual Studio a 800 ms freeze during startup that was due to garbage collection. Upon further inspection, I discovered that during this collection the GC spends 60% of its time just scanning dependent handles!
+
+{{<image classes="fancybox center" src="/images/2026-02-10-writing-a-net-gc-in-c-part-7-2.png" >}}
+
+ReSharper and Rider had the same issue when Solution-Wide Analysis was enabled, so we reworked our logic to reduce our reliance on dependent handles.
 
 # Clearing the handles
 
@@ -556,7 +560,7 @@ There is one more thing to do. After marking the heap, we must invalidate all th
 
 For now, we don't differentiate short weak references and long weak references. The difference is that long weak references stay alive while an object is pending finalization, in case it gets resurrected. As we don't support finalization yet, we don't have to worry about it.
 
-This is all for this part. At this point, our GC correctly manages weak references (assuming no finalization) and dependent handles, as demonstrated [in those simple tests](https://github.com/kevingosse/ManagedDotnetGC/blob/master/TestApp/Tests/WeakReferenceTest.cs). Next time, we will have a look at interior pointers, last step before starting to look at finalization.
+This is all for this part. At this point, our GC correctly manages weak references (assuming no finalization) and dependent handles, as demonstrated [in those simple tests](https://github.com/kevingosse/ManagedDotnetGC/blob/master/TestApp/Tests/WeakReferenceTest.cs). Next time, we will have a look at interior pointers, last step before starting to implement finalization.
 
 As usual, the full code is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/).
 
