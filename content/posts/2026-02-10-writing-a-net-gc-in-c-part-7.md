@@ -541,14 +541,14 @@ There is one more thing to do. After marking the heap, we must invalidate all th
 ```csharp
     private void ClearHandles()
     {
-        foreach (var weakReference in _gcHandleManager.Store.EnumerateHandlesOfType(
+        foreach (var handle in _gcHandleManager.Store.EnumerateHandlesOfType(
             [HandleType.HNDTYPE_WEAK_SHORT, HandleType.HNDTYPE_WEAK_LONG, HandleType.HNDTYPE_DEPENDENT]))
         {
-            var obj = weakReference->Object;
+            var obj = handle->Object;
 
             if (obj != null && !obj->IsMarked())
             {
-                weakReference->Clear();
+                handle->Clear();
             }
         }
     }
