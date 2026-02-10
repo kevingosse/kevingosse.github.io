@@ -338,7 +338,7 @@ The whole thing is wrapped in a `while` loop, for the case when we lose the race
                 // Still the same tail, append a new segment
                 var newSegment = new HandleSegment(SegmentCapacity);
 
-                // Allocate the handle *before* publicating the segment
+                // Allocate the handle *before* publishing the segment
                 // Otherwise there is a small risk that the segment gets full before we allocate
                 var handle = newSegment.TryAllocate()!;
 
@@ -556,7 +556,7 @@ There is one more thing to do. After marking the heap, we must invalidate all th
 
 For now, we don't differentiate short weak references and long weak references. The difference is that long weak references stay alive while an object is pending finalization, in case it gets resurrected. As we don't support finalization yet, we don't have to worry about it.
 
-This is all for this part. At this point, our GC correctly manages weak references (assuming no finalization) and dependent handles, as demonstrated [in those simple tests](https://github.com/kevingosse/ManagedDotnetGC/blob/master/TestApp/Tests/WeakReferenceTest.cs). Next time, we will have a look at interior pointers, last step before starting to look at finalization.
+This is all for this part. At this point, our GC correctly manages weak references (assuming no finalization) and dependent handles, as demonstrated [in those simple tests](https://github.com/kevingosse/ManagedDotnetGC/blob/master/TestApp/Tests/WeakReferenceTest.cs). Next time, we will have a look at interior pointers, the last step before starting to look at finalization.
 
 As usual, the full code is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/).
 
