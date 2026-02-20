@@ -16,7 +16,7 @@ I ran into an interesting gotcha with PerfView (but that applies to profiling in
 
 My goal was, and still is, to optimize the startup of ReSharper in Visual Studio. This is a complicated process because it involves a lot of different small tasks, there isn't one nice and big bottleneck that takes 90% of the time and that you can focus your efforts on. Rather, it involves saving 1% here, 2% there, and letting all the small optimizations add up.
 
-My target this time was the `ResolveContextManager.GetResolveResult` method, which appeared as a hotspot in my test scenario. After digging further in with Perfview, I saw that the cumulated CPU time was ~23 seconds (2.6% of the total overhead during startup), divided like this :
+My target this time was the `ResolveContextManager.GetResolveResult` method, which appeared as a hotspot in my test scenario. After digging further in with PerfView, I saw that the cumulated CPU time was ~23 seconds (2.6% of the total overhead during startup), divided like this :
 
 ```
 ResolveContextManager.GetResolveResult (23,191 ms)
