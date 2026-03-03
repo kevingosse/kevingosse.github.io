@@ -1,8 +1,8 @@
 ---
 url: writing-a-net-gc-in-c-part-8
 title: 'Writing a .NET Garbage Collector in C#  -  Part 8: Interior pointers'
-subtitle: Using NativeAOT to write a .NET GC in C#. This time, we look at what interior pointers are and why they're so difficult for the GC.
-summary: Using NativeAOT to write a .NET GC in C#. This time, we look at what interior pointers are and why they're so difficult for the GC.
+subtitle: Using NativeAOT to write a .NET GC in C#. This time, we look at what interior pointers are and why they're so challenging for the GC. We also introduce the concept of brick table.
+summary: Using NativeAOT to write a .NET GC in C#. This time, we look at what interior pointers are and why they're so challenging for the GC. We also introduce the concept of brick table.
 date: 2026-03-03
 tags:
 - dotnet
@@ -74,14 +74,14 @@ In case you need a refresher, don’t hesitate to jump back to those past articl
 
 # What are interior pointers?
 
-As suggested by the name, interior pointers are pointers to the interior of an object. Typically, a pointer points to the beginning of an object. Or more specifically, just past its header:
+As suggested by the name, interior pointers are pointers to the interior of an object. Typically, a reference points to the beginning of an object. Or more specifically, just past its header:
 
 ```csharp
 var obj = new MyObject();
 ```
 
 ```b                                     
-                      Object         
+                     MyObject
                 +-----------------+  
                 | Object header   |  
                 +-----------------+  
@@ -105,7 +105,7 @@ ref var ptr = ref obj.Field2;
 ```
 
 ```b                                     
-                      Object         
+                     MyObject  
                 +-----------------+  
                 | Object header   |  
                 +-----------------+  
@@ -146,9 +146,9 @@ public void Increment(string key)
 }
 ```
 
-`CollectionsMarshal.GetValueRefOrAddDefault` returns a reference to the item in the underlying array, and we can then directly increment it, saving one lookup.
+`CollectionsMarshal.GetValueRefOrAddDefault` returns a reference to the item in the underlying array, and we can then directly mutate it, saving one lookup.
 
-But there is an even simpler and more common case: spans.
+But there is an even simpler and more common use-case: spans.
 
 ```csharp
 long[] array = [1, 2, 3, 4];
@@ -156,8 +156,10 @@ var span = array.AsSpan();
 var slice = span.Slice(2);
 ```
 
-```b                                     
-                      Object         
+Under the hood, spans work by keeping a direct reference to the interior of the array:
+
+```a
+                      long[]         
                 +-----------------+  
                 | Object header   |  
                 +-----------------+  
@@ -197,11 +199,11 @@ private static void DoStuff(ReadOnlySpan<long> span)
 }
 ```
 
-By the time `DoStuff` is invoked, the `array` reference is no longer considered live by the JIT, and thus is eligible for garbage collection. It is necessary for the span, and therefore interior pointers, to keep the object alive just like normal references, otherwise we may end up reading invalid memory.
+By the time `DoStuff` is invoked, the `array` reference is no longer considered live by the JIT, and thus is eligible for garbage collection. It is necessary for spans, and therefore interior pointers, to keep the object alive just like normal references, otherwise we may end up reading invalid memory.
 
 When marking objects, the GC needs to read the method-table pointer, for at least two reasons:
  - We need the GCDescs, stored next to the method-table, to find the offsets of the outgoing references of the object. See [part 5](https://minidump.net/writing-a-net-gc-in-c-part-5/) for a refresher on the topic.
- - We use the least-significant bit of the method-table to mark the object, as explained in [part 6](https://minidump.net/writing-a-net-gc-in-c-part-6/).
+ - We use the least-significant bit of the method-table pointer to mark the object, as explained in [part 6](https://minidump.net/writing-a-net-gc-in-c-part-6/).
 
 For normal references, this is trivial for the GC because it directly receives the address of the method-table pointer. For interior pointers, it must somehow backtrack to find the beginning of the object.
 
@@ -248,6 +250,7 @@ To shrink it further, we need to accept that the brick table won't be exhaustive
 ----------------------------------------
         |        |        |        |
 ----------------------------------------
+        0        0        0        0
 ```
 
 Every bar `|` indicates a 64 bytes boundary, and is mapped to a single bit in the bitmap. If an object (`*`) is allocated at the beginning of the boundary, we can set the bit to indicate its position:
@@ -256,6 +259,7 @@ Every bar `|` indicates a 64 bytes boundary, and is mapped to a single bit in th
 ----------------------------------------
         |*       |        |        |
 ----------------------------------------
+        1        0        0        0
 ```
 
 So when scanning the brick table, we know that a bit set means that an object is located at the beginning of that chunk of 64 bytes of memory.
@@ -266,6 +270,7 @@ However, if the object is located somewhere in the middle:
 ----------------------------------------
         |     *  |        |        |
 ----------------------------------------
+        0        0        0        0
 ```
 
 Then we can't mark the bit. Otherwise, when we scan the bitmap and see a bit set, we would only know that an object is _somewhere_ in that 64 bytes range, and not exactly where. Then we circle back to the very problem that we're trying to solve: how do we identify where an object begins?
@@ -286,13 +291,13 @@ So, let's imagine that the beginning of our brick table is: `[0x54, 0x0, 0x22, 0
  To perform a lookup in that brick table, we apply the following algorithm:
   - Given an address, we compute what byte of the brick table covers that address (by dividing it by 255*8)
   - We read that byte. If it's non-zero, then we have the address of the first object in that range and we can start walking the heap from there
-  - If it's zero, then we read the previous entry of the brick table, and we repeat until we find a non-zero entry or we reach the beginning (in which case we know we have to walk the whole heap)
+  - If it's zero, then we read the previous entry of the brick table, and we repeat until we find a non-zero entry or we reach the beginning (in which case we know we have to walk the whole segment)
 
   To avoid that last step and not have to scan an arbitrary number of entries backward, the .NET GC has implemented another optimization. It uses signed shorts for the brick table entries. A positive value indicates the offset of the object, and a negative value indicates how far back in the brick table we must jump to find a positive entry. So the algorithm becomes:
 
   - Given an address, we compute what entry of the brick table covers that address
   - We read that entry. If it's greater than zero, then we have the address of the first object in that range and we can start walking the heap from there
-  - If it's negative, adjust the brick index by adding the (negative) value, and repeat the lookup. For instance, let's say we started from the 9th entry in the table, and we read the value -4. Then we jump back to entry 5 and we're guaranteed to find a non-zero value.
+  - If it's negative, we adjust the brick index by adding the (negative) value, and repeat the lookup. For instance, let's say we started from the 9th entry in the table, and we read the value -4. Then we jump back to entry 5 and we're guaranteed to find a non-zero value.
 
 # The implementation
 
@@ -320,15 +325,16 @@ private void ScanRoots(GCObject* root, ScanContext* context, GcCallFlags flags)
         }
 
         var objectStartPtr = segment.FindClosestObjectBelow((IntPtr)root);
-
         bool found = false;
 
-        // Walk the heap until we find the object pointed at by the interior pointer
+        // Walk the heap starting from objectStartPtr,
+        // until we find the object pointed at by the interior pointer
         foreach (var ptr in WalkHeapObjects(objectStartPtr, (IntPtr)root))
         {
             var o = (GCObject*)ptr;
             var size = o->ComputeSize();
 
+            // Is the interior pointer within this object?
             if ((IntPtr)o <= (IntPtr)root && (IntPtr)root < (IntPtr)o + (nint)size)
             {
                 root = o;
@@ -365,7 +371,7 @@ private void ScanRoots(GCObject* root, ScanContext* context, GcCallFlags flags)
 
         o->EnumerateObjectReferences(_markStack.Push);
         o->Mark();
-        segment.MarkObject((IntPtr)o);
+        segment.MarkObject((IntPtr)o); // Update the brick table
     }
 }
 ```
@@ -376,11 +382,11 @@ As you can see, two things have changed in the `ScanRoots` method:
 
 Currently, the GC only sweeps memory and [replaces the dead object with a special free object](https://minidump.net/writing-a-net-gc-in-c-part-6/) which is walkable like a normal object. This means that we don't need to unmark objects from the brick table for now, but we'll have to revisit that in the future when we implement an allocator that is capable of reusing those free spaces.
 
-Also, note that during the first GC, the brick table is empty. It means that scanning interior pointers will be especially expensive during that time. To reduce this cost, I update the brick table as we find objects during the mark phase, but we can do more. Threads are mostly autonomous when allocating objects, thanks to their [allocation context](https://minidump.net/writing-a-net-gc-in-c-part-2/). But they still call the `Alloc` API of the GC whenever they need a new allocation context, [so we can update the brick table when that happens](https://github.com/kevingosse/ManagedDotnetGC/blob/500772ac383195177d74c779e554e8861a28f24e/ManagedDotnetGC/GCHeap.cs#L200).
+Also, note that during the first GC, the brick table is empty. It means that scanning interior pointers will be especially expensive during that time. To reduce this cost, I update the brick table whenever we find objects during the mark phase, so it gets populated progressively. But we can do more: threads are mostly autonomous when allocating objects, thanks to their [allocation context](https://minidump.net/writing-a-net-gc-in-c-part-2/), but they still call the `Alloc` API of the GC whenever they need a new allocation context. [We can update the brick table when that happens](https://github.com/kevingosse/ManagedDotnetGC/blob/500772ac383195177d74c779e554e8861a28f24e/ManagedDotnetGC/GCHeap.cs#L200).
 
 With that, our GC is finally able to resolve interior pointers! As you can see, they're a lot harder to deal with than it first seems. And it's very important that the GC is as efficient as possible when scanning them, because they're typically used in highly optimized code where performance matters.
 
-You might have noticed that, because of the brick table, our GC now has to frequently retrieve the segment owning a given address (done with the `_segmentManager.FindSegmentContaining` method). The method is currently very inefficient (it just iterates over the list of segments until it finds the right one) so it's going to become a bottleneck. Because of this, and because of the topic of frozen segments that we entirely ignored so far, we're going to completely rethink the way memory is allocated by our GC. This will be the subject of the next article.
+You might have noticed that, because of the brick table, our GC now has to frequently retrieve the segment owning a given address (done with the `_segmentManager.FindSegmentContaining` method). The method is currently very inefficient (it just iterates over the list of segments until it finds the right one) so it will become a bottleneck. Because of this, and because of the topic of frozen segments that we entirely ignored so far, we're going to completely rethink the way memory is allocated by our GC. This will be the subject of the next article.
 
 {{<rawhtml>}}
 <a href="https://amzn.to/42tg58c" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
