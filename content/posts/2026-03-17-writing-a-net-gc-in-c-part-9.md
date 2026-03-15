@@ -366,7 +366,7 @@ private void ScanRoots(GCObject* obj, ScanContext* context, GcCallFlags flags)
 
 Thanks to this, we don't have to walk the frozen segments to unmark the objects at the end of the garbage collection, because we never mark those objects to begin with.
 
-Of course, our allocator is very simple for now because this GC never releases memory. Once we start doing so, we must switch to a fully-featured allocator, with a free-list to keep track of free chunks of memory, and size buckets to prevent fragmentation. Reimplementing `malloc`, basically.
+Of course, our allocator is very simple for now because this GC never reuses freed address ranges. Once we start reclaiming and reusing space, we must switch to a fully-featured allocator, with a free-list to keep track of free chunks of memory, and size buckets to prevent fragmentation. Reimplementing `malloc`, basically.
 
 
 As usual, the full code is available on [GitHub](https://github.com/kevingosse/ManagedDotnetGC/).
