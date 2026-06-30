@@ -172,6 +172,12 @@ private void PrepareForFinalization()
 
 We iterate over the finalization queue (no need for locking because it happens during garbage collection while the threads are suspended) and look for objects that aren't marked. When we find one, we add it to the proper f-reachable queue (critical finalizers have a special flag set in their method-table), and we remove it from the finalization queue. To remove it cheaply, we swap its position with the last element of the queue, then set it to null.
 
+We can now cheaply implement `GetNumberOfFinalizable`:
+
+```csharp
+public nint GetNumberOfFinalizable() => _freachableQueue.Count + _criticalFreachableQueue.Count;
+```
+
 When the finalizer thread runs, it will call `GetNextFinalizable` to get the next object to finalize. We simply dequeue an item from the f-reachable queue, or if empty, the critical f-reachable queue:
 
 ```csharp
@@ -277,7 +283,7 @@ private void MarkPhase()
 }
 ```
 
-But that's not all. Because `ScanDependentHandles` potentially causes some objects to become rooted, we must run `ScanDependentHandles` once more, as it may cause some dependent handles to become valid again (if you don't understand why, this is explained in the [marking handles](https://minidump.net/writing-a-net-gc-in-c-part-7/) chapter). After that second dependent handles scan, we can finally clear the long weak handles and dependent handles that are still not pointing at a marked object.
+But that's not all. Because `ScanForFinalization` potentially causes some objects to become rooted, we must run `ScanDependentHandles` once more, as it may cause some dependent handles to become valid again (if you don't understand why, this is explained in the [marking handles](https://minidump.net/writing-a-net-gc-in-c-part-7/) chapter). After that second dependent handles scan, we can finally clear the long weak handles and dependent handles that are still not pointing at a marked object.
 
 ```csharp
 private void MarkPhase()
@@ -301,13 +307,7 @@ private void MarkPhase()
 
 # BIT_SBLK_FINALIZER_RUN
 
-User code can influence the finalization status of an object at any time, using the `GC.SuppressFinalize` and `GC.ReRegisterForFinalize` methods. It would be prohibitively expensive for the GC to remove/re-add an object to the finalization queue every time they're called. To make this cheaper, one bit inside of each object header is reserved to track its finalization status: `BIT_SBLK_FINALIZER_RUN`. 
-
-```csharp
-private const uint BIT_SBLK_FINALIZER_RUN = 0x40000000;
-```
-
-To access it easily, we add an `ObjectHeader` struct with a `HasFinalizerRun` property:
+User code can influence the finalization status of an object at any time, using the `GC.SuppressFinalize` and `GC.ReRegisterForFinalize` methods. It would be prohibitively expensive for the GC to remove/re-add an object to the finalization queue every time they're called. To make this cheaper, one bit inside of each object header is reserved to track its finalization status: `BIT_SBLK_FINALIZER_RUN`. To access it easily, we add an `ObjectHeader` struct with a `HasFinalizerRun` property:
 
 ```csharp
 [StructLayout(LayoutKind.Sequential)]
