@@ -307,7 +307,7 @@ User code can influence the finalization status of an object at any time, using 
 private const uint BIT_SBLK_FINALIZER_RUN = 0x40000000;
 ```
 
-To access it easily, we add a `ObjectHeader` struct with a `HasFinalizerRun` property:
+To access it easily, we add an `ObjectHeader` struct with a `HasFinalizerRun` property:
 
 ```csharp
 [StructLayout(LayoutKind.Sequential)]
