@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" font-family="Consolas, monospace" font-size="13" text-anchor="middle">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+  </defs>
+  <rect width="600" height="280" fill="#fff"/>
+
+  <!-- uint[] field: the struct holds a reference to an array elsewhere -->
+  <text x="20" y="30" font-size="15" font-weight="bold" text-anchor="start">uint[] data = new uint[70];</text>
+  <g stroke="#333" fill="#e8eef7">
+    <rect x="20" y="50" width="140" height="30"/>
+    <rect x="20" y="80" width="140" height="30"/>
+  </g>
+  <text x="90" y="70">data</text><text x="90" y="100">dataLength</text>
+
+  <g stroke="#333" fill="#fbe3d6">
+    <rect x="220" y="50" width="140" height="30"/>
+    <rect x="220" y="80" width="140" height="30"/>
+    <rect x="220" y="110" width="140" height="30"/>
+    <rect x="220" y="140" width="140" height="30" fill="#f6c3a6"/>
+    <rect x="220" y="170" width="140" height="30" fill="#f6c3a6"/>
+    <rect x="220" y="200" width="140" height="30" fill="#f6c3a6"/>
+    <rect x="220" y="230" width="140" height="30" fill="#f6c3a6"/>
+  </g>
+  <text x="290" y="70">header</text><text x="290" y="100">MT</text><text x="290" y="130">length</text>
+  <text x="290" y="160">[0]</text><text x="290" y="190">[1]</text><text x="290" y="220">…</text><text x="290" y="250">[69]</text>
+  <path d="M160,65 L190,65 L190,95 L218,95" fill="none" stroke="#333" marker-end="url(#arr)"/>
+
+  <line x1="400" y1="20" x2="400" y2="260" stroke="#ccc" stroke-dasharray="4 4"/>
+
+  <!-- fixed buffer: the elements live inside the struct -->
+  <text x="510" y="30" font-size="15" font-weight="bold">fixed uint data[70];</text>
+  <g stroke="#333" fill="#f6c3a6">
+    <rect x="440" y="50" width="140" height="30"/>
+    <rect x="440" y="80" width="140" height="30"/>
+    <rect x="440" y="110" width="140" height="30"/>
+    <rect x="440" y="140" width="140" height="30"/>
+    <rect x="440" y="170" width="140" height="30" fill="#e8eef7"/>
+  </g>
+  <text x="510" y="70">data[0]</text><text x="510" y="100">data[1]</text><text x="510" y="130">…</text><text x="510" y="160">data[69]</text><text x="510" y="190">dataLength</text>
+</svg>
