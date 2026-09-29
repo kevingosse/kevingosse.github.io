@@ -84,7 +84,7 @@ public struct BigInteger
 Unfortunately, ReSharper is limited to .NET Framework because it runs inside of Visual Studio, so we're stuck with fixed arrays.
 
 
-Rewriting the code was easy enough in appearance. And yet, when testing, I realized that the whole feature was broken. Debugging was quite difficult for a simple reason: I had no idea what intermediary results the crypto code is meant to produce (and I still don't), so I had no way to tell when the results started diverging. Still, after much persistence, I narrowed it down to one surprising behavior of fixed arrays.
+Rewriting the code was easy enough in appearance. And yet, when testing, I realized that the whole feature was broken. Debugging was quite difficult for a simple reason: I had no idea what intermediary results the crypto code was meant to produce (and I still don't), so I had no way to tell when the results started diverging. Still, after much persistence, I narrowed it down to one surprising behavior of fixed arrays.
 
 Rather than disclosing it right away, take a minute to consider the following code (or ask your agent to, if you stopped reading code):
 
@@ -139,13 +139,13 @@ What's happening is that the buffer is no longer zeroed when creating a new inst
 
 {{<image classes="fancybox center" src="/images/2026-09-29-the-hidden-trap-of-fixed-buffers-in-csharp-1.png" >}}
 
-So, what's really happening under the hood? It's time to dig into the C# specification.
+So, what's really happening under the hood? Well, this is the part where we dig into the C# specification.
 
 # The part where we dig into the C# specification (it's that part)
 
-It turns out it's not actually a bug. When I first encountered this issue, one year ago, it was a different world. I opened the C# specification, tried looking for a few relevant keywords, found nothing that could explain this behavior, and concluded that it was a bug. Fast-forward one year, agents have taken over the world, and after I asked Claude to look into the JIT code to explain the bug to me, it demonstrated that the behavior was _by design_ and produced the receipts.
+When I first encountered this issue, one year ago, it was a different world. I opened the C# specification, tried looking for a few relevant keywords, found nothing that could explain this behavior, and concluded that it was a bug. Fast-forward one year, agents have taken over the world, and after I asked Claude to look into the JIT code to explain the bug to me, it demonstrated that the behavior was _by design_ and produced the receipts.
 
-A few features in C# are making the problem more dangerous and harder to understand. So first, let's revert to C# 7.3 by adding those lines to the csproj:
+It turns out that a few features in C# are making the problem harder to understand (and more dangerous). So first, let's revert to C# 7.3 by adding those lines to the csproj:
 
 ```xml
 <PropertyGroup>
@@ -155,7 +155,7 @@ A few features in C# are making the problem more dangerous and harder to underst
 
 Now, the code doesn't compile anymore:
 
-```
+```a
 error CS8370: Feature 'parameterless struct constructors' is not available in C# 7.3. Please use language version 10.0 or greater.
 ```
 
@@ -199,7 +199,7 @@ unsafe struct StructWithFixedBuffer
 
 ... then we get a compilation error:
 
-```
+```a
 error CS0171: Field 'Program.StructWithFixedBuffer.value' must be fully assigned before control is returned to the caller. Consider updating to language version '11.0' to auto-default the field.
 ```
 
@@ -241,7 +241,7 @@ unsafe struct StructWithFixedBuffer
 
 In this case, when constructing the struct, the compiler will emit an `initobj` instruction, which is pretty much the equivalent of writing:
 
-```
+```csharp
 var a = default(StructWithFixedBuffer);
 ```
 
@@ -250,7 +250,7 @@ There, the JIT will zero the fields of the struct for you, _including the fixed 
 
 # The fix
 
-Once you understand the problem, the fix is fairly straightforward: ~~ask Microsoft to rewrite the C# spec~~, ~~ask Microsoft to convert Visual Studio to .NET Core so ReSharper can use InlineArray~~ manually zero the struct in the constructor.
+Once you understand the problem, the fix is fairly straightforward: ~~ask Microsoft to rewrite the C# spec~~, ~~ask Microsoft to convert Visual Studio to .NET Core so ReSharper can use InlineArray~~ manually zero the buffer in the constructor.
 
 ```csharp
 public unsafe struct BigInteger
@@ -269,3 +269,5 @@ public unsafe struct BigInteger
     // ...
 }
 ```
+
+Or really, if you can, use `InlineArray` and save yourself the trouble.
